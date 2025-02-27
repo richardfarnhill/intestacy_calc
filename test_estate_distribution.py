@@ -27,6 +27,37 @@ class TestEstateDistribution(unittest.TestCase):
             "Failed to correctly distribute estate to spouse only"
         )
 
+    def test_spouse_and_children_small_estate(self):
+        """Test estate distribution between spouse and children for estate under £322,000."""
+        state = self.default_state.copy()
+        state["married"] = True
+        state["children"] = True
+        estate_value = 300000
+        _, result = determine_estate_distribution(state, estate_value)
+        self.assertIn(
+            "Your spouse/civil partner will receive: £300,000.00",
+            result.value,
+            "Failed to correctly allocate entire small estate to spouse"
+        )
+
+    def test_spouse_and_children_large_estate(self):
+        """Test estate distribution between spouse and children for estate over £322,000."""
+        state = self.default_state.copy()
+        state["married"] = True
+        state["children"] = True
+        estate_value = 522000  # £200,000 over threshold
+        _, result = determine_estate_distribution(state, estate_value)
+        self.assertIn(
+            "Your spouse/civil partner will receive: £422,000.00",  # £322,000 + (200,000/2)
+            result.value,
+            "Failed to correctly allocate spouse portion for large estate"
+        )
+        self.assertIn(
+            "Your children will share equally: £100,000.00",  # 200,000/2
+            result.value,
+            "Failed to correctly allocate children portion for large estate"
+        )
+
     def test_spouse_and_children(self):
         """Test estate distribution between spouse and children."""
         state = self.default_state.copy()

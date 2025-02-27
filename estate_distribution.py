@@ -1,71 +1,81 @@
 import gradio as gr
 from dataclasses import dataclass
+from typing import Optional, Tuple
 
 @dataclass
-class Result:
-    value: str
+class UserState:
+    name: str = ""
+    estate_value: float = 0
+    relationship_status: str = ""
+    has_children: bool = False
+    has_grandchildren: bool = False
+    has_great_grandchildren: bool = False
+    has_living_parents: bool = False
+    has_siblings: bool = False
+    has_grandparents: bool = False
+    has_aunts_uncles: bool = False
+    current_question: int = 0
 
-def determine_estate_distribution(estate_value):
-    formatted_value = f"£{estate_value:,.2f}"
+def determine_distribution(state: UserState) -> Optional[str]:
+    estate = state.estate_value
+    formatted_value = f"£{estate:,.2f}"
     
-    def format_response(message):
-        return None, Result(message)
+    if state.relationship_status == "Married":
+        if not state.has_children:
+            return f"{state.name}, your entire estate of {formatted_value} will pass to your spouse. If you wish to change this, you will need to create a Will."
+        else:
+            spouse_threshold = 322000
+            if estate <= spouse_threshold:
+                spouse_amount = estate
+                children_amount = 0
+            else:
+                excess = estate - spouse_threshold
+                spouse_amount = spouse_threshold + (excess / 2)
+                children_amount = excess / 2
+            return f"{state.name}, your spouse will inherit £{spouse_amount:,.2f} (£322,000 plus half of the remainder), and your children will share £{children_amount:,.2f} (half of the remainder). If you wish to change this, you will need to create a Will."
 
-    # Check each case and return appropriate distribution message
-    if state.get("married") and not state.get("children"):
-        return format_response(f"Your entire estate of {formatted_value} will pass to your spouse/civil partner")
-    
-    elif state.get("married") and state.get("children"):
-        spouse_share = 322000
-        children_share = estate_value - spouse_share
-        message = (f"Your spouse/civil partner will receive: £{spouse_share:,.2f}\n"
-                  f"Your children will share equally: £{children_share:,.2f}")
-        return None, Result(message)
-    
-    elif state.get("children"):
-        return format_response(f"Your entire estate of {formatted_value} will be divided equally between your children")
-    
-    elif state.get("parents_alive"):
-        return format_response(f"Your entire estate of {formatted_value} will pass to your surviving parent(s) in equal shares")
-    
-    elif state.get("siblings"):
-        return format_response(f"Your entire estate of {formatted_value} will be divided equally between your siblings (or their children)")
-    
-    elif state.get("grandparents"):
-        return format_response(f"Your entire estate of {formatted_value} will pass to your surviving grandparents in equal shares")
-    
-    elif state.get("aunts_uncles"):
-        return format_response(f"Your entire estate of {formatted_value} will be divided equally between your aunts/uncles (or their children)")
-    
-    else:
-        return format_response("Your estate will pass to the Crown (Bona Vacantia) as no eligible relatives have been identified")
+    # Continue with other conditions...
 
-# Create Gradio interface
+def get_next_question(state: UserState) -> Tuple[Optional[str], Optional[str]]:
+    questions = [
+        ("Hi, what is your name?", None),
+        ("What is your approximate estate value?", None),
+        ("What is your relationship status?", "radio"),
+        ("Do you have any children?", "radio"),
+        ("Do you have any living grandchildren?", "radio"),
+        # Add more questions as needed...
+    ]
+    
+    if state.current_question >= len(questions):
+        return None, None
+        
+    return questions[state.current_question]
+
 with gr.Blocks() as app:
     gr.Markdown("## UK Intestacy Calculator")
-    gr.Markdown("Answer the following questions to determine how your estate would be distributed if you died without a will")
     
-    estate_value = gr.Number(label="What is the total value of your estate (£)?")
-    current_question = gr.Textbox(label="Question")
-    yes_no = gr.Radio(["Yes", "No"], label="Your Answer")
-    output = gr.Textbox(label="Distribution Result", visible=False)
+    state = UserState()
     
-    def on_submit(value, question, answer):
-        if not question:
-            question, output_update = determine_estate_distribution(value)
-            return question, output_update
-        
-        if can_determine_distribution(state):
-            return "", calculate_distribution(state, value)
-            
-        state["current_question"] += 1
-        return questions[state["current_question"]], gr.Textbox.update(visible=False)
+    name_input = gr.Textbox(label="Name", visible=True)
+    estate_value = gr.Number(label="Estate Value (£)", visible=False)
+    relationship_status = gr.Radio(
+        choices=["Single", "Married", "Divorced", "Widowed"],
+        label="Relationship Status",
+        visible=False
+    )
+    yes_no = gr.Radio(choices=["Yes", "No"], label="Answer", visible=False)
+    result = gr.Textbox(label="Result", visible=False)
     
-    submit = gr.Button("Continue")
-    submit.click(
-        fn=on_submit,
-        inputs=[estate_value, current_question, yes_no],
-        outputs=[current_question, output]
+    def update_interface(name, value, status, answer):
+        # Logic to update state and determine next question
+        # ...existing code...
+        pass
+
+    next_button = gr.Button("Continue")
+    next_button.click(
+        fn=update_interface,
+        inputs=[name_input, estate_value, relationship_status, yes_no],
+        outputs=[name_input, estate_value, relationship_status, yes_no, result]
     )
 
 app.launch()
