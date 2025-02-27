@@ -1,150 +1,92 @@
-import unittest
-from estate_distribution import determine_estate_distribution
+import pytest
+from decimal import Decimal
+from estate_distribution import IntestacyCalculator
 
-class TestEstateDistribution(unittest.TestCase):
-    """Test cases for estate distribution calculation."""
+@pytest.fixture
+def calculator():
+    calc = IntestacyCalculator()
+    calc.state.update({
+        "name": "Test User",
+        "estate_value": 500000,
+        "married": None,
+        "children": None,
+        "parents_alive": None,
+        "current_question": 0
+    })
+    return calc
 
-    def setUp(self):
-        """Set up common test data."""
-        self.default_state = {
-            "married": False,
-            "children": False,
-            "parents_alive": False,
-            "siblings": False,
-            "grandparents": False,
-            "aunts_uncles": False
-        }
+def test_validate_estate_value(calculator):
+    """Test estate value validation"""
+    assert calculator.validate_estate_value(100000)[0] is True
+    assert calculator.validate_estate_value(0)[0] is False
+    assert calculator.validate_estate_value(-1000)[0] is False
+    assert calculator.validate_estate_value(None)[0] is False
 
-    def test_spouse_only(self):
-        """Test estate distribution when only spouse is alive."""
-        state = self.default_state.copy()
-        state["married"] = True
-        estate_value = 500000
-        _, result = determine_estate_distribution(state, estate_value)
-        self.assertIn(
-            "Your entire estate of £500,000.00 will pass to your spouse/civil partner",
-            result.value,
-            "Failed to correctly distribute estate to spouse only"
-        )
+def test_spouse_and_children_large_estate(calculator):
+    """Test distribution with spouse and children for estate over £322,000"""
+    calculator.state.update({
+        "married": True,
+        "children": True
+    })
+    result = calculator.calculate_distribution()
+    assert "£411,000.00" in result  # £322,000 + (£178,000/2)
+    assert "£89,000.00" in result   # £178,000/2
 
-    def test_spouse_and_children_small_estate(self):
-        """Test estate distribution between spouse and children for estate under £322,000."""
-        state = self.default_state.copy()
-        state["married"] = True
-        state["children"] = True
-        estate_value = 300000
-        _, result = determine_estate_distribution(state, estate_value)
-        self.assertIn(
-            "Your spouse/civil partner will receive: £300,000.00",
-            result.value,
-            "Failed to correctly allocate entire small estate to spouse"
-        )
+def test_spouse_and_children_small_estate(calculator):
+    """Test distribution with spouse and children for estate under £322,000"""
+    calculator.state["estate_value"] = 300000
+    calculator.state.update({
+        "married": True,
+        "children": True
+    })
+    result = calculator.calculate_distribution()
+    assert "£300,000.00" in result
+    assert "will go to your spouse" in result
 
-    def test_spouse_and_children_large_estate(self):
-        """Test estate distribution between spouse and children for estate over £322,000."""
-        state = self.default_state.copy()
-        state["married"] = True
-        state["children"] = True
-        estate_value = 522000  # £200,000 over threshold
-        _, result = determine_estate_distribution(state, estate_value)
-        self.assertIn(
-            "Your spouse/civil partner will receive: £422,000.00",  # £322,000 + (200,000/2)
-            result.value,
-            "Failed to correctly allocate spouse portion for large estate"
-        )
-        self.assertIn(
-            "Your children will share equally: £100,000.00",  # 200,000/2
-            result.value,
-            "Failed to correctly allocate children portion for large estate"
-        )
+def test_spouse_only(calculator):
+    """Test distribution with spouse only"""
+    calculator.state.update({
+        "married": True,
+        "children": False
+    })
+    result = calculator.calculate_distribution()
+    assert "£500,000.00" in result
+    assert "will go to your spouse" in result
 
-    def test_spouse_and_children(self):
-        """Test estate distribution between spouse and children."""
-        state = self.default_state.copy()
-        state["married"] = True
-        state["children"] = True
-        estate_value = 500000
-        _, result = determine_estate_distribution(state, estate_value)
-        self.assertIn(
-            "Your spouse/civil partner will receive: £322,000.00",
-            result.value,
-            "Failed to correctly allocate spouse portion"
-        )
-        self.assertIn(
-            "Your children will share equally: £178,000.00",
-            result.value,
-            "Failed to correctly allocate children portion"
-        )
+def test_children_only(calculator):
+    """Test distribution with children only"""
+    calculator.state.update({
+        "married": False,
+        "children": True
+    })
+    result = calculator.calculate_distribution()
+    assert "£500,000.00" in result
+    assert "divided equally between your children" in result
 
-    def test_children_only(self):
-        """Test estate distribution when only children are alive."""
-        state = self.default_state.copy()
-        state["children"] = True
-        estate_value = 500000
-        _, result = determine_estate_distribution(state, estate_value)
-        self.assertIn(
-            "Your entire estate of £500,000.00 will be divided equally between your children",
-            result.value,
-            "Failed to correctly distribute estate to children only"
-        )
+def test_parents_only(calculator):
+    """Test distribution with parents only"""
+    calculator.state.update({
+        "married": False,
+        "children": False,
+        "parents_alive": True
+    })
+    result = calculator.calculate_distribution()
+    assert "£500,000.00" in result
+    assert "surviving parents" in result
 
-    def test_parents_only(self):
-        """Test estate distribution when only parents are alive."""
-        state = self.default_state.copy()
-        state["parents_alive"] = True
-        estate_value = 500000
-        _, result = determine_estate_distribution(state, estate_value)
-        self.assertIn(
-            "Your entire estate of £500,000.00 will pass to your surviving parent(s) in equal shares",
-            result.value,
-            "Failed to correctly distribute estate to parents only"
-        )
+def test_crown_inheritance(calculator):
+    """Test distribution with no eligible relatives"""
+    calculator.state.update({
+        "married": False,
+        "children": False,
+        "parents_alive": False
+    })
+    result = calculator.calculate_distribution()
+    assert "£500,000.00" in result
+    assert "Crown (Bona Vacantia)" in result
 
-    def test_siblings_only(self):
-        """Test estate distribution when only siblings are alive."""
-        state = self.default_state.copy()
-        state["siblings"] = True
-        estate_value = 500000
-        _, result = determine_estate_distribution(state, estate_value)
-        self.assertIn(
-            "Your entire estate of £500,000.00 will be divided equally between your siblings (or their children)",
-            result.value,
-            "Failed to correctly distribute estate to siblings only"
-        )
-
-    def test_grandparents_only(self):
-        """Test estate distribution when only grandparents are alive."""
-        state = self.default_state.copy()
-        state["grandparents"] = True
-        estate_value = 500000
-        _, result = determine_estate_distribution(state, estate_value)
-        self.assertIn(
-            "Your entire estate of £500,000.00 will pass to your surviving grandparents in equal shares",
-            result.value,
-            "Failed to correctly distribute estate to grandparents only"
-        )
-
-    def test_aunts_uncles_only(self):
-        """Test estate distribution when only aunts/uncles are alive."""
-        state = self.default_state.copy()
-        state["aunts_uncles"] = True
-        estate_value = 500000
-        _, result = determine_estate_distribution(state, estate_value)
-        self.assertIn(
-            "Your entire estate of £500,000.00 will be divided equally between your aunts/uncles (or their children)",
-            result.value,
-            "Failed to correctly distribute estate to aunts/uncles only"
-        )
-
-    def test_no_relatives(self):
-        """Test estate distribution when no eligible relatives exist."""
-        estate_value = 500000
-        _, result = determine_estate_distribution(self.default_state, estate_value)
-        self.assertIn(
-            "Your estate will pass to the Crown (Bona Vacantia)",
-            result.value,
-            "Failed to correctly handle case with no eligible relatives"
-        )
-
-if __name__ == '__main__':
-    unittest.main()
+def test_question_flow(calculator):
+    """Test that questions follow correct order"""
+    assert "married" in calculator.questions[0].lower()
+    assert "children" in calculator.questions[1].lower()
+    assert "parents" in calculator.questions[2].lower()
