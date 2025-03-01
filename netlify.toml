@@ -1,0 +1,12 @@
+[build]
+  publish = "examples"
+
+[context.production]
+  publish = "examples"
+  [[redirects]]
+    from = "/*"
+    to = "/basic.html"
+    status = 200
+
+[context.deploy-preview]
+  publish = "examples"
