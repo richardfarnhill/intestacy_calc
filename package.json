@@ -1,0 +1,45 @@
+{
+  "name": "intestacy-calculator",
+  "version": "1.0.0",
+  "description": "UK Intestacy Calculator Widget for embedding in websites, email newsletters, and landing pages",
+  "main": "dist/intestacy-calculator.js",
+  "module": "src/integration/IntestacyWidget.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "lint": "eslint src/**/*.js",
+    "serve": "node server.js",
+    "start": "npm run serve"
+  },
+  "keywords": [
+    "intestacy",
+    "calculator",
+    "uk",
+    "legal",
+    "widget",
+    "estate",
+    "will"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "@rollup/plugin-babel": "^6.0.0",
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-terser": "^0.4.0",
+    "eslint": "^8.50.0",
+    "http-server": "^14.1.0",
+    "jest": "^29.7.0",
+    "rollup": "^3.29.0",
+    "rollup-plugin-css-only": "^4.3.0"
+  },
+  "dependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

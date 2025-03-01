@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UK Intestacy Calculator - Basic Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    h1 {
+      color: #2c3e50;
+    }
+    
+    .description {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 30px;
+    }
+    
+    .calculator-container {
+      margin-bottom: 40px;
+    }
+    
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>UK Intestacy Calculator Example</h1>
+      <p>A demonstration of the intestacy calculator widget integration</p>
+    </header>
+    
+    <div class="description">
+      <h2>About This Calculator</h2>
+      <p>
+        This calculator helps you understand how your estate would be distributed if you die without a will in the UK.
+        It uses the current intestacy rules to determine who would inherit your assets.
+      </p>
+      <p>
+        The calculator is designed to be easy to use and provides clear information about the distribution of your estate.
+        Simply follow the prompts and answer the questions to see the results.
+      </p>
+    </div>
+    
+    <!-- Calculator container -->
+    <div id="intestacy-calculator" class="calculator-container"></div>
+    
+    <footer>
+      <p>&copy; 2025 UK Intestacy Calculator. All rights reserved.</p>
+      <p>This calculator is for informational purposes only and does not constitute legal advice.</p>
+    </footer>
+  </div>
+  
+  <!-- Include the intestacy calculator script -->
+  <script type="module">
+    // Import the IntestacyWidget class
+    import IntestacyWidget from '../src/integration/IntestacyWidget.js';
+    
+    // Initialize the widget when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      // Create a new instance of the widget
+      const widget = new IntestacyWidget({
+        container: '#intestacy-calculator',
+        theme: 'light',
+        contactInfo: 'Please contact us on 0161 123 4567 to discuss creating a Will.'
+      });
+    });
+  </script>
+</body>
+</html>

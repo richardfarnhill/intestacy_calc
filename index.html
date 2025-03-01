@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UK Intestacy Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+    }
+    
+    .examples {
+      margin-top: 30px;
+    }
+    
+    .example-link {
+      display: block;
+      padding: 15px;
+      margin-bottom: 10px;
+      background-color: #fff;
+      border-radius: 5px;
+      text-decoration: none;
+      color: #333;
+      border-left: 4px solid #007bff;
+      transition: all 0.2s ease;
+    }
+    
+    .example-link:hover {
+      background-color: #f0f7ff;
+      transform: translateX(5px);
+    }
+    
+    .example-link h3 {
+      margin: 0 0 5px 0;
+      color: #007bff;
+    }
+    
+    .example-link p {
+      margin: 0;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>UK Intestacy Calculator</h1>
+    <p>
+      This project provides a JavaScript widget that calculates how an estate would be distributed 
+      under UK intestacy rules. The widget is designed to be easily embedded in websites, 
+      email newsletters, and landing pages.
+    </p>
+    
+    <div class="examples">
+      <h2>Examples</h2>
+      
+      <a href="examples/basic.html" class="example-link">
+        <h3>Basic Example</h3>
+        <p>A simple implementation using ES modules</p>
+      </a>
+      
+      <a href="examples/simple-include.html" class="example-link">
+        <h3>Simple Include Example</h3>
+        <p>Implementation using a simple script tag</p>
+      </a>
+      
+      <a href="examples/custom-theme.html" class="example-link">
+        <h3>Custom Theme Example</h3>
+        <p>Customizing the appearance with CSS</p>
+      </a>
+      
+      <a href="examples/email-compatible.html" class="example-link">
+        <h3>Email Compatible Example</h3>
+        <p>Example of how to reference the calculator in an email</p>
+      </a>
+    </div>
+  </div>
+  
+  <script>
+    // Automatically redirect to the basic example after a short delay
+    setTimeout(function() {
+      window.location.href = 'examples/basic.html';
+    }, 1500);
+  </script>
+</body>
+</html>
