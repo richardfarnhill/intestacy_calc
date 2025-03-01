@@ -65,6 +65,20 @@
         This example demonstrates how to include the calculator using a simple script tag, which is ideal for
         websites where you don't have module support or want a simpler integration.
       </p>
+      
+      <h3>Code:</h3>
+      <pre><code>
+&lt;script src="/dist/intestacy-calculator.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  document.addEventListener('DOMContentLoaded', function() {
+    var widget = new IntestacyWidget({
+      container: '#intestacy-calculator',
+      theme: 'light',
+      contactInfo: 'Please contact us on 0161 928 3848 to discuss creating a Will.'
+    });
+  });
+&lt;/script&gt;
+      </code></pre>
     </div>
     
     <!-- Calculator container -->
@@ -78,7 +92,7 @@
   
   <!-- Include the intestacy calculator script -->
   <!-- In a real-world scenario, this would point to a CDN or your server -->
-  <script src="../dist/intestacy-calculator.min.js"></script>
+  <script src="/dist/intestacy-calculator.min.js"></script>
   
   <script>
     // Initialize the widget when the DOM is loaded
