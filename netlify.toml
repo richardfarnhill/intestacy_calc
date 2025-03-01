@@ -4,10 +4,6 @@
 
 [context.production]
   publish = "dist"
-  [[redirects]]
-    from = "/*"
-    to = "/examples/index.html"
-    status = 200
 
 [context.deploy-preview]
   publish = "dist"
