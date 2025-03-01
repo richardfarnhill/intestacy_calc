@@ -76,14 +76,13 @@
   </div>
   
   <!-- Include the intestacy calculator script -->
-  <script type="module">
-    // Import the IntestacyWidget class
-    import IntestacyWidget from '../intestacy-calculator.min.js';
-    
+  <script src="../intestacy-calculator.min.js"></script>
+  
+  <script>
     // Initialize the widget when the DOM is loaded
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', function() {
       // Create a new instance of the widget
-      const widget = new IntestacyWidget({
+      var widget = new IntestacyWidget({
         container: '#intestacy-calculator',
         theme: 'light',
         contactInfo: 'Please contact us on 0161 928 3848 to discuss creating a Will.'
