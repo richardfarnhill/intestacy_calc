@@ -218,3 +218,26 @@ MIT
 ## Future Development
 
 See [DEVELOPMENT.md](DEVELOPMENT.md) for a list of planned future enhancements.
+
+## Deployment
+
+You can deploy the UK Intestacy Calculator to Netlify for free:
+
+1. **Create a Netlify account:** If you don't already have one, sign up for a free account at [https://www.netlify.com/](https://www.netlify.com/).
+2. **Connect your GitHub repository:**
+   - Once you're logged in, click the "Add new site" button.
+   - Select "Import an existing project".
+   - Click "Deploy with GitHub".
+   - Authorize Netlify to access your GitHub account.
+   - Choose the `intestacy_calc` repository.
+3. **Configure the deployment settings:**
+   - **Branch to deploy:** Select `main`.
+   - **Build command:** Leave this blank (or enter `npm run build` if you need to build the project).
+   - **Publish directory:** Enter `examples` (or `dist` if you are building the project).
+   - **Base directory:** Leave this blank.
+   - **Functions directory:** This is not relevant for this project.
+4. **Deploy your site:** Click the "Deploy site" button.
+
+Netlify will automatically build and deploy your site. You can view the deployed calculator at [https://intestacycalculator.netlify.app](https://intestacycalculator.netlify.app).
+
+Every time you push changes to your GitHub repository, Netlify will automatically rebuild and redeploy your site.
