@@ -33,14 +33,11 @@ Add a container element to your HTML:
 <div id="intestacy-calculator"></div>
 ```
 
-#### Option 1: Using ES Modules
-
 ```html
-<script type="module">
-  import IntestacyWidget from './path/to/intestacy-calculator.js';
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    const widget = new IntestacyWidget({
+<script src="./path/to/intestacy-calculator.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var widget = new IntestacyWidget({
       container: '#intestacy-calculator',
       theme: 'light',
       contactInfo: 'Please contact us on 0161 928 3848 or mch@mchaleandco.co.uk to discuss creating a Will.'
@@ -49,20 +46,7 @@ Add a container element to your HTML:
 </script>
 ```
 
-#### Option 2: Using Script Tag
-
-```html
-<script src="./path/to/intestacy-calculator.min.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var widget = new IntestacyWidget({
-      container: '#intestacy-calculator',
-      theme: 'light',
-      contactInfo: 'Please contact us on 0161 123 4567 to discuss creating a Will.'
-    });
-  });
-</script>
-```
+**Note:** While ES modules (`import` statements) are supported in the source code, we recommend using the regular script tag approach for the most reliable integration, especially when deploying to various hosting environments.
 
 ### Configuration Options
 
@@ -232,11 +216,47 @@ You can deploy the UK Intestacy Calculator to Netlify for free:
    - Choose the `intestacy_calc` repository.
 3. **Configure the deployment settings:**
    - **Branch to deploy:** Select `main`.
-   - **Build command:** Leave this blank (or enter `npm run build` if you need to build the project).
-   - **Publish directory:** Enter `examples` (or `dist` if you are building the project).
+   - **Build command:** Enter `npm run build` to build the project.
+   - **Publish directory:** Enter `dist` as this is where the built files are located.
    - **Base directory:** Leave this blank.
    - **Functions directory:** This is not relevant for this project.
 4. **Deploy your site:** Click the "Deploy site" button.
+
+### Important Netlify Configuration
+
+The project includes a `netlify.toml` file that configures the deployment correctly. This file:
+
+- Sets the build command and publish directory
+- Configures redirects to ensure the JavaScript and CSS files are served correctly
+- Redirects the root URL to the examples index page
+
+```toml
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[context.production]
+  publish = "dist"
+  [[redirects]]
+    from = "/intestacy-calculator.min.js"
+    to = "/intestacy-calculator.min.js"
+    status = 200
+    force = true
+  [[redirects]]
+    from = "/intestacy-calculator.min.css"
+    to = "/intestacy-calculator.min.css"
+    status = 200
+    force = true
+  [[redirects]]
+    from = "/"
+    to = "/examples/index.html"
+    status = 200
+    force = true
+  [[redirects]]
+    from = "/*"
+    to = "/examples/index.html"
+    status = 200
+```
 
 Netlify will automatically build and deploy your site. You can view the deployed calculator at [https://intestacycalculator.netlify.app](https://intestacycalculator.netlify.app).
 
