@@ -5,7 +5,8 @@
   "main": "dist/intestacy-calculator.js",
   "module": "src/integration/IntestacyWidget.js",
   "scripts": {
-    "build": "rollup -c",
+    "build": "rollup -c && npm run copy-assets",
+    "copy-assets": "cp -r examples/assets dist/examples/ || true",
     "dev": "rollup -c -w",
     "test": "jest",
     "lint": "eslint src/**/*.js",
@@ -36,7 +37,9 @@
     "rollup": "^3.29.0",
     "rollup-plugin-css-only": "^4.3.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "jest-environment-jsdom": "^29.7.0"
+  },
   "browserslist": [
     "> 1%",
     "last 2 versions",

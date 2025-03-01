@@ -1,12 +1,13 @@
 [build]
-  publish = "examples"
+  command = "npm run build"
+  publish = "dist/examples"
 
 [context.production]
-  publish = "examples"
+  publish = "dist/examples"
   [[redirects]]
     from = "/*"
-    to = "/basic.html"
+    to = "/index.html"
     status = 200
 
 [context.deploy-preview]
-  publish = "examples"
+  publish = "dist/examples"
