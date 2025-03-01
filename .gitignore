@@ -34,3 +34,6 @@ yarn-error.log*
 # Misc
 .cache/
 .temp/
+
+# Cursor settings
+cline_custom_modes.json
