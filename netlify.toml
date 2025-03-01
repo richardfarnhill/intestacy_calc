@@ -6,7 +6,7 @@
   publish = "dist"
   [[redirects]]
     from = "/"
-    to = "/index.html"
+    to = "/examples/index.html"
     status = 200
 
 [context.deploy-preview]
