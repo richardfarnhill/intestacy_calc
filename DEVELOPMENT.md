@@ -17,6 +17,8 @@ These are the planned future enhancements for the UK Intestacy Calculator, categ
 
 ### Integrations
 
+- **API Endpoints 🚀 (HIGH):**
+    - Create API endpoints to enable wide integration with the user's app and other services like Make.com or Hubspot.
 - **CRM Integration 🚀 (HIGH):**
     - Integrate with a CRM system (potentially Hubspot) to add users who request an email report.
 - **Email Report Generation 🚀 (HIGH):**
@@ -25,8 +27,13 @@ These are the planned future enhancements for the UK Intestacy Calculator, categ
         - A reiteration of the output (intestacy distribution).
         - Clickable CTAs and sales information.
     - Gain user consent for follow-up communication.
+- **Admin Dashboard 🚀 (HIGH):**
+    - Develop an admin dashboard to create co-branded versions of the calculator.
+    - The dashboard should enable the addition of the co-brand and their logo.
 - **Tracking and Analytics 🛠️ (MEDIUM):**
     - Integrate tracking pixels (Facebook Pixel, Google Analytics, Google Tag Manager, etc.) to monitor user behavior and conversion rates.
 - **Online Calendar Integration 🛠️ (MEDIUM):** Integrate with online calendar services for easy appointment scheduling.
 - **Legal Services Integration 🛠️ (MEDIUM):** Partner with legal service providers to offer users a seamless transition to Will creation.
+- **Partner Dashboard (v3) 🛠️ (MEDIUM):**
+    - Develop a partner dashboard so that the co-brand partner can view reports (potential v3 iteration).
 - **Supabase Integration 🕳️ (LOW):** Explore the potential for using Supabase for backend services such as user authentication and data storage (if needed for future features).
