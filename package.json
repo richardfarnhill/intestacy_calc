@@ -4,10 +4,10 @@
   "description": "UK Intestacy Calculator Widget for embedding in websites, email newsletters, and landing pages",
   "main": "dist/intestacy-calculator.js",
   "module": "src/integration/IntestacyWidget.js",
+  "type": "module",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "test": "jest",
     "test": "jest",
     "lint": "eslint src/**/*.js",
     "serve": "node server.js",
