@@ -5,7 +5,7 @@ yarn-debug.log
 yarn-error.log
 
 # Build files
-dist/
+# dist/ - Commented out to allow Netlify to deploy the dist directory
 build/
 coverage/
 
