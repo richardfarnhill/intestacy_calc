@@ -43,7 +43,7 @@ Add a container element to your HTML:
     const widget = new IntestacyWidget({
       container: '#intestacy-calculator',
       theme: 'light',
-      contactInfo: 'Please contact us on 0161 123 4567 to discuss creating a Will.'
+      contactInfo: 'Please contact us on 0161 928 3848 or mch@mchaleandco.co.uk to discuss creating a Will.'
     });
   });
 </script>
@@ -214,3 +214,7 @@ This will start a development server and open the basic example in your browser.
 ## License
 
 MIT
+
+## Future Development
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for a list of planned future enhancements.
