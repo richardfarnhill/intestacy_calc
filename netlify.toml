@@ -5,6 +5,14 @@
 [context.production]
   publish = "dist"
   [[redirects]]
+    from = "/intestacy-calculator.min.js"
+    to = "/intestacy-calculator.min.js"
+    status = 200
+  [[redirects]]
+    from = "/intestacy-calculator.min.css"
+    to = "/intestacy-calculator.min.css"
+    status = 200
+  [[redirects]]
     from = "/*"
     to = "/examples/index.html"
     status = 200
