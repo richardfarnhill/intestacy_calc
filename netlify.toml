@@ -15,6 +15,11 @@
     status = 200
     force = true
   [[redirects]]
+    from = "/"
+    to = "/examples/index.html"
+    status = 200
+    force = true
+  [[redirects]]
     from = "/*"
     to = "/examples/index.html"
     status = 200
