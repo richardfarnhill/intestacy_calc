@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "rollup -c && npm run copy-index",
-    "copy-index": "copy index.html dist\\",
+    "copy-index": "cp index.html dist/",
     "dev": "rollup -c -w",
     "test": "jest",
     "lint": "eslint src/**/*.js",
