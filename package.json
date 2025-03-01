@@ -5,9 +5,9 @@
   "main": "dist/intestacy-calculator.js",
   "module": "src/integration/IntestacyWidget.js",
   "scripts": {
-    "build": "rollup -c && npm run copy-assets",
-    "copy-assets": "cp -r examples/assets dist/examples/ || true",
+    "build": "rollup -c",
     "dev": "rollup -c -w",
+    "test": "jest",
     "test": "jest",
     "lint": "eslint src/**/*.js",
     "serve": "node server.js",
