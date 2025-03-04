@@ -75,79 +75,141 @@ class IntestacyUI {
     const calculatorElement = document.createElement('div');
     calculatorElement.className = 'intestacy-calculator';
     calculatorElement.id = 'intestacy-calculator';
+    calculatorElement.setAttribute('role', 'application');
+    calculatorElement.setAttribute('aria-label', 'UK Intestacy Calculator');
+    
+    // Add skip navigation link for keyboard users
+    const skipLink = document.createElement('a');
+    skipLink.className = 'intestacy-skip-link';
+    skipLink.href = '#intestacy-name-section';
+    skipLink.textContent = 'Skip to main content';
+    skipLink.setAttribute('tabindex', '0');
+    calculatorElement.appendChild(skipLink);
     
     // Create name input section
-    const nameSection = document.createElement('div');
+    const nameSection = document.createElement('form');
     nameSection.className = 'intestacy-section intestacy-name-section';
     nameSection.id = 'intestacy-name-section';
+    nameSection.setAttribute('role', 'form');
+    nameSection.setAttribute('novalidate', 'true');
+    nameSection.setAttribute('aria-labelledby', 'intestacy-name-heading');
     
     const nameHeading = document.createElement('h2');
     nameHeading.textContent = 'What is your name?';
+    nameHeading.id = 'intestacy-name-heading';
+    
+    const nameLabel = document.createElement('label');
+    nameLabel.setAttribute('for', 'intestacy-name-input');
+    nameLabel.textContent = 'Full Name';
+    nameLabel.className = 'intestacy-label';
     
     const nameInput = document.createElement('input');
     nameInput.type = 'text';
     nameInput.className = 'intestacy-name-input';
     nameInput.id = 'intestacy-name-input';
     nameInput.placeholder = 'Enter your name';
+    nameInput.setAttribute('aria-required', 'true');
+    nameInput.setAttribute('aria-describedby', 'intestacy-name-error');
+    nameInput.setAttribute('autocomplete', 'name');
     
     // Add error message for name
     const nameError = document.createElement('div');
     nameError.className = 'intestacy-error intestacy-name-error';
     nameError.id = 'intestacy-name-error';
     nameError.style.display = 'none';
+    nameError.setAttribute('role', 'alert');
+    nameError.setAttribute('aria-live', 'assertive');
     
     const nameButton = document.createElement('button');
     nameButton.className = 'intestacy-button intestacy-name-button';
     nameButton.id = 'intestacy-name-button';
     nameButton.textContent = 'Continue';
+    nameButton.type = 'submit';
+    nameButton.setAttribute('aria-label', 'Continue to next step');
     
     nameSection.appendChild(nameHeading);
+    nameSection.appendChild(nameLabel);
     nameSection.appendChild(nameInput);
     nameSection.appendChild(nameError);
     nameSection.appendChild(nameButton);
     
     // Create estate input section
-    const estateSection = document.createElement('div');
+    const estateSection = document.createElement('form');
     estateSection.className = 'intestacy-section intestacy-estate-section';
     estateSection.id = 'intestacy-estate-section';
     estateSection.style.display = 'none';
+    estateSection.setAttribute('role', 'form');
+    estateSection.setAttribute('novalidate', 'true');
+    estateSection.setAttribute('aria-labelledby', 'intestacy-estate-heading');
     
     const estateHeading = document.createElement('h2');
     estateHeading.textContent = 'What is the value of your estate?';
+    estateHeading.id = 'intestacy-estate-heading';
+    
+    const estateLabel = document.createElement('label');
+    estateLabel.setAttribute('for', 'intestacy-estate-input');
+    estateLabel.textContent = 'Estate Value (£)';
+    estateLabel.className = 'intestacy-label';
     
     const estateInput = document.createElement('input');
     estateInput.type = 'text';
     estateInput.className = 'intestacy-estate-input';
     estateInput.id = 'intestacy-estate-input';
     estateInput.placeholder = 'Enter estate value (£)';
+    estateInput.setAttribute('aria-required', 'true');
+    estateInput.setAttribute('aria-describedby', 'intestacy-estate-error');
+    estateInput.setAttribute('inputmode', 'numeric');
+    estateInput.setAttribute('pattern', '[0-9]*');
     
     // Add error message for estate
     const estateError = document.createElement('div');
     estateError.className = 'intestacy-error intestacy-estate-error';
     estateError.id = 'intestacy-estate-error';
     estateError.style.display = 'none';
+    estateError.setAttribute('role', 'alert');
+    estateError.setAttribute('aria-live', 'assertive');
     
     const estateButton = document.createElement('button');
     estateButton.className = 'intestacy-button intestacy-estate-button';
     estateButton.id = 'intestacy-estate-button';
     estateButton.textContent = 'Continue';
+    estateButton.type = 'submit';
+    estateButton.setAttribute('aria-label', 'Continue to next step');
     
     estateSection.appendChild(estateHeading);
+    estateSection.appendChild(estateLabel);
     estateSection.appendChild(estateInput);
     estateSection.appendChild(estateError);
     estateSection.appendChild(estateButton);
     
     // Create marital status section
-    const statusSection = document.createElement('div');
+    const statusSection = document.createElement('form');
     statusSection.className = 'intestacy-section intestacy-status-section';
     statusSection.id = 'intestacy-status-section';
     statusSection.style.display = 'none';
+    statusSection.setAttribute('role', 'form');
+    statusSection.setAttribute('novalidate', 'true');
+    statusSection.setAttribute('aria-labelledby', 'intestacy-status-heading');
     
     const statusHeading = document.createElement('h2');
     statusHeading.textContent = 'What is your marital status?';
+    statusHeading.id = 'intestacy-status-heading';
+    
+    // Create fieldset for radio buttons
+    const statusFieldset = document.createElement('fieldset');
+    statusFieldset.className = 'intestacy-status-fieldset';
+    
+    const statusLegend = document.createElement('legend');
+    statusLegend.textContent = 'Select your marital status';
+    statusLegend.className = 'intestacy-visuallyhidden'; // Visually hidden but accessible to screen readers
+    
+    statusFieldset.appendChild(statusLegend);
     
     const statusOptions = document.createElement('div');
     statusOptions.className = 'intestacy-status-options';
+    statusOptions.setAttribute('role', 'radiogroup');
+    statusOptions.setAttribute('aria-required', 'true');
+    statusOptions.setAttribute('aria-describedby', 'intestacy-status-error');
     
     const options = [
       { id: 'married', label: 'Married or in Civil Partnership' },
@@ -155,15 +217,23 @@ class IntestacyUI {
       { id: 'single', label: 'Single/Divorced/Widowed' }
     ];
     
-    options.forEach(option => {
+    options.forEach((option, index) => {
       const optionLabel = document.createElement('label');
       optionLabel.className = 'intestacy-status-option';
+      optionLabel.setAttribute('for', `intestacy-status-${option.id}`);
       
       const optionInput = document.createElement('input');
       optionInput.type = 'radio';
       optionInput.name = 'marital-status';
       optionInput.value = option.id;
+      optionInput.id = `intestacy-status-${option.id}`;
       optionInput.className = 'intestacy-status-input';
+      if (index === 0) {
+        optionInput.setAttribute('tabindex', '0');
+      } else {
+        optionInput.setAttribute('tabindex', '-1');
+      }
+      optionInput.setAttribute('aria-checked', 'false');
       
       const optionText = document.createTextNode(option.label);
       
@@ -172,11 +242,15 @@ class IntestacyUI {
       statusOptions.appendChild(optionLabel);
     });
     
+    statusFieldset.appendChild(statusOptions);
+    
     // Add error message for status
     const statusError = document.createElement('div');
     statusError.className = 'intestacy-error intestacy-status-error';
     statusError.id = 'intestacy-status-error';
     statusError.style.display = 'none';
+    statusError.setAttribute('role', 'alert');
+    statusError.setAttribute('aria-live', 'assertive');
     
     // Add cohabiting warning
     const cohabitingWarning = document.createElement('div');
@@ -184,23 +258,30 @@ class IntestacyUI {
     cohabitingWarning.id = 'intestacy-cohabiting-warning';
     cohabitingWarning.innerHTML = '<strong>Warning:</strong> As a cohabiting partner, you have no automatic inheritance rights under UK law.';
     cohabitingWarning.style.display = 'none';
+    cohabitingWarning.setAttribute('role', 'alert');
+    cohabitingWarning.setAttribute('aria-live', 'polite');
     
     const statusButton = document.createElement('button');
     statusButton.className = 'intestacy-button intestacy-status-button';
     statusButton.id = 'intestacy-status-button';
     statusButton.textContent = 'Continue';
+    statusButton.type = 'submit';
+    statusButton.setAttribute('aria-label', 'Continue to next step');
     
     statusSection.appendChild(statusHeading);
-    statusSection.appendChild(statusOptions);
+    statusSection.appendChild(statusFieldset);
     statusSection.appendChild(statusError);
     statusSection.appendChild(cohabitingWarning);
     statusSection.appendChild(statusButton);
     
     // Create question section
-    const questionSection = document.createElement('div');
+    const questionSection = document.createElement('form');
     questionSection.className = 'intestacy-section intestacy-question-section';
     questionSection.id = 'intestacy-question-section';
     questionSection.style.display = 'none';
+    questionSection.setAttribute('role', 'form');
+    questionSection.setAttribute('novalidate', 'true');
+    questionSection.setAttribute('aria-labelledby', 'intestacy-question-heading');
     
     const questionHeading = document.createElement('h2');
     questionHeading.className = 'intestacy-question-heading';
@@ -210,15 +291,30 @@ class IntestacyUI {
     const questionText = document.createElement('div');
     questionText.className = 'intestacy-question-text';
     questionText.id = 'intestacy-question-text';
+    questionText.setAttribute('aria-live', 'polite');
+    
+    // Create fieldset for question options
+    const questionFieldset = document.createElement('fieldset');
+    questionFieldset.className = 'intestacy-question-fieldset';
+    
+    const questionLegend = document.createElement('legend');
+    questionLegend.className = 'intestacy-visuallyhidden';
+    questionLegend.textContent = 'Answer the question';
+    
+    questionFieldset.appendChild(questionLegend);
     
     const questionOptions = document.createElement('div');
     questionOptions.className = 'intestacy-question-options';
     questionOptions.id = 'intestacy-question-options';
     
+    questionFieldset.appendChild(questionOptions);
+    
     const questionError = document.createElement('div');
     questionError.className = 'intestacy-error intestacy-question-error';
     questionError.id = 'intestacy-question-error';
     questionError.style.display = 'none';
+    questionError.setAttribute('role', 'alert');
+    questionError.setAttribute('aria-live', 'assertive');
     
     const questionButtons = document.createElement('div');
     questionButtons.className = 'intestacy-question-buttons';
@@ -227,18 +323,22 @@ class IntestacyUI {
     yesButton.className = 'intestacy-button intestacy-yes-button';
     yesButton.id = 'intestacy-yes-button';
     yesButton.textContent = 'Yes';
+    yesButton.type = 'button';
+    yesButton.setAttribute('aria-label', 'Yes to the question');
     
     const noButton = document.createElement('button');
     noButton.className = 'intestacy-button intestacy-no-button';
     noButton.id = 'intestacy-no-button';
     noButton.textContent = 'No';
+    noButton.type = 'button';
+    noButton.setAttribute('aria-label', 'No to the question');
     
     questionButtons.appendChild(yesButton);
     questionButtons.appendChild(noButton);
     
     questionSection.appendChild(questionHeading);
     questionSection.appendChild(questionText);
-    questionSection.appendChild(questionOptions);
+    questionSection.appendChild(questionFieldset);
     questionSection.appendChild(questionError);
     questionSection.appendChild(questionButtons);
     
@@ -247,26 +347,34 @@ class IntestacyUI {
     resultSection.className = 'intestacy-section intestacy-result-section';
     resultSection.id = 'intestacy-result-section';
     resultSection.style.display = 'none';
+    resultSection.setAttribute('role', 'region');
+    resultSection.setAttribute('aria-labelledby', 'intestacy-result-heading');
     
     const resultHeading = document.createElement('h2');
     resultHeading.textContent = 'Inheritance Distribution';
+    resultHeading.id = 'intestacy-result-heading';
     
     const resultContent = document.createElement('div');
     resultContent.className = 'intestacy-result-content';
     resultContent.id = 'intestacy-result-content';
+    resultContent.setAttribute('tabindex', '0'); // Make focusable to help screen reader users
+    resultContent.setAttribute('aria-live', 'polite');
     
     const restartButton = document.createElement('button');
     restartButton.className = 'intestacy-button intestacy-restart-button';
     restartButton.id = 'intestacy-restart';
     restartButton.textContent = 'Start Again';
+    restartButton.type = 'button';
+    restartButton.setAttribute('aria-label', 'Start calculator again from beginning');
     
     resultSection.appendChild(resultHeading);
     resultSection.appendChild(resultContent);
     resultSection.appendChild(restartButton);
     
     // Create footer with legal disclaimer
-    const footer = document.createElement('div');
+    const footer = document.createElement('footer');
     footer.className = 'intestacy-footer';
+    footer.setAttribute('role', 'contentinfo');
     
     const disclaimer = document.createElement('p');
     disclaimer.className = 'intestacy-disclaimer';
@@ -279,6 +387,31 @@ class IntestacyUI {
       const contactInfo = document.createElement('div');
       contactInfo.className = 'intestacy-contact-info';
       contactInfo.innerHTML = this.options.contactInfo;
+      contactInfo.setAttribute('aria-label', 'Contact Information');
+      
+      // If phone number is provided, make it accessible
+      if (this.options.contactPhone) {
+        const phoneLink = document.createElement('a');
+        phoneLink.href = `tel:${this.options.contactPhone.replace(/\s+/g, '')}`;
+        phoneLink.className = 'intestacy-contact-phone';
+        phoneLink.innerHTML = this.options.contactPhone;
+        phoneLink.setAttribute('aria-label', `Phone: ${this.options.contactPhone}`);
+        
+        contactInfo.appendChild(document.createElement('br'));
+        contactInfo.appendChild(phoneLink);
+      }
+      
+      // If email is provided, make it accessible
+      if (this.options.contactEmail) {
+        const emailLink = document.createElement('a');
+        emailLink.href = `mailto:${this.options.contactEmail}`;
+        emailLink.className = 'intestacy-contact-email';
+        emailLink.innerHTML = this.options.contactEmail;
+        emailLink.setAttribute('aria-label', `Email: ${this.options.contactEmail}`);
+        
+        contactInfo.appendChild(document.createElement('br'));
+        contactInfo.appendChild(emailLink);
+      }
       
       footer.appendChild(contactInfo);
     }
@@ -330,32 +463,93 @@ class IntestacyUI {
    */
   addEventListeners() {
     // Name button click
-    this.elements.nameButton.addEventListener('click', () => {
+    this.elements.nameButton.addEventListener('click', (e) => {
+      e.preventDefault();
       this.handleNameSubmit();
     });
     
-    // Name input enter key
-    this.elements.nameInput.addEventListener('keypress', (e) => {
+    // Name form submission
+    this.elements.nameSection.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.handleNameSubmit();
+    });
+    
+    // Name input Enter key
+    this.elements.nameInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
+        e.preventDefault();
         this.handleNameSubmit();
       }
     });
     
     // Estate button click
-    this.elements.estateButton.addEventListener('click', () => {
+    this.elements.estateButton.addEventListener('click', (e) => {
+      e.preventDefault();
       this.handleEstateSubmit();
     });
     
-    // Estate input enter key
-    this.elements.estateInput.addEventListener('keypress', (e) => {
+    // Estate form submission
+    this.elements.estateSection.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.handleEstateSubmit();
+    });
+    
+    // Estate input Enter key
+    this.elements.estateInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
+        e.preventDefault();
         this.handleEstateSubmit();
       }
     });
     
     // Status button click
-    this.elements.statusButton.addEventListener('click', () => {
+    this.elements.statusButton.addEventListener('click', (e) => {
+      e.preventDefault();
       this.handleStatusSubmit();
+    });
+    
+    // Status form submission
+    this.elements.statusSection.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.handleStatusSubmit();
+    });
+    
+    // Status radio button keyboard navigation
+    Array.from(this.elements.statusInputs).forEach((input, index) => {
+      input.addEventListener('keydown', (e) => {
+        const inputs = Array.from(this.elements.statusInputs);
+        let nextIndex;
+        
+        // Arrow up/down navigation for radio buttons
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          e.preventDefault();
+          nextIndex = (index + 1) % inputs.length;
+          inputs[nextIndex].checked = true;
+          inputs[nextIndex].focus();
+          this.updateRadioGroupTabindex(nextIndex);
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          nextIndex = (index - 1 + inputs.length) % inputs.length;
+          inputs[nextIndex].checked = true;
+          inputs[nextIndex].focus();
+          this.updateRadioGroupTabindex(nextIndex);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          this.handleStatusSubmit();
+        }
+      });
+      
+      // Update ARIA state when radio changes
+      input.addEventListener('change', () => {
+        Array.from(this.elements.statusInputs).forEach((radio, i) => {
+          radio.setAttribute('aria-checked', radio.checked.toString());
+          
+          // Update tabindex to make only the checked radio tabbable
+          if (radio.checked) {
+            this.updateRadioGroupTabindex(i);
+          }
+        });
+      });
     });
     
     // Yes button click
@@ -363,14 +557,66 @@ class IntestacyUI {
       this.handleQuestionAnswer(true);
     });
     
+    // Yes button keyboard accessibility
+    this.elements.yesButton.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.handleQuestionAnswer(true);
+      }
+    });
+    
     // No button click
     this.elements.noButton.addEventListener('click', () => {
       this.handleQuestionAnswer(false);
     });
     
+    // No button keyboard accessibility
+    this.elements.noButton.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.handleQuestionAnswer(false);
+      }
+    });
+    
     // Restart button click
     this.elements.restartButton.addEventListener('click', () => {
       this.reset();
+    });
+    
+    // Restart button keyboard accessibility
+    this.elements.restartButton.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.reset();
+      }
+    });
+    
+    // Accessibility skip link
+    const skipLink = this.elements.calculator.querySelector('.intestacy-skip-link');
+    if (skipLink) {
+      skipLink.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const targetId = skipLink.getAttribute('href').substring(1);
+          const targetElement = document.getElementById(targetId);
+          
+          if (targetElement) {
+            targetElement.setAttribute('tabindex', '-1');
+            targetElement.focus();
+          }
+        }
+      });
+    }
+  }
+  
+  /**
+   * Update tabindex attributes for radio button group
+   * @param {number} selectedIndex - The index of the selected radio button
+   */
+  updateRadioGroupTabindex(selectedIndex) {
+    Array.from(this.elements.statusInputs).forEach((radio, i) => {
+      radio.setAttribute('tabindex', i === selectedIndex ? '0' : '-1');
+      radio.setAttribute('aria-checked', radio.checked.toString());
     });
   }
   
@@ -411,6 +657,10 @@ class IntestacyUI {
     if (!name) {
       this.elements.nameError.textContent = 'Please enter your name';
       this.elements.nameError.style.display = 'block';
+      // Set aria-invalid on the input
+      this.elements.nameInput.setAttribute('aria-invalid', 'true');
+      // Set focus back to the input for correction
+      this.elements.nameInput.focus();
       return;
     }
     
@@ -418,8 +668,9 @@ class IntestacyUI {
     this.state.name = name;
     this.calculator.state.name = name;
     
-    // Clear error
+    // Clear error and reset aria attributes
     this.elements.nameError.style.display = 'none';
+    this.elements.nameInput.setAttribute('aria-invalid', 'false');
     
     // Show estate input
     this.showEstateInput();
@@ -435,8 +686,20 @@ class IntestacyUI {
     this.elements.questionSection.style.display = 'none';
     this.elements.resultSection.style.display = 'none';
     
-    // Focus on input
-    setTimeout(() => this.elements.estateInput.focus(), 300);
+    // Focus on heading first for screen readers to announce the section
+    const estateHeading = this.elements.estateSection.querySelector('h2');
+    if (estateHeading) {
+      estateHeading.setAttribute('tabindex', '-1');
+      estateHeading.focus();
+      // Then move focus to the input after announcing
+      setTimeout(() => {
+        estateHeading.removeAttribute('tabindex');
+        this.elements.estateInput.focus();
+      }, 100);
+    } else {
+      // Fallback to direct focus on input
+      setTimeout(() => this.elements.estateInput.focus(), 300);
+    }
   }
   
   /**
@@ -452,29 +715,39 @@ class IntestacyUI {
     if (!estateValue) {
       this.elements.estateError.textContent = 'Please enter your estate value';
       this.elements.estateError.style.display = 'block';
+      // Set aria-invalid on the input
+      this.elements.estateInput.setAttribute('aria-invalid', 'true');
+      // Set focus back to the input for correction
+      this.elements.estateInput.focus();
       return;
     }
     
-    const numValue = parseFloat(estateValue);
-    if (isNaN(numValue) || numValue <= 0) {
-      this.elements.estateError.textContent = 'Please enter a valid positive number';
+    // Validate estate value is a number
+    if (!validateEstateValue(estateValue)) {
+      this.elements.estateError.textContent = 'Please enter a valid number for your estate value';
       this.elements.estateError.style.display = 'block';
+      // Set aria-invalid on the input
+      this.elements.estateInput.setAttribute('aria-invalid', 'true');
+      // Set focus back to the input for correction
+      this.elements.estateInput.focus();
       return;
     }
     
     // Store the estate value
-    this.state.estateValue = numValue;
-    this.calculator.state.estateValue = numValue;
+    const estateValueNumber = parseFloat(estateValue);
+    this.state.estateValue = estateValueNumber;
+    this.calculator.state.estateValue = estateValueNumber;
     
-    // Clear error
+    // Clear error and reset aria attributes
     this.elements.estateError.style.display = 'none';
+    this.elements.estateInput.setAttribute('aria-invalid', 'false');
     
-    // Move to next step
+    // Show marital status input
     this.showStatusInput();
   }
   
   /**
-   * Show the relationship status input step
+   * Show marital status input
    */
   showStatusInput() {
     this.elements.nameSection.style.display = 'none';
@@ -482,64 +755,86 @@ class IntestacyUI {
     this.elements.statusSection.style.display = 'block';
     this.elements.questionSection.style.display = 'none';
     this.elements.resultSection.style.display = 'none';
+    
+    // Focus on heading first for screen readers to announce the section
+    const statusHeading = this.elements.statusSection.querySelector('h2');
+    if (statusHeading) {
+      statusHeading.setAttribute('tabindex', '-1');
+      statusHeading.focus();
+      // Then move focus to the first radio button after announcing
+      setTimeout(() => {
+        statusHeading.removeAttribute('tabindex');
+        // Focus the first radio button in the group
+        const firstRadio = this.elements.statusInputs[0];
+        if (firstRadio) {
+          firstRadio.focus();
+          // Ensure only the first radio is in the tab order initially
+          this.updateRadioGroupTabindex(0);
+        }
+      }, 100);
+    }
   }
   
   /**
-   * Handle relationship status submission
+   * Handle marital status submission
    */
   handleStatusSubmit() {
-    let selectedStatus = '';
+    // Get selected status
+    let selectedStatus = null;
     
-    // Find selected status
-    const statusInputs = this.elements.statusInputs;
-    statusInputs.forEach(input => {
+    for (const input of this.elements.statusInputs) {
       if (input.checked) {
         selectedStatus = input.value;
+        break;
       }
-    });
+    }
     
+    // Validate selection
     if (!selectedStatus) {
       this.elements.statusError.textContent = 'Please select your marital status';
       this.elements.statusError.style.display = 'block';
+      
+      // Set focus on the error message for screen readers
+      this.elements.statusError.setAttribute('tabindex', '-1');
+      this.elements.statusError.focus();
+      
+      // Reset focus to the first radio
+      setTimeout(() => {
+        this.elements.statusError.removeAttribute('tabindex');
+        const firstRadio = this.elements.statusInputs[0];
+        if (firstRadio) {
+          firstRadio.focus();
+        }
+      }, 1000);
+      
       return;
     }
     
-    // Store the status
+    // Store marital status
     this.state.marriageStatus = selectedStatus;
+    this.calculator.state.marriageStatus = selectedStatus;
     
     // Clear error
     this.elements.statusError.style.display = 'none';
     
-    // Update calculator with the appropriate marital status
-    if (selectedStatus === 'married') {
-      this.calculator.state.married = true;
-      this.calculator.state.cohabiting = false;
-      this.elements.cohabitingWarning.style.display = 'none';
-    } else if (selectedStatus === 'cohabiting') {
-      this.calculator.state.married = false;
+    // Handle cohabiting status
+    if (selectedStatus === 'cohabiting') {
       this.calculator.state.cohabiting = true;
-      
-      // Update and show the cohabiting warning with clearer message
-      this.elements.cohabitingWarning.innerHTML = '<strong>Warning:</strong> As a cohabiting partner, you have no automatic inheritance rights under UK law.';
       this.elements.cohabitingWarning.style.display = 'block';
+      
+      // Announce the warning to screen readers
+      this.elements.cohabitingWarning.setAttribute('tabindex', '-1');
+      this.elements.cohabitingWarning.focus();
+      
+      // Move on after the warning has been read (or after a delay)
+      setTimeout(() => {
+        this.elements.cohabitingWarning.removeAttribute('tabindex');
+        this.moveToQuestions();
+      }, 2000);
     } else {
-      // Single
-      this.calculator.state.married = false;
       this.calculator.state.cohabiting = false;
       this.elements.cohabitingWarning.style.display = 'none';
-    }
-    
-    // Check if we can determine distribution already or need to ask more questions
-    if (this.calculator.canDetermineDistribution()) {
-      this.showResult();
-    } else {
-      // Get the first question and show it
-      const firstQuestionId = 'children'; // Start with the children question
-      if (firstQuestionId) {
-        this.showQuestion(firstQuestionId);
-      } else {
-        console.error('No questions defined');
-      }
+      this.moveToQuestions();
     }
   }
   
@@ -575,6 +870,24 @@ class IntestacyUI {
     
     // Clear any previous error
     this.elements.questionError.style.display = 'none';
+    
+    // Accessibility enhancements
+    // Set focus to the question heading for screen readers to announce it
+    this.elements.questionHeading.setAttribute('tabindex', '-1');
+    this.elements.questionHeading.focus();
+    // Remove tabindex after focus to avoid keyboard navigation issues
+    setTimeout(() => {
+      this.elements.questionHeading.removeAttribute('tabindex');
+    }, 100);
+    
+    // Announce the question to screen readers
+    // The aria-live region in questionText will announce the change automatically
+    
+    // Ensure yes/no buttons are properly enabled and have appropriate roles
+    this.elements.yesButton.disabled = false;
+    this.elements.noButton.disabled = false;
+    this.elements.yesButton.setAttribute('aria-pressed', 'false');
+    this.elements.noButton.setAttribute('aria-pressed', 'false');
   }
   
   /**
@@ -587,16 +900,15 @@ class IntestacyUI {
     // Get estate value for display
     const estateValue = this.calculator.formatCurrency(this.state.estateValue);
     
-    // Format result with rich text and structured sections
-    // We'll handle the cohabiting warning separately, not in the HTML
+    // Format result with rich text and structured sections with enhanced semantics for accessibility
     let formattedResult = `
       <h2>Distribution Results for ${this.state.name}</h2>
       
-      <div class="intestacy-result-summary">
-        <p><strong>Estate Value:</strong> ${estateValue}</p>
+      <div class="intestacy-result-summary" role="region" aria-label="Estate Summary">
+        <p><strong>Estate Value:</strong> <span aria-label="Estate Value: ${estateValue}">${estateValue}</span></p>
       </div>
       
-      <div class="intestacy-result-details">
+      <div class="intestacy-result-details" role="region" aria-label="Detailed Distribution">
         <h3>Detailed Distribution</h3>
         ${this.formatDistributionDetails(distribution.data)}
       </div>
@@ -620,6 +932,29 @@ class IntestacyUI {
       // Move the warning to the result section so it's visible at the top
       this.elements.resultSection.insertBefore(this.elements.cohabitingWarning, this.elements.resultContent);
     }
+    
+    // Accessibility enhancements
+    // Set focus to the result heading for screen readers to announce it
+    const resultHeading = this.elements.resultSection.querySelector('h2');
+    if (resultHeading) {
+      resultHeading.setAttribute('tabindex', '-1');
+      resultHeading.focus();
+      // Remove tabindex after focus to avoid keyboard navigation issues
+      setTimeout(() => {
+        resultHeading.removeAttribute('tabindex');
+      }, 100);
+    } else {
+      // Fall back to setting focus on the result content
+      this.elements.resultContent.focus();
+    }
+    
+    // Ensure all links and interactive elements in the results are keyboard accessible
+    const interactiveElements = this.elements.resultContent.querySelectorAll('a, button');
+    interactiveElements.forEach(element => {
+      if (!element.getAttribute('tabindex')) {
+        element.setAttribute('tabindex', '0');
+      }
+    });
   }
   
   /**
@@ -644,68 +979,119 @@ class IntestacyUI {
     
     const summaryHtml = `<p>${summaryText}</p>`;
     
-    let html = summaryHtml + '<ul class="intestacy-distribution-list">';
+    let html = summaryHtml + '<ul class="intestacy-distribution-list" role="list" aria-label="Distribution Breakdown">';
     
-    for (let i = 0; i < distributionData.shares.length; i++) {
+    for (let i = 0; i < distributionData.beneficiaries.length; i++) {
+      const beneficiary = distributionData.beneficiaries[i];
       const share = distributionData.shares[i];
-      const label = distributionData.labels[i];
-      const percentage = (share / totalValue * 100).toFixed(1);
-      const formattedShare = this.calculator.formatCurrency(share);
+      
+      // Convert share to percentage of total
+      const percentage = Math.round((share / totalValue) * 100);
+      
+      // Format share as currency
+      const shareFormatted = this.calculator.formatCurrency(share);
       
       html += `
-        <li>
-          <span class="intestacy-recipient">${label}:</span> 
-          <span class="intestacy-amount">${formattedShare}</span>
-          <span class="intestacy-percentage">(${percentage}%)</span>
+        <li class="intestacy-beneficiary" role="listitem">
+          <div class="intestacy-beneficiary-details">
+            <span class="intestacy-beneficiary-name">${beneficiary}</span>
+            <span class="intestacy-beneficiary-share" aria-label="${beneficiary} receives ${shareFormatted}, which is ${percentage}% of the estate">
+              <span class="intestacy-beneficiary-amount">${shareFormatted}</span>
+              <span class="intestacy-beneficiary-percentage">(${percentage}%)</span>
+            </span>
+          </div>
         </li>
       `;
     }
     
     html += '</ul>';
     
-    // Add disclaimer at the end
-    html += `
-      <div class="intestacy-result-disclaimer">
-        <p>This is a simplified calculation based on the intestacy rules in England and Wales. 
-        The actual distribution may be more complex depending on specific circumstances.</p>
-        <p>To ensure your assets are distributed according to your wishes, consider creating a Will.</p>
-      </div>
-    `;
+    // Add an accessible explanation for screen readers
+    if (distributionData.beneficiaries.length > 0) {
+      html += `
+        <div class="intestacy-distribution-summary sr-only" aria-live="polite">
+          The estate valued at ${this.calculator.formatCurrency(totalValue)} will be distributed among 
+          ${distributionData.beneficiaries.length} beneficiaries.
+        </div>
+      `;
+    }
     
     return html;
   }
   
   /**
-   * Handle question answer
-   * @param {boolean} answer - The user's answer (true for Yes, false for No)
+   * Move to questions section after marital status
    */
-  handleQuestionAnswer(answer) {
-    // Process the answer and get the next question or null if done
-    const nextQuestionId = this.calculator.processAnswer(this.state.currentQuestionId, answer);
-    
-    // Store the answer
-    this.state.answers[this.state.currentQuestionId] = answer;
-    
-    // Special handling for siblingsDeceasedWithChildren - ensure it goes to the result if we're stuck
-    if (this.state.currentQuestionId === 'siblingsDeceasedWithChildren') {
+  moveToQuestions() {
+    // Check if we can determine distribution already or need to ask more questions
+    if (this.calculator.canDetermineDistribution()) {
       this.showResult();
-      return;
-    }
-    
-    if (nextQuestionId) {
-      // Show the next question
-      this.showQuestion(nextQuestionId);
     } else {
-      // We have enough information to determine distribution
-      this.showResult();
+      // Get the first question and show it
+      const firstQuestionId = 'children'; // Start with the children question
+      if (firstQuestionId) {
+        this.showQuestion(firstQuestionId);
+      } else {
+        console.error('No questions defined');
+      }
     }
   }
   
   /**
-   * Reset the calculator to initial state
+   * Handle question answer
+   * @param {boolean} answer - The answer (true for yes, false for no)
+   */
+  handleQuestionAnswer(answer) {
+    // Make sure we have a current question
+    if (!this.state.currentQuestionId) {
+      console.error('No current question');
+      return;
+    }
+    
+    // Update calculator with the answer
+    this.calculator.answerQuestion(this.state.currentQuestionId, answer);
+    
+    // Update button aria states for screen readers
+    if (answer) {
+      this.elements.yesButton.setAttribute('aria-pressed', 'true');
+      this.elements.noButton.setAttribute('aria-pressed', 'false');
+    } else {
+      this.elements.yesButton.setAttribute('aria-pressed', 'false');
+      this.elements.noButton.setAttribute('aria-pressed', 'true');
+    }
+    
+    // Temporarily disable buttons to prevent double-clicking
+    this.elements.yesButton.disabled = true;
+    this.elements.noButton.disabled = true;
+    
+    // Add a brief delay for screen readers to announce the selection
+    setTimeout(() => {
+      // Get the next question or show results
+      const nextQuestionId = this.calculator.getNextQuestionId();
+      
+      if (nextQuestionId) {
+        this.showQuestion(nextQuestionId);
+      } else {
+        // No more questions, show the result
+        this.showResult();
+      }
+      
+      // Reset button states
+      this.elements.yesButton.disabled = false;
+      this.elements.noButton.disabled = false;
+      this.elements.yesButton.setAttribute('aria-pressed', 'false');
+      this.elements.noButton.setAttribute('aria-pressed', 'false');
+    }, 300);
+  }
+  
+  /**
+   * Reset the calculator
    */
   reset() {
-    // Reset the state
+    // Reset calculator state
+    this.calculator = new IntestacyCalculator();
+    
+    // Reset UI state
     this.state = {
       name: '',
       estateValue: 0,
@@ -714,47 +1100,48 @@ class IntestacyUI {
       answers: {}
     };
     
-    // Reset the calculator
-    this.calculator = new IntestacyCalculator();
-    
-    // Clear inputs
+    // Reset inputs
     this.elements.nameInput.value = '';
     this.elements.estateInput.value = '';
     
-    // Uncheck all radio buttons
-    this.elements.statusInputs.forEach(input => {
+    // Reset marital status
+    for (const input of this.elements.statusInputs) {
       input.checked = false;
-    });
+      input.setAttribute('aria-checked', 'false');
+    }
     
-    // Clear all errors
+    // Reset first radio tabindex for keyboard accessibility
+    this.updateRadioGroupTabindex(0);
+    
+    // Reset ARIA states
+    this.elements.nameInput.setAttribute('aria-invalid', 'false');
+    this.elements.estateInput.setAttribute('aria-invalid', 'false');
+    
+    // Hide errors
     this.elements.nameError.style.display = 'none';
     this.elements.estateError.style.display = 'none';
     this.elements.statusError.style.display = 'none';
     this.elements.questionError.style.display = 'none';
     
-    // Hide all sections first
-    this.hideAllSections();
+    // Hide warning
+    this.elements.cohabitingWarning.style.display = 'none';
     
-    // Update progress bar
-    if (this.elements.progressBar) {
-      this.elements.progressBar.style.width = '0%';
-    }
-    
-    // Reset active step in progress indicator
-    if (this.elements.steps) {
-      const steps = this.elements.steps;
-      for (let i = 0; i < steps.length; i++) {
-        steps[i].classList.remove('intestacy-step-active');
-        steps[i].classList.remove('intestacy-step-complete');
-      }
-      // Set first step as active
-      if (steps.length > 0) {
-        steps[0].classList.add('intestacy-step-active');
-      }
-    }
-    
-    // Show the name input step
+    // Show the name input section
     this.showNameInput();
+    
+    // Announce to screen readers that the calculator has been reset
+    const announcement = document.createElement('div');
+    announcement.className = 'sr-only';
+    announcement.setAttribute('aria-live', 'assertive');
+    announcement.textContent = 'Calculator has been reset. Please enter your information again.';
+    this.elements.calculator.appendChild(announcement);
+    
+    // Remove the announcement after it's been read
+    setTimeout(() => {
+      if (announcement.parentNode) {
+        announcement.parentNode.removeChild(announcement);
+      }
+    }, 3000);
   }
 }
 

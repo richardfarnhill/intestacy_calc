@@ -18,11 +18,66 @@
   --border-color: #e0e0e0;
   --light-text: #757575;
   --section-transition: all 0.4s ease-in-out;
+  --focus-color: #4285f4;
+  --focus-width: 3px;
 }
 
 .intestacy-calculator * {
   box-sizing: border-box;
   transition: var(--section-transition);
+}
+
+/* Accessibility: Skip Navigation Link */
+.intestacy-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.intestacy-skip-link:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 10px 15px;
+  margin: 10px 0;
+  background: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  display: block;
+  text-align: center;
+  outline: none;
+}
+
+/* Accessibility: Focus Styles */
+.intestacy-calculator a:focus,
+.intestacy-calculator button:focus,
+.intestacy-calculator input:focus,
+.intestacy-calculator select:focus,
+.intestacy-calculator textarea:focus,
+.intestacy-calculator [tabindex]:focus {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.5);
+  transition: outline 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
+}
+
+/* Accessibility: Visually Hidden Class */
+.intestacy-visuallyhidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+  white-space: nowrap;
 }
 
 /* Header styles */
@@ -100,8 +155,6 @@
 .intestacy-calculator input[type="number"]:focus,
 .intestacy-calculator input[type="email"]:focus {
   border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
 }
 
 /* Radio group styles */
@@ -143,16 +196,181 @@
   font-weight: 600;
 }
 
-/* Error styles */
+/* Enhanced Error States */
 .intestacy-error {
   color: var(--warning-color);
   font-size: 14px;
-  margin-top: -10px;
-  margin-bottom: 15px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  background-color: rgba(234, 67, 53, 0.1);
+  padding: 8px 10px;
   display: none;
+  margin-bottom: 15px;
+  border-left: 3px solid var(--warning-color);
+  padding-left: 10px;
+  background-color: rgba(234, 67, 53, 0.1);
+  border-radius: 0 4px 4px 0;
+}
+
+.intestacy-error[style*="display: block"] {
+  display: block;
+}
+
+/* Add icon for errors for visual cue in addition to color */
+.intestacy-error::before {
+  content: "⚠ ";
+}
+
+/* Improve radio button accessibility */
+.intestacy-status-option {
+  display: block;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  position: relative;
+  padding-left: 40px;
+}
+
+.intestacy-status-option:hover {
+  background-color: var(--light-bg);
+}
+
+.intestacy-status-input {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.intestacy-status-input:focus + .intestacy-status-option {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+.intestacy-status-input:checked + .intestacy-status-option {
+  background-color: rgba(66, 133, 244, 0.1);
+  border-color: var(--primary-color);
+}
+
+/* Cohabiting warning enhanced for accessibility */
+.intestacy-cohabiting-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  border-left: 4px solid var(--warning-color);
+  font-weight: 500;
+}
+
+/* Make sure button states are clear for keyboard users */
+.intestacy-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: 2px solid var(--primary-color);
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  margin-right: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.intestacy-button:hover {
+  background-color: #3b78e7;
+}
+
+.intestacy-button:focus {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.5);
+}
+
+.intestacy-button:active {
+  background-color: #2a56c6;
+  transform: translateY(1px);
+}
+
+/* Yes/No button enhancements */
+.intestacy-yes-button, 
+.intestacy-no-button {
+  min-width: 100px;
+  text-align: center;
+}
+
+.intestacy-yes-button {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.intestacy-yes-button:hover {
+  background-color: #2d9649;
+}
+
+.intestacy-yes-button:focus {
+  box-shadow: 0 0 0 3px rgba(52, 168, 83, 0.5);
+}
+
+.intestacy-no-button {
+  background-color: var(--warning-color);
+  border-color: var(--warning-color);
+}
+
+.intestacy-no-button:hover {
+  background-color: #d23c2a;
+}
+
+.intestacy-no-button:focus {
+  box-shadow: 0 0 0 3px rgba(234, 67, 53, 0.5);
+}
+
+/* Enhance footer for better accessibility */
+.intestacy-footer {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+  font-size: 14px;
+  color: var(--light-text);
+  line-height: 1.5;
+}
+
+.intestacy-disclaimer {
+  margin-bottom: 15px;
+}
+
+.intestacy-contact-info {
+  margin-top: 15px;
+}
+
+.intestacy-contact-phone,
+.intestacy-contact-email {
+  display: inline-block;
+  margin-top: 5px;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.intestacy-contact-phone:hover,
+.intestacy-contact-email:hover {
+  text-decoration: underline;
+}
+
+/* Accessibility: High Contrast Mode Support */
+@media (forced-colors: active) {
+  .intestacy-calculator {
+    forced-color-adjust: none;
+  }
+  
+  .intestacy-button {
+    border: 2px solid currentColor;
+  }
+  
+  .intestacy-status-option {
+    border: 1px solid currentColor;
+  }
 }
 
 /* Question styles */
@@ -213,43 +431,6 @@
 
 #intestacy-restart:hover {
   background-color: #f5f5f5;
-}
-
-/* Footer styles */
-.intestacy-footer {
-  margin-top: 20px;
-  text-align: center;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-color);
-  color: var(--light-text);
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.intestacy-footer a {
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.intestacy-footer a:hover {
-  text-decoration: underline;
-  color: #3367d6;
-}
-
-/* Remove progress indicator styles */
-.intestacy-progress-container,
-.intestacy-progress-text,
-.intestacy-progress-bar,
-.intestacy-progress-steps,
-.intestacy-step,
-.intestacy-step-number,
-.intestacy-step-label,
-.intestacy-step.active,
-.intestacy-step.completed {
-  display: none !important;
 }
 
 /* Dark theme styles */
@@ -328,39 +509,6 @@
   border-color: var(--border-color);
 }
 
-/* Cohabiting warning - make it more prominent */
-.intestacy-cohabiting-warning {
-  display: block;
-  margin: 0 0 20px 0;
-  padding: 15px;
-  background-color: #ffe8e8;
-  border: 2px solid #ff5252;
-  border-radius: 4px;
-  color: #d32f2f;
-  animation: pulse 2s infinite;
-  font-weight: bold;
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.intestacy-cohabiting-warning strong {
-  font-size: 1.1em;
-}
-
-/* Animation for highlighting important elements */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(234, 67, 53, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(234, 67, 53, 0);
-  }
-}
-
 /* Responsive styles */
 @media (max-width: 768px) {
   .intestacy-calculator {
@@ -423,4 +571,141 @@
     height: 25px;
     font-size: 12px;
   }
+}
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Enhance focus visibility in dark mode and high contrast mode */
+@media (prefers-contrast: more) {
+  .intestacy-calculator a:focus,
+  .intestacy-calculator button:focus,
+  .intestacy-calculator input:focus,
+  .intestacy-calculator select:focus,
+  .intestacy-calculator [tabindex]:focus {
+    outline: 3px solid #fff !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 6px #000 !important;
+  }
+}
+
+/* Improve beneficiary list for accessibility */
+.intestacy-distribution-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.intestacy-beneficiary {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: #fff;
+}
+
+.intestacy-beneficiary:last-child {
+  border-bottom: none;
+}
+
+.intestacy-beneficiary-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.intestacy-beneficiary-name {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.intestacy-beneficiary-share {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.intestacy-beneficiary-amount {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.intestacy-beneficiary-percentage {
+  color: var(--light-text);
+  font-size: 0.9em;
+}
+
+/* Ensure all controls have proper focus, hover, active states */
+.intestacy-calculator a,
+.intestacy-calculator button,
+.intestacy-calculator input,
+.intestacy-calculator select,
+.intestacy-calculator [tabindex="0"] {
+  position: relative;
+  z-index: 1;
+}
+
+.intestacy-calculator a:focus-visible,
+.intestacy-calculator button:focus-visible,
+.intestacy-calculator input:focus-visible,
+.intestacy-calculator select:focus-visible,
+.intestacy-calculator [tabindex="0"]:focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.5);
+  z-index: 2;
+}
+
+/* Add animation for section transitions - ensure they're accessible */
+@media (prefers-reduced-motion: no-preference) {
+  .intestacy-section {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+  
+  .intestacy-section[style*="display: none"] {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  
+  .intestacy-section:not([style*="display: none"]) {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .intestacy-calculator * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Dark theme accessibility enhancements */
+.intestacy-theme-dark .intestacy-beneficiary {
+  background-color: #333;
+  border-color: #444;
+}
+
+.intestacy-theme-dark .intestacy-beneficiary-name {
+  color: #f0f0f0;
+}
+
+.intestacy-theme-dark .intestacy-beneficiary-amount {
+  color: #6ba4ff;
+}
+
+.intestacy-theme-dark .intestacy-beneficiary-percentage {
+  color: #aaa;
 }
