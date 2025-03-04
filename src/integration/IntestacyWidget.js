@@ -18,7 +18,6 @@ class IntestacyWidget {
       contactInfo: 'Please contact us to discuss creating a Will.',
       contactPhone: '0123 456 7890',
       contactEmail: 'info@example.com',
-      showCharts: true, // Enable visual distribution charts by default
       ...options
     };
     
@@ -30,11 +29,6 @@ class IntestacyWidget {
    * Initialize the widget
    */
   init() {
-    // Load Chart.js if charts are enabled
-    if (this.options.showCharts) {
-      this.loadChartJs();
-    }
-    
     // Ensure styles are loaded
     this.loadStyles();
     
@@ -45,15 +39,14 @@ class IntestacyWidget {
         theme: this.options.theme,
         contactInfo: this.options.contactInfo,
         contactPhone: this.options.contactPhone,
-        contactEmail: this.options.contactEmail,
-        showCharts: this.options.showCharts
+        contactEmail: this.options.contactEmail
       }
     );
   }
   
   /**
    * Get the container element
-   * @returns {HTMLElement} - The container element
+   * @returns {HTMLElement} Container element
    */
   getContainer() {
     if (typeof this.options.container === 'string') {
@@ -63,69 +56,16 @@ class IntestacyWidget {
   }
   
   /**
-   * Load Chart.js library
-   */
-  loadChartJs() {
-    // Check if Chart.js is already loaded
-    if (window.Chart) {
-      return;
-    }
-    
-    try {
-      // Try to load Chart.js from our bundled version
-      const scriptSrc = new URL('../libs/chart.min.js', import.meta.url).href;
-      
-      // Create script element
-      const script = document.createElement('script');
-      script.src = scriptSrc;
-      script.async = true;
-      script.id = 'intestacy-chart-js';
-      
-      // Add error handling
-      script.onerror = () => {
-        console.warn('Failed to load Chart.js from bundled version, trying CDN...');
-        this.loadChartJsFromCDN();
-      };
-      
-      // Append to head
-      document.head.appendChild(script);
-    } catch (error) {
-      console.warn('Error loading bundled Chart.js:', error);
-      this.loadChartJsFromCDN();
-    }
-  }
-  
-  /**
-   * Load Chart.js from CDN as a fallback
-   */
-  loadChartJsFromCDN() {
-    if (window.Chart) {
-      return;
-    }
-    
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-    script.async = true;
-    script.id = 'intestacy-chart-js-cdn';
-    document.head.appendChild(script);
-  }
-  
-  /**
-   * Load the required styles
+   * Load the required CSS styles
    */
   loadStyles() {
-    // Check if styles are already loaded
-    if (document.getElementById('intestacy-calculator-styles')) {
-      return;
+    if (!document.getElementById('intestacy-calculator-styles')) {
+      const styles = this.getStyles();
+      const styleElement = document.createElement('style');
+      styleElement.id = 'intestacy-calculator-styles';
+      styleElement.textContent = styles;
+      document.head.appendChild(styleElement);
     }
-    
-    // Create style element
-    const style = document.createElement('style');
-    style.id = 'intestacy-calculator-styles';
-    style.textContent = this.getStyles();
-    
-    // Append to head
-    document.head.appendChild(style);
   }
   
   /**
@@ -486,70 +426,6 @@ class IntestacyWidget {
           font-size: 20px;
         }
       }
-      
-      /* Chart styles */
-      .intestacy-charts-container {
-        display: flex;
-        flex-direction: column;
-        padding: 15px;
-        margin: 20px 0;
-        background-color: #f9f9f9;
-        border-radius: 5px;
-        border: 1px solid #eaeaea;
-      }
-      
-      .intestacy-chart-title {
-        text-align: center;
-        margin-bottom: 10px;
-        color: #333;
-        font-size: 18px;
-      }
-      
-      .intestacy-pie-chart,
-      .intestacy-bar-chart {
-        height: 300px;
-        margin: 10px 0;
-        position: relative;
-      }
-      
-      .intestacy-chart {
-        max-width: 100%;
-      }
-      
-      .intestacy-chart-error {
-        padding: 15px;
-        background-color: #f8d7da;
-        color: #721c24;
-        border-radius: 4px;
-        margin: 10px 0;
-        text-align: center;
-      }
-      
-      /* Dark theme for charts */
-      .intestacy-theme-dark .intestacy-charts-container {
-        background-color: #555;
-        border-color: #666;
-      }
-      
-      .intestacy-theme-dark .intestacy-chart-title {
-        color: #f5f5f5;
-      }
-      
-      .intestacy-theme-dark .intestacy-chart-error {
-        background-color: #721c24;
-        color: #f8d7da;
-      }
-      
-      @media (max-width: 768px) {
-        .intestacy-charts-container {
-          flex-direction: column;
-        }
-        
-        .intestacy-pie-chart,
-        .intestacy-bar-chart {
-          width: 100%;
-        }
-      }
     `;
   }
   
@@ -558,21 +434,21 @@ class IntestacyWidget {
    */
   reset() {
     if (this.ui) {
-      this.ui.handleRestart();
+      this.ui.reset();
     }
   }
   
   /**
-   * Update widget options
-   * @param {Object} options - New options to apply
+   * Update the widget options
+   * @param {Object} newOptions - New options to apply
    */
-  updateOptions(options = {}) {
+  updateOptions(newOptions = {}) {
     this.options = {
       ...this.options,
-      ...options
+      ...newOptions
     };
     
-    // Reinitialize with new options
+    // Re-initialize with new options
     this.init();
   }
 }

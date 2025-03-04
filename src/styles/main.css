@@ -345,25 +345,10 @@
 }
 
 .intestacy-cohabiting-warning strong {
-  color: #d32f2f;
-  font-weight: 700;
   font-size: 1.1em;
 }
 
-/* Fix for chart error display */
-.intestacy-chart-error {
-  display: block;
-  margin: 15px 0;
-  padding: 15px;
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
-  border-radius: 4px;
-  color: #856404;
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box;
-}
-
+/* Animation for highlighting important elements */
 @keyframes pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.4);
@@ -438,14 +423,4 @@
     height: 25px;
     font-size: 12px;
   }
-}
-
-/* Remove all chart-related styles */
-.intestacy-charts-container,
-.intestacy-pie-chart-container,
-.intestacy-bar-chart-container,
-.intestacy-chart-title,
-.intestacy-chart,
-.intestacy-chart-error {
-  display: none !important;
 }
