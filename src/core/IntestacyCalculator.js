@@ -137,45 +137,83 @@ class IntestacyCalculator {
     const estateValue = parseFloat(this.state.estateValue);
     const formattedValue = this.formatCurrency(estateValue);
     
+    // Initialize distribution data for visualization
+    let distributionData = {
+      shares: [],
+      labels: [],
+      colors: [],
+      totalValue: estateValue
+    };
+    
     // Cohabiting warning - check this before spouse rules
     if (this.state.cohabiting) {
-      return (
-        `<div class="intestacy-cohabiting-warning">` +
-        `Warning: As a cohabiting partner, you have no automatic inheritance rights under UK law.` +
-        `</div>\n\n` +
-        `Your estate of ${formattedValue} will be distributed as follows:\n` +
-        `• Your cohabiting partner will not automatically inherit anything\n` +
-        `• Your estate will pass to your relatives according to intestacy rules:\n` +
-        this.getInheritanceHierarchyText(estateValue) +
-        `\n\nTo protect your partner, you should create a valid Will.`
-      );
+      // Create distribution data based on the inheritance hierarchy
+      this._populateDistributionData(distributionData, estateValue);
+      
+      return {
+        text: (
+          `<div class="intestacy-cohabiting-warning">` +
+          `Warning: As a cohabiting partner, you have no automatic inheritance rights under UK law.` +
+          `</div>\n\n` +
+          `Your estate of ${formattedValue} will be distributed as follows:\n` +
+          `• Your cohabiting partner will not automatically inherit anything\n` +
+          `• Your estate will pass to your relatives according to intestacy rules:\n` +
+          this.getInheritanceHierarchyText(estateValue) +
+          `\n\nTo protect your partner, you should create a valid Will.`
+        ),
+        data: distributionData
+      };
     }
     
     // Spouse rules
     if (this.state.married) {
       if (!this.state.children) {
-        return `Your entire estate of ${formattedValue} will pass to your spouse/civil partner.`;
+        // Spouse gets everything
+        distributionData.shares = [estateValue];
+        distributionData.labels = ['Spouse/Civil Partner'];
+        distributionData.colors = ['#4B9CD3'];
+        
+        return {
+          text: `Your entire estate of ${formattedValue} will pass to your spouse/civil partner.`,
+          data: distributionData
+        };
       } else {
         if (estateValue <= this.STATUTORY_LEGACY) {
-          return `Your entire estate of ${formattedValue} will pass to your spouse/civil partner.`;
+          // Spouse gets everything
+          distributionData.shares = [estateValue];
+          distributionData.labels = ['Spouse/Civil Partner'];
+          distributionData.colors = ['#4B9CD3'];
+          
+          return {
+            text: `Your entire estate of ${formattedValue} will pass to your spouse/civil partner.`,
+            data: distributionData
+          };
         }
         
         const remainder = estateValue - this.STATUTORY_LEGACY;
         const spouseShare = this.STATUTORY_LEGACY + (remainder / 2);
         const childrenShare = remainder / 2;
         
+        // Create distribution data
+        distributionData.shares = [spouseShare, childrenShare];
+        distributionData.labels = ['Spouse/Civil Partner', 'Children'];
+        distributionData.colors = ['#4B9CD3', '#95D47A'];
+        
         // Improved text for per stirpes distribution
         const childrenText = !this.state.childrenDeceased 
           ? "children" 
           : "living children and the children of your deceased children (who will share their parent's portion per stirpes)";
         
-        return (
-          `Your estate will be distributed as follows:\n` +
-          `• Your spouse/civil partner will receive: ${this.formatCurrency(spouseShare)}\n` +
-          `  - First ${this.formatCurrency(this.STATUTORY_LEGACY)} as statutory legacy\n` +
-          `  - Plus ${this.formatCurrency(remainder / 2)} (half of the remainder)\n` +
-          `• Your ${childrenText} will share: ${this.formatCurrency(childrenShare)}`
-        );
+        return {
+          text: (
+            `Your estate will be distributed as follows:\n` +
+            `• Your spouse/civil partner will receive: ${this.formatCurrency(spouseShare)}\n` +
+            `  - First ${this.formatCurrency(this.STATUTORY_LEGACY)} as statutory legacy\n` +
+            `  - Plus ${this.formatCurrency(remainder / 2)} (half of the remainder)\n` +
+            `• Your ${childrenText} will share: ${this.formatCurrency(childrenShare)}`
+          ),
+          data: distributionData
+        };
       }
     }
     
@@ -185,11 +223,27 @@ class IntestacyCalculator {
         ? "children" 
         : "living children and the children of your deceased children (who will share their parent's portion per stirpes)";
       
-      return `Your entire estate of ${formattedValue} will be divided equally between your ${childrenText}.`;
+      // Children get everything
+      distributionData.shares = [estateValue];
+      distributionData.labels = ['Children'];
+      distributionData.colors = ['#95D47A'];
+      
+      return {
+        text: `Your entire estate of ${formattedValue} will be divided equally between your ${childrenText}.`,
+        data: distributionData
+      };
     }
     
     if (this.state.parentsAlive) {
-      return `Your entire estate of ${formattedValue} will pass to your surviving parent(s) in equal shares.`;
+      // Parents get everything
+      distributionData.shares = [estateValue];
+      distributionData.labels = ['Parents'];
+      distributionData.colors = ['#F3C969'];
+      
+      return {
+        text: `Your entire estate of ${formattedValue} will pass to your surviving parent(s) in equal shares.`,
+        data: distributionData
+      };
     }
     
     // Improved sibling handling with full vs half distinction
@@ -200,14 +254,38 @@ class IntestacyCalculator {
           ? " (their children will inherit their share per stirpes)" 
           : "";
         
-        return `Your entire estate of ${formattedValue} will be divided equally between your ${siblingType}${childrenText}.`;
+        // Siblings get everything
+        distributionData.shares = [estateValue];
+        distributionData.labels = ['Siblings'];
+        distributionData.colors = ['#E36588'];
+        
+        return {
+          text: `Your entire estate of ${formattedValue} will be divided equally between your ${siblingType}${childrenText}.`,
+          data: distributionData
+        };
       } else if (this.state.halfSiblings) {
-        return `Your entire estate of ${formattedValue} will be divided equally between your half-siblings.`;
+        // Half-siblings get everything
+        distributionData.shares = [estateValue];
+        distributionData.labels = ['Half-Siblings'];
+        distributionData.colors = ['#E36588'];
+        
+        return {
+          text: `Your entire estate of ${formattedValue} will be divided equally between your half-siblings.`,
+          data: distributionData
+        };
       }
     }
     
     if (this.state.grandparents) {
-      return `Your entire estate of ${formattedValue} will be divided equally between your grandparents.`;
+      // Grandparents get everything
+      distributionData.shares = [estateValue];
+      distributionData.labels = ['Grandparents'];
+      distributionData.colors = ['#9B6EBF'];
+      
+      return {
+        text: `Your entire estate of ${formattedValue} will be divided equally between your grandparents.`,
+        data: distributionData
+      };
     }
     
     // Improved aunts/uncles handling with full vs half distinction
@@ -218,13 +296,84 @@ class IntestacyCalculator {
           ? " (their children will inherit their share per stirpes)" 
           : "";
         
-        return `Your entire estate of ${formattedValue} will be divided equally between your ${auntsText}${childrenText}.`;
+        // Aunts/uncles get everything
+        distributionData.shares = [estateValue];
+        distributionData.labels = ['Aunts and Uncles'];
+        distributionData.colors = ['#F78E69'];
+        
+        return {
+          text: `Your entire estate of ${formattedValue} will be divided equally between your ${auntsText}${childrenText}.`,
+          data: distributionData
+        };
       } else if (this.state.halfAuntsUncles) {
-        return `Your entire estate of ${formattedValue} will be divided equally between your half-aunts and half-uncles.`;
+        // Half-aunts/uncles get everything
+        distributionData.shares = [estateValue];
+        distributionData.labels = ['Half-Aunts and Half-Uncles'];
+        distributionData.colors = ['#F78E69'];
+        
+        return {
+          text: `Your entire estate of ${formattedValue} will be divided equally between your half-aunts and half-uncles.`,
+          data: distributionData
+        };
       }
     }
     
-    return `Your estate of ${formattedValue} will pass to the Crown (Bona Vacantia).`;
+    // Crown - Bona Vacantia
+    distributionData.shares = [estateValue];
+    distributionData.labels = ['Crown (Bona Vacantia)'];
+    distributionData.colors = ['#8C8C8C'];
+    
+    return {
+      text: `Your estate of ${formattedValue} will pass to the Crown (Bona Vacantia).`,
+      data: distributionData
+    };
+  }
+  
+  /**
+   * Helper method to populate distribution data based on inheritance hierarchy
+   * @param {Object} distributionData - The distribution data object to populate
+   * @param {number} estateValue - The value of the estate
+   * @private
+   */
+  _populateDistributionData(distributionData, estateValue) {
+    if (this.state.children) {
+      distributionData.shares = [estateValue];
+      distributionData.labels = ['Children'];
+      distributionData.colors = ['#95D47A'];
+      return;
+    }
+    
+    if (this.state.parentsAlive) {
+      distributionData.shares = [estateValue];
+      distributionData.labels = ['Parents'];
+      distributionData.colors = ['#F3C969'];
+      return;
+    }
+    
+    if (this.state.siblings) {
+      distributionData.shares = [estateValue];
+      distributionData.labels = ['Siblings'];
+      distributionData.colors = ['#E36588'];
+      return;
+    }
+    
+    if (this.state.grandparents) {
+      distributionData.shares = [estateValue];
+      distributionData.labels = ['Grandparents'];
+      distributionData.colors = ['#9B6EBF'];
+      return;
+    }
+    
+    if (this.state.auntsUncles) {
+      distributionData.shares = [estateValue];
+      distributionData.labels = ['Aunts and Uncles'];
+      distributionData.colors = ['#F78E69'];
+      return;
+    }
+    
+    distributionData.shares = [estateValue];
+    distributionData.labels = ['Crown (Bona Vacantia)'];
+    distributionData.colors = ['#8C8C8C'];
   }
   
   /**
@@ -259,9 +408,9 @@ class IntestacyCalculator {
   }
   
   /**
-   * Generate text describing the inheritance hierarchy for cohabiting cases
+   * Get a text representation of the inheritance hierarchy
    * @param {number} estateValue - The value of the estate
-   * @returns {string} - Description of how the estate will be distributed
+   * @returns {string} - Text describing the inheritance hierarchy
    */
   getInheritanceHierarchyText(estateValue) {
     const formattedValue = this.formatCurrency(estateValue);

@@ -23,6 +23,20 @@ A JavaScript widget that calculates how an estate would be distributed under UK 
 
 You can view live examples of the calculator at [https://intestacycalculator.netlify.app/](https://intestacycalculator.netlify.app/)
 
+The demo provides several examples showcasing different implementation approaches:
+- Basic Example - Core functionality with default styling
+- Simple Include Example - Quick script-tag based implementation
+- Custom Theme Example - Customized appearance to match branding
+- Email Compatible Example - Adaptation for email newsletter use
+
+## Recent Updates
+
+- Consolidated documentation files to reduce redundancy
+- Improved Netlify routing configuration for seamless navigation
+- Streamlined UI by removing redundant documentation links
+- Enhanced proprietary notices throughout the codebase
+- Fixed deployment issues with proper redirect paths
+
 ## Important Notice
 
 This calculator is provided for demonstration purposes only. It is not intended for unauthorized deployment.
@@ -100,4 +114,4 @@ Proprietary. All rights reserved.
 
 ## Future Development
 
-See [DEVELOPMENT.md](DEVELOPMENT.md) for planned future enhancements.
+See [DEVELOPMENT.md](DEVELOPMENT.md) for planned future enhancements and development roadmap.

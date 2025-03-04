@@ -5,6 +5,7 @@
 
 import IntestacyCalculator from '../core/IntestacyCalculator.js';
 import { validateEstateValue, validateName, stringToBoolean } from '../core/ValidationUtils.js';
+import ChartUtils from '../libs/ChartUtils.js';
 
 class IntestacyUI {
   /**
@@ -26,6 +27,7 @@ class IntestacyUI {
     this.options = {
       theme: 'light',
       contactInfo: 'Please contact us to discuss creating a Will.',
+      showCharts: true,
       ...options
     };
     
@@ -42,6 +44,12 @@ class IntestacyUI {
     
     // UI elements
     this.elements = {};
+    
+    // Initialize chart instance holder
+    this.charts = {
+      distribution: null,
+      breakdown: null
+    };
     
     // Initialize the UI
     this.init();
@@ -178,11 +186,15 @@ class IntestacyUI {
     this.elements.questionText = questionSection.querySelector('#intestacy-question-text');
     this.elements.answerInputs = questionSection.querySelectorAll('input[name="intestacy-answer"]');
     
-    // Create result section
+    // Create result section with chart container
     const resultSection = document.createElement('div');
     resultSection.className = 'intestacy-section intestacy-result-section';
     resultSection.innerHTML = `
       <div class="intestacy-result" id="intestacy-result"></div>
+      <div class="intestacy-charts-container" id="intestacy-charts-container">
+        <div class="intestacy-pie-chart" id="intestacy-pie-chart"></div>
+        <div class="intestacy-bar-chart" id="intestacy-bar-chart"></div>
+      </div>
       <div class="intestacy-next-steps">
         <h2>What Next?</h2>
         <p>Having a proper Will is the only way to ensure your estate is distributed according to your wishes.</p>
@@ -192,6 +204,9 @@ class IntestacyUI {
     content.appendChild(resultSection);
     this.elements.resultSection = resultSection;
     this.elements.result = resultSection.querySelector('#intestacy-result');
+    this.elements.chartsContainer = resultSection.querySelector('#intestacy-charts-container');
+    this.elements.pieChart = resultSection.querySelector('#intestacy-pie-chart');
+    this.elements.barChart = resultSection.querySelector('#intestacy-bar-chart');
     this.elements.contactInfo = resultSection.querySelector('#intestacy-contact-info');
     
     // Create buttons
@@ -342,31 +357,66 @@ class IntestacyUI {
    * Show the result
    */
   showResult() {
-    // Calculate distribution
-    const resultText = this.calculator.calculateDistribution();
+    // Calculate distribution - now returns object with text and data
+    const distribution = this.calculator.calculateDistribution();
     
-    // Format result with name
+    // Get estate value for display
+    const estateValue = this.calculator.formatCurrency(this.state.estateValue);
+    
+    // Get inheritance hierarchy text for detailed explanation
+    const hierarchyText = this.calculator.getInheritanceHierarchyText(this.state.estateValue);
+    
+    // Format result with rich text and structured sections
     const formattedResult = `
       <h2>Distribution Results for ${this.state.name}</h2>
-      <p>${resultText}</p>
-      <p>If you wish to change this distribution, you will need to create a Will.</p>
+      
+      <div class="intestacy-result-summary">
+        <p><strong>Estate Value:</strong> ${estateValue}</p>
+        <p><strong>Summary:</strong> ${distribution.text}</p>
+      </div>
+      
+      <div class="intestacy-result-details">
+        <h3>How Your Estate Will Be Distributed</h3>
+        ${this.formatDistributionDetails(distribution.data)}
+      </div>
+      
+      <div class="intestacy-result-explanation">
+        <h3>Understanding Your Inheritance</h3>
+        <p>${hierarchyText}</p>
+      </div>
+      
+      <div class="intestacy-result-advice">
+        <h3>Legal Advice</h3>
+        <p>Under intestacy rules, your estate will be distributed according to a strict legal formula that may not reflect your wishes.</p>
+        <p><strong>If you wish to change this distribution, you will need to create a Will.</strong></p>
+      </div>
     `;
     
     // Update result text
     this.elements.result.innerHTML = formattedResult;
+    
+    // Create visualizations if enabled
+    if (this.options.showCharts) {
+      this.createDistributionCharts(distribution.data);
+    } else {
+      this.elements.chartsContainer.style.display = 'none';
+    }
     
     // Update contact info
     if (this.calculator.state.cohabiting) {
       // Enhanced contact info for cohabiting partners
       this.elements.contactInfo.innerHTML = `
         <strong>URGENT:</strong> As a cohabiting partner, creating a Will is essential to protect your partner.
-        <br>Contact our firm at <strong>0123 456 7890</strong> or <strong>info@example.com</strong> to discuss creating a Will.
+        <br>Contact our firm at <strong>${this.options.contactPhone}</strong> or <a href="mailto:${this.options.contactEmail}">${this.options.contactEmail}</a> to discuss creating a Will.
       `;
       
       // Ensure cohabiting warning remains visible
       this.elements.cohabitingWarning.style.display = 'block';
     } else {
-      this.elements.contactInfo.textContent = this.options.contactInfo;
+      this.elements.contactInfo.innerHTML = `
+        ${this.options.contactInfo}
+        <br>Call us at <strong>${this.options.contactPhone}</strong> or email <a href="mailto:${this.options.contactEmail}">${this.options.contactEmail}</a>.
+      `;
     }
     
     // Show/hide sections
@@ -375,6 +425,91 @@ class IntestacyUI {
     this.elements.statusSection.style.display = 'none';
     this.elements.questionSection.style.display = 'none';
     this.elements.resultSection.style.display = 'block';
+  }
+  
+  /**
+   * Format distribution details as rich text
+   * @param {Object} distributionData - Data for distribution
+   * @returns {string} HTML formatted distribution details
+   */
+  formatDistributionDetails(distributionData) {
+    if (!distributionData || !distributionData.labels || !distributionData.shares || distributionData.labels.length === 0) {
+      return '<p>No distribution details available.</p>';
+    }
+    
+    // Create a formatted list of beneficiaries and their shares
+    let detailsHtml = '<ul class="intestacy-beneficiaries-list">';
+    
+    for (let i = 0; i < distributionData.labels.length; i++) {
+      const percentage = Math.round((distributionData.shares[i] / distributionData.totalValue) * 100);
+      const formattedValue = this.calculator.formatCurrency(distributionData.shares[i]);
+      
+      detailsHtml += `
+        <li class="intestacy-beneficiary-item">
+          <div class="intestacy-beneficiary-icon" style="background-color: ${distributionData.colors[i]}"></div>
+          <div class="intestacy-beneficiary-details">
+            <strong>${distributionData.labels[i]}</strong>
+            <span>${formattedValue} (${percentage}%)</span>
+          </div>
+        </li>
+      `;
+    }
+    
+    detailsHtml += '</ul>';
+    return detailsHtml;
+  }
+  
+  /**
+   * Create distribution charts
+   * @param {Object} chartData - Data for the charts
+   */
+  createDistributionCharts(chartData) {
+    // Clear any existing charts
+    if (this.charts.distribution) {
+      this.charts.distribution.destroy();
+    }
+    if (this.charts.breakdown) {
+      this.charts.breakdown.destroy();
+    }
+    
+    // Clear chart containers
+    this.elements.pieChart.innerHTML = '';
+    this.elements.barChart.innerHTML = '';
+    
+    try {
+      // Add title to charts container
+      const chartTitle = document.createElement('h3');
+      chartTitle.textContent = 'Visual Distribution of Estate';
+      chartTitle.className = 'intestacy-chart-title';
+      this.elements.chartsContainer.insertBefore(chartTitle, this.elements.pieChart);
+      
+      // Create pie chart
+      this.charts.distribution = ChartUtils.createDistributionChart(
+        chartData, 
+        this.elements.pieChart
+      );
+      
+      // Create breakdown chart if there are multiple shares
+      if (chartData.shares.length > 1) {
+        const breakdownTitle = document.createElement('h3');
+        breakdownTitle.textContent = 'Breakdown of Shares';
+        breakdownTitle.className = 'intestacy-chart-title';
+        this.elements.barChart.appendChild(breakdownTitle);
+        
+        this.charts.breakdown = ChartUtils.createBreakdownChart(
+          chartData,
+          this.elements.barChart
+        );
+      } else {
+        this.elements.barChart.style.display = 'none';
+      }
+      
+      // Show charts container
+      this.elements.chartsContainer.style.display = 'flex';
+    } catch (error) {
+      console.error('Error creating charts:', error);
+      this.elements.chartsContainer.style.display = 'none';
+    }
   }
   
   /**

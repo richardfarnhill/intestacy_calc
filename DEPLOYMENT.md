@@ -13,6 +13,12 @@ The UK Intestacy Calculator is deployed on Netlify at [https://intestacycalculat
 ### Important Notice
 This deployment guide is intended for authorized licensees only. Unauthorized deployment of the UK Intestacy Calculator is strictly prohibited and may result in legal action.
 
+### Recent Updates
+
+- **Improved Routing Configuration**: Fixed routing issues to ensure all examples and resources are properly accessible
+- **Streamlined UI**: Removed redundant documentation sections from the examples page
+- **Consolidated Documentation**: Single source of truth for documentation files to simplify maintenance
+
 ### Deployment Configuration
 
 1. **Build Settings**
@@ -39,6 +45,27 @@ The project includes a `netlify.toml` file that configures the deployment:
     to = "/examples/index.html"
     status = 200
     force = true
+  [[redirects]]
+    from = "/examples/*"
+    to = "/examples/:splat"
+    status = 200
+    force = true
+  [[redirects]]
+    from = "/docs"
+    to = "/examples/docs/index.html"
+    status = 200
+    force = true
+  [[redirects]]
+    from = "/docs/"
+    to = "/examples/docs/index.html"
+    status = 200
+    force = true
+  [[redirects]]
+    from = "/docs/*"
+    to = "/examples/docs/:splat"
+    status = 200
+    force = true
+  # Fallback redirect
   [[redirects]]
     from = "/*"
     to = "/examples/index.html"
@@ -85,6 +112,11 @@ Common deployment issues and solutions:
    - Clear cache and rebuild
    - Check branch settings
    - Verify deploy settings in Netlify UI 
+   
+3. **404 Errors**
+   - Ensure all redirects in netlify.toml use status 200
+   - Check path patterns in redirects
+   - Verify file locations match redirect destinations
 
 ## Security and Access Control
 
