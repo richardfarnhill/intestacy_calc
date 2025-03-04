@@ -1,19 +1,9 @@
 [build]
-  command = "npm run build"
-  publish = "dist"
+  command = ""
+  publish = "."
 
 [context.production]
-  publish = "dist"
-  [[redirects]]
-    from = "/intestacy-calculator.min.js"
-    to = "/intestacy-calculator.min.js"
-    status = 200
-    force = true
-  [[redirects]]
-    from = "/intestacy-calculator.min.css"
-    to = "/intestacy-calculator.min.css"
-    status = 200
-    force = true
+  publish = "."
   [[redirects]]
     from = "/"
     to = "/examples/index.html"
@@ -47,4 +37,4 @@
     status = 404
 
 [context.deploy-preview]
-  publish = "dist"
+  publish = "."

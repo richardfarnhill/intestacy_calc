@@ -2,21 +2,14 @@
   "name": "intestacy-calculator",
   "version": "1.0.0",
   "description": "UK Intestacy Calculator Widget for embedding in websites, email newsletters, and landing pages",
-  "main": "dist/intestacy-calculator.js",
+  "main": "src/integration/IntestacyWidget.js",
   "module": "src/integration/IntestacyWidget.js",
   "type": "module",
   "scripts": {
-    "process-docs": "node scripts/process-docs.js",
-    "build": "npm run process-docs && rollup -c && npm run copy-examples && npm run copy-docs && npm run fix-index",
-    "copy-index": "copy index.html dist\\",
-    "dev": "rollup -c -w",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "lint": "eslint src/**/*.js",
     "serve": "node server.js",
-    "start": "npm run serve",
-    "copy-examples": "copyfiles -u 1 \"examples/**/*\" dist/",
-    "copy-docs": "copyfiles -u 1 \"docs/**/*\" dist/docs/",
-    "fix-index": "node scripts/fix-index.js"
+    "start": "npm run serve"
   },
   "jest": {
     "transform": {},
@@ -39,16 +32,9 @@
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
-    "@rollup/plugin-babel": "^6.0.0",
-    "@rollup/plugin-commonjs": "^25.0.0",
-    "@rollup/plugin-node-resolve": "^15.0.0",
-    "@rollup/plugin-terser": "^0.4.0",
-    "copyfiles": "^2.4.1",
     "eslint": "^8.50.0",
     "http-server": "^14.1.0",
-    "jest": "^29.7.0",
-    "rollup": "^3.29.0",
-    "rollup-plugin-css-only": "^4.3.0"
+    "jest": "^29.7.0"
   },
   "dependencies": {
     "jest-environment-jsdom": "^29.7.0"

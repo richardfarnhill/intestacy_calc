@@ -76,9 +76,9 @@
   </div>
   
   <!-- Include the intestacy calculator script -->
-  <script src="../intestacy-calculator.min.js"></script>
-  
-  <script>
+  <script type="module">
+    import IntestacyWidget from '../src/integration/IntestacyWidget.js';
+    
     // Initialize the widget when the DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
       // Create a new instance of the widget

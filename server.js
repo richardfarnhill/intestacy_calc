@@ -33,39 +33,45 @@ const server = http.createServer((req, res) => {
   // Extract the path from the URL
   let pathname = path.join(__dirname, parsedUrl.pathname);
   
-  // If path ends with '/', serve index.html
+  // If path ends with '/', serve index.html or examples/index.html
   if (parsedUrl.pathname === '/' || parsedUrl.pathname === '') {
-    pathname = path.join(__dirname, 'index.html');
+    pathname = path.join(__dirname, 'examples', 'index.html');
   }
   
-  // Get the file extension
-  const ext = path.parse(pathname).ext;
-  
-  // Check if the file exists and read it
-  fs.promises.access(pathname)
-    .then(() => fs.promises.readFile(pathname))
-    .then(data => {
-      // Set the content type based on the file extension
+  // Check if the file exists
+  fs.stat(pathname, (err, stats) => {
+    if (err) {
+      // If the file doesn't exist
+      res.statusCode = 404;
+      res.end(`File ${pathname} not found!`);
+      return;
+    }
+    
+    // If it's a directory, try to serve index.html
+    if (stats.isDirectory()) {
+      pathname = path.join(pathname, 'index.html');
+    }
+    
+    // Read the file
+    fs.readFile(pathname, (err, data) => {
+      if (err) {
+        res.statusCode = 500;
+        res.end(`Error reading file: ${err.message}`);
+        return;
+      }
+      
+      // Determine the content type based on the file extension
+      const ext = path.extname(pathname);
       res.setHeader('Content-type', mimeTypes[ext] || 'text/plain');
       
-      // Send the file data
+      // Serve the file
       res.end(data);
-    })
-    .catch(err => {
-      if (err.code === 'ENOENT') {
-        // If the file doesn't exist, return 404
-        res.statusCode = 404;
-        res.end(`File ${pathname} not found!`);
-      } else {
-        // If there's another error, return 500
-        res.statusCode = 500;
-        res.end(`Error reading file: ${err.code}`);
-      }
     });
+  });
 });
 
-// Port to listen on
-const port = process.env.PORT || 8080;
+// Set the port
+const port = process.env.PORT || 3000;
 
 // Start the server
 server.listen(port, () => {

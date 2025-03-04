@@ -25,9 +25,9 @@ You can view live examples of the calculator at [https://intestacycalculator.net
 npm install intestacy-calculator
 ```
 
-### Direct Download
+### Direct Integration
 
-Download the latest release from the [releases page](https://github.com/yourusername/intestacy-calculator/releases) and include it in your project.
+Simply reference the source files directly in your project.
 
 ## Usage
 
@@ -42,8 +42,9 @@ Add a container element to your HTML:
 Then include the script and initialize the widget:
 
 ```html
-<script src="./path/to/intestacy-calculator.min.js"></script>
-<script>
+<script type="module">
+  import IntestacyWidget from './path/to/src/integration/IntestacyWidget.js';
+  
   document.addEventListener('DOMContentLoaded', function() {
     var widget = new IntestacyWidget({
       container: '#intestacy-calculator',
@@ -90,20 +91,7 @@ npm install
 npm run serve
 ```
 
-This will start a development server on port 8080 and open the basic example in your browser.
-
-### Building
-
-```bash
-npm run build
-```
-
-This will create the following files in the `dist` directory:
-- `intestacy-calculator.js` - UMD build
-- `intestacy-calculator.min.js` - Minified UMD build
-- `intestacy-calculator.esm.js` - ES Module build
-- `intestacy-calculator.css` - CSS styles
-- `intestacy-calculator.min.css` - Minified CSS styles
+This will start a development server on port 3000 and open the examples in your browser.
 
 ## License
 

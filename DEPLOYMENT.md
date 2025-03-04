@@ -7,8 +7,8 @@ The UK Intestacy Calculator is deployed on Netlify at [https://intestacycalculat
 ### Deployment Configuration
 
 1. **Build Settings**
-   - Build command: `npm run build`
-   - Publish directory: `dist`
+   - Build command: None (direct deployment)
+   - Publish directory: Root directory (`.`)
    - Node.js version: 16.x
 
 2. **Environment Variables**
@@ -20,21 +20,11 @@ The project includes a `netlify.toml` file that configures the deployment:
 
 ```toml
 [build]
-  command = "npm run build"
-  publish = "dist"
+  command = ""
+  publish = "."
 
 [context.production]
-  publish = "dist"
-  [[redirects]]
-    from = "/intestacy-calculator.min.js"
-    to = "/intestacy-calculator.min.js"
-    status = 200
-    force = true
-  [[redirects]]
-    from = "/intestacy-calculator.min.css"
-    to = "/intestacy-calculator.min.css"
-    status = 200
-    force = true
+  publish = "."
   [[redirects]]
     from = "/"
     to = "/examples/index.html"
@@ -60,9 +50,6 @@ The project includes a `netlify.toml` file that configures the deployment:
 
 3. **Manual Deployment**
    ```bash
-   # Build locally
-   npm run build
-   
    # Deploy using Netlify CLI
    netlify deploy
    ```
@@ -72,7 +59,7 @@ The project includes a `netlify.toml` file that configures the deployment:
 The main deployment serves an examples page that showcases different implementations:
 
 1. **Basic Example**: Simple widget integration
-2. **Simple Include Example**: Script tag implementation
+2. **Simple Include Example**: Module import implementation
 3. **Custom Theme Example**: Styled implementation
 4. **Email Compatible Example**: Email newsletter integration
 
@@ -80,17 +67,12 @@ The main deployment serves an examples page that showcases different implementat
 
 Common deployment issues and solutions:
 
-1. **Build Failures**
-   - Ensure all dependencies are correctly listed in package.json
-   - Check Node.js version compatibility
-   - Verify build command in netlify.toml
-
-2. **Asset Loading Issues**
+1. **Asset Loading Issues**
    - Check file paths in redirects
    - Verify CORS settings if needed
-   - Ensure assets are in the correct publish directory
+   - Ensure assets are in the correct locations
 
-3. **Preview Deployment Issues**
+2. **Preview Deployment Issues**
    - Clear cache and rebuild
    - Check branch settings
    - Verify deploy settings in Netlify UI 

@@ -62,14 +62,15 @@
         It uses the current intestacy rules to determine who would inherit your assets.
       </p>
       <p>
-        This example demonstrates how to include the calculator using a simple script tag, which is ideal for
-        websites where you don't have module support or want a simpler integration.
+        This example demonstrates how to include the calculator using a simple import approach, which is ideal for
+        websites where you have ES module support.
       </p>
       
       <h3>Code:</h3>
       <pre><code>
-&lt;script src="/dist/intestacy-calculator.min.js"&gt;&lt;/script&gt;
-&lt;script&gt;
+&lt;script type="module"&gt;
+  import IntestacyWidget from '../src/integration/IntestacyWidget.js';
+  
   document.addEventListener('DOMContentLoaded', function() {
     var widget = new IntestacyWidget({
       container: '#intestacy-calculator',
@@ -90,10 +91,9 @@
   </div>
   
   <!-- Include the intestacy calculator script -->
-  <!-- In a real-world scenario, this would point to a CDN or your server -->
-  <script src="/intestacy-calculator.min.js"></script>
-  
-  <script>
+  <script type="module">
+    import IntestacyWidget from '../src/integration/IntestacyWidget.js';
+    
     // Initialize the widget when the DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
       // Create a new instance of the widget

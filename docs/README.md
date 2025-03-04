@@ -24,3 +24,5 @@ You can view live examples of the calculator at [https://intestacycalculator.net
 
 ## Usage
 
+For detailed usage instructions, please refer to the main README.md file in the repository.
+
