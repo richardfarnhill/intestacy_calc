@@ -25,7 +25,7 @@
     status = 200
     force = true
   [[redirects]]
-    from = "/examples/docs/*"
+    from = "/docs/*"
     to = "/docs/:splat"
     status = 200
     force = true
