@@ -1,8 +1,17 @@
-# Deployment Guide
+# PROPRIETARY SOFTWARE
+This software is proprietary and confidential. No license is granted for its use, modification, or distribution.
+Unauthorized deployment or distribution of this calculator is strictly prohibited.
+
+Copyright © 2025 Richard Farnhill. All rights reserved.
+
+# Deployment Guide (For Authorized Licensees Only)
 
 ## Netlify Deployment
 
-The UK Intestacy Calculator is deployed on Netlify at [https://intestacycalculator.netlify.app/](https://intestacycalculator.netlify.app/). This page serves as a demonstration site showing different implementation examples of the calculator.
+The UK Intestacy Calculator is deployed on Netlify at [https://intestacycalculator.netlify.app/](https://intestacycalculator.netlify.app/). This page serves as an official demonstration site showing different implementation examples of the calculator.
+
+### Important Notice
+This deployment guide is intended for authorized licensees only. Unauthorized deployment of the UK Intestacy Calculator is strictly prohibited and may result in legal action.
 
 ### Deployment Configuration
 
@@ -36,7 +45,7 @@ The project includes a `netlify.toml` file that configures the deployment:
     status = 200
 ```
 
-### Deployment Process
+### Deployment Process (Authorized Licensees Only)
 
 1. **Initial Setup**
    - Create a Netlify account at [https://www.netlify.com/](https://www.netlify.com/)
@@ -76,3 +85,12 @@ Common deployment issues and solutions:
    - Clear cache and rebuild
    - Check branch settings
    - Verify deploy settings in Netlify UI 
+
+## Security and Access Control
+
+As this is proprietary software, ensure that:
+
+1. Repository access is restricted to authorized personnel only
+2. Deployment platforms have appropriate access controls
+3. All demonstration deployments include the proprietary notice
+4. Any publicly accessible instances are for demonstration purposes only 

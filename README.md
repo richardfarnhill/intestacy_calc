@@ -1,3 +1,9 @@
+# PROPRIETARY SOFTWARE
+This software is proprietary and confidential. No license is granted for its use, modification, or distribution.
+Unauthorized deployment or distribution of this calculator is strictly prohibited.
+
+Copyright © 2025 Richard Farnhill. All rights reserved.
+
 # UK Intestacy Calculator Widget
 
 A JavaScript widget that calculates how an estate would be distributed under UK intestacy rules. This widget is designed to be easily embedded in websites, email newsletters, and landing pages.
@@ -17,19 +23,12 @@ A JavaScript widget that calculates how an estate would be distributed under UK 
 
 You can view live examples of the calculator at [https://intestacycalculator.netlify.app/](https://intestacycalculator.netlify.app/)
 
-## Installation
+## Important Notice
 
-### Using npm
+This calculator is provided for demonstration purposes only. It is not intended for unauthorized deployment.
+For licensing inquiries or to discuss implementing this calculator on your website, please contact the owner.
 
-```bash
-npm install intestacy-calculator
-```
-
-### Direct Integration
-
-Simply reference the source files directly in your project.
-
-## Usage
+## Usage (Authorized Licensees Only)
 
 ### Basic Integration
 
@@ -77,10 +76,12 @@ Updates the widget options and reinitializes it.
 
 ## Development
 
+For authorized developers only. Unauthorized modifications or distributions are strictly prohibited.
+
 ### Setup
 
 ```bash
-git clone https://github.com/yourusername/intestacy-calculator.git
+git clone [private repository URL]
 cd intestacy-calculator
 npm install
 ```
@@ -95,7 +96,7 @@ This will start a development server on port 3000 and open the examples in your 
 
 ## License
 
-MIT
+Proprietary. All rights reserved.
 
 ## Future Development
 

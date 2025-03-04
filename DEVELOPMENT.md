@@ -1,3 +1,9 @@
+# PROPRIETARY SOFTWARE
+This software is proprietary and confidential. No license is granted for its use, modification, or distribution.
+Unauthorized deployment or distribution of this calculator is strictly prohibited.
+
+Copyright © 2025 Richard Farnhill. All rights reserved.
+
 # UK Intestacy Calculator - Future Development Plans
 
 ## Current Status
@@ -85,6 +91,6 @@ The UK Intestacy Calculator has been successfully implemented as a pure JavaScri
    - White-label features
    - Advanced customization options
 
-## Getting Involved
+## Notice for Developers
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get involved with the project.
+This document is for authorized developers only. All development work is subject to the proprietary license and confidentiality agreements. This software is not open source, and unauthorized modifications or distributions are strictly prohibited.
