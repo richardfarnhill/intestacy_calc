@@ -11,30 +11,29 @@
     force = true
   [[redirects]]
     from = "/examples/*"
-    to = "/:splat"
+    to = "/examples/:splat"
     status = 200
     force = true
   [[redirects]]
-    from = "/docs/README.md"
-    to = "/docs/README.md"
+    from = "/docs"
+    to = "/examples/docs/index.html"
     status = 200
     force = true
   [[redirects]]
-    from = "/docs/DEVELOPMENT.md"
-    to = "/docs/DEVELOPMENT.md"
+    from = "/docs/"
+    to = "/examples/docs/index.html"
     status = 200
     force = true
-  # Restrict access to other docs files
   [[redirects]]
     from = "/docs/*"
-    to = "/examples/index.html"
-    status = 404
+    to = "/examples/docs/:splat"
+    status = 200
     force = true
   # Fallback redirect
   [[redirects]]
     from = "/*"
     to = "/examples/index.html"
-    status = 404
+    status = 200
 
 [context.deploy-preview]
   publish = "."
