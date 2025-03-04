@@ -78,14 +78,6 @@ class IntestacyUI {
     calculatorElement.setAttribute('role', 'application');
     calculatorElement.setAttribute('aria-label', 'UK Intestacy Calculator');
     
-    // Add skip navigation link for keyboard users
-    const skipLink = document.createElement('a');
-    skipLink.className = 'intestacy-skip-link';
-    skipLink.href = '#intestacy-name-section';
-    skipLink.textContent = 'Skip to main content';
-    skipLink.setAttribute('tabindex', '0');
-    calculatorElement.appendChild(skipLink);
-    
     // Create name input section
     const nameSection = document.createElement('form');
     nameSection.className = 'intestacy-section intestacy-name-section';
@@ -386,8 +378,12 @@ class IntestacyUI {
     if (this.options.contactInfo) {
       const contactInfo = document.createElement('div');
       contactInfo.className = 'intestacy-contact-info';
-      contactInfo.innerHTML = this.options.contactInfo;
       contactInfo.setAttribute('aria-label', 'Contact Information');
+      
+      // Add basic contact info text without duplicating phone/email that will be added below
+      const contactText = document.createElement('p');
+      contactText.innerHTML = this.options.contactInfo;
+      contactInfo.appendChild(contactText);
       
       // If phone number is provided, make it accessible
       if (this.options.contactPhone) {
@@ -590,23 +586,6 @@ class IntestacyUI {
         this.reset();
       }
     });
-    
-    // Accessibility skip link
-    const skipLink = this.elements.calculator.querySelector('.intestacy-skip-link');
-    if (skipLink) {
-      skipLink.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          const targetId = skipLink.getAttribute('href').substring(1);
-          const targetElement = document.getElementById(targetId);
-          
-          if (targetElement) {
-            targetElement.setAttribute('tabindex', '-1');
-            targetElement.focus();
-          }
-        }
-      });
-    }
   }
   
   /**

@@ -27,33 +27,6 @@
   transition: var(--section-transition);
 }
 
-/* Accessibility: Skip Navigation Link */
-.intestacy-skip-link {
-  position: absolute;
-  left: -9999px;
-  top: auto;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  z-index: 9999;
-}
-
-.intestacy-skip-link:focus {
-  position: static;
-  width: auto;
-  height: auto;
-  padding: 10px 15px;
-  margin: 10px 0;
-  background: var(--primary-color);
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  font-weight: bold;
-  display: block;
-  text-align: center;
-  outline: none;
-}
-
 /* Accessibility: Focus Styles */
 .intestacy-calculator a:focus,
 .intestacy-calculator button:focus,
