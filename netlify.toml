@@ -19,27 +19,21 @@
     to = "/examples/index.html"
     status = 200
     force = true
-  # New redirects for documentation
   [[redirects]]
-    from = "/docs"
-    to = "/examples/docs/index.html"
+    from = "/examples/*"
+    to = "/:splat"
     status = 200
     force = true
   [[redirects]]
-    from = "/docs/"
-    to = "/examples/docs/index.html"
+    from = "/examples/docs/*"
+    to = "/docs/:splat"
     status = 200
     force = true
-  [[redirects]]
-    from = "/docs/*"
-    to = "/examples/docs/:splat"
-    status = 200
-  force = true
   # Fallback redirect
   [[redirects]]
     from = "/*"
     to = "/examples/index.html"
-    status = 200
+    status = 404
 
 [context.deploy-preview]
   publish = "dist"
