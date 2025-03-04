@@ -5,7 +5,6 @@
 
 import IntestacyCalculator from '../core/IntestacyCalculator.js';
 import { validateEstateValue, validateName, stringToBoolean } from '../core/ValidationUtils.js';
-import ChartUtils from '../libs/ChartUtils.js';
 
 class IntestacyUI {
   /**
@@ -29,7 +28,6 @@ class IntestacyUI {
       contactInfo: 'Please contact us to discuss creating a Will.',
       contactPhone: '0123 456 7890',
       contactEmail: 'info@example.com',
-      showCharts: true,
       ...options
     };
     
@@ -38,8 +36,6 @@ class IntestacyUI {
     
     // State object
     this.state = {
-      currentStep: 1,
-      totalSteps: 4,
       name: '',
       estateValue: 0,
       marriageStatus: '',
@@ -49,12 +45,6 @@ class IntestacyUI {
     
     // UI elements
     this.elements = {};
-    
-    // Initialize chart instance holder
-    this.charts = {
-      distribution: null,
-      breakdown: null
-    };
     
     // Initialize the UI
     this.init();
@@ -71,9 +61,9 @@ class IntestacyUI {
     this.addEventListeners();
     
     // Apply theme
-    this.applyTheme();
+    this.applyTheme(this.options.theme);
     
-    // Show the first step (name input)
+    // Show the name input step
     this.showNameInput();
   }
   
@@ -81,527 +71,335 @@ class IntestacyUI {
    * Create the UI structure
    */
   createUIStructure() {
-    // Clear the container
-    this.container.innerHTML = '';
+    // Create the main calculator container
+    const calculatorElement = document.createElement('div');
+    calculatorElement.className = 'intestacy-calculator';
+    calculatorElement.id = 'intestacy-calculator';
     
-    // Add CSS class to container
-    this.container.classList.add('intestacy-calculator');
-    this.container.classList.add(`intestacy-theme-${this.options.theme}`);
-    
-    // Create header
-    const header = document.createElement('div');
-    header.className = 'intestacy-header';
-    header.innerHTML = `
-      <h1>UK Intestacy Calculator</h1>
-      <p>Find out how your estate would be distributed if you die without a Will in the UK</p>
-    `;
-    this.container.appendChild(header);
-    
-    // Create progress indicator
-    const progressIndicator = document.createElement('div');
-    progressIndicator.className = 'intestacy-progress';
-    this.container.appendChild(progressIndicator);
-    
-    // Create steps
-    const steps = document.createElement('div');
-    steps.className = 'intestacy-steps';
-    for (let i = 1; i <= this.state.totalSteps; i++) {
-      const step = document.createElement('div');
-      step.className = 'intestacy-step';
-      step.setAttribute('data-step', i);
-      step.innerHTML = `
-        <div class="intestacy-step-dot">${i}</div>
-        <div class="intestacy-step-label">${i === 1 ? 'Your Details' : i === 2 ? 'Estate Value' : i === 3 ? 'Marital Status' : 'Family'}</div>
-      `;
-      steps.appendChild(step);
-    }
-    progressIndicator.appendChild(steps);
-    
-    // Create main content area
-    const content = document.createElement('div');
-    content.className = 'intestacy-content';
-    this.container.appendChild(content);
-    this.elements.content = content;
-    
-    // Create name input
+    // Create name input section
     const nameSection = document.createElement('div');
     nameSection.className = 'intestacy-section intestacy-name-section';
-    nameSection.innerHTML = `
-      <label for="intestacy-name">Your Name</label>
-      <input type="text" id="intestacy-name" placeholder="Enter your name" required>
-      <div class="intestacy-error" id="intestacy-name-error"></div>
-    `;
-    content.appendChild(nameSection);
-    this.elements.nameSection = nameSection;
-    this.elements.nameInput = nameSection.querySelector('#intestacy-name');
-    this.elements.nameError = nameSection.querySelector('#intestacy-name-error');
+    nameSection.id = 'intestacy-name-section';
     
-    // Create estate value input
+    const nameHeading = document.createElement('h2');
+    nameHeading.textContent = 'What is your name?';
+    
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'intestacy-name-input';
+    nameInput.id = 'intestacy-name-input';
+    nameInput.placeholder = 'Enter your name';
+    
+    // Add error message for name
+    const nameError = document.createElement('div');
+    nameError.className = 'intestacy-error intestacy-name-error';
+    nameError.id = 'intestacy-name-error';
+    nameError.style.display = 'none';
+    
+    const nameButton = document.createElement('button');
+    nameButton.className = 'intestacy-button intestacy-name-button';
+    nameButton.id = 'intestacy-name-button';
+    nameButton.textContent = 'Continue';
+    
+    nameSection.appendChild(nameHeading);
+    nameSection.appendChild(nameInput);
+    nameSection.appendChild(nameError);
+    nameSection.appendChild(nameButton);
+    
+    // Create estate input section
     const estateSection = document.createElement('div');
     estateSection.className = 'intestacy-section intestacy-estate-section';
-    estateSection.innerHTML = `
-      <label for="intestacy-estate-value">What is the approximate value of your estate?</label>
-      <input type="text" id="intestacy-estate-value" placeholder="£" required>
-      <div class="intestacy-error" id="intestacy-estate-error"></div>
-    `;
-    content.appendChild(estateSection);
-    this.elements.estateSection = estateSection;
-    this.elements.estateValueInput = estateSection.querySelector('#intestacy-estate-value');
-    this.elements.estateError = estateSection.querySelector('#intestacy-estate-error');
+    estateSection.id = 'intestacy-estate-section';
+    estateSection.style.display = 'none';
     
-    // Create status input
+    const estateHeading = document.createElement('h2');
+    estateHeading.textContent = 'What is the value of your estate?';
+    
+    const estateInput = document.createElement('input');
+    estateInput.type = 'text';
+    estateInput.className = 'intestacy-estate-input';
+    estateInput.id = 'intestacy-estate-input';
+    estateInput.placeholder = 'Enter estate value (£)';
+    
+    // Add error message for estate
+    const estateError = document.createElement('div');
+    estateError.className = 'intestacy-error intestacy-estate-error';
+    estateError.id = 'intestacy-estate-error';
+    estateError.style.display = 'none';
+    
+    const estateButton = document.createElement('button');
+    estateButton.className = 'intestacy-button intestacy-estate-button';
+    estateButton.id = 'intestacy-estate-button';
+    estateButton.textContent = 'Continue';
+    
+    estateSection.appendChild(estateHeading);
+    estateSection.appendChild(estateInput);
+    estateSection.appendChild(estateError);
+    estateSection.appendChild(estateButton);
+    
+    // Create marital status section
     const statusSection = document.createElement('div');
     statusSection.className = 'intestacy-section intestacy-status-section';
-    statusSection.innerHTML = `
-      <div>What is your marital status?</div>
-      <div class="intestacy-radio-group">
-        <input type="radio" id="intestacy-status-married" name="intestacy-status" value="married">
-        <label for="intestacy-status-married">Married or in a Civil Partnership</label>
-      </div>
-      <div class="intestacy-radio-group">
-        <input type="radio" id="intestacy-status-cohabiting" name="intestacy-status" value="cohabiting">
-        <label for="intestacy-status-cohabiting">Living with Partner (Cohabiting)</label>
-      </div>
-      <div class="intestacy-radio-group">
-        <input type="radio" id="intestacy-status-single" name="intestacy-status" value="single">
-        <label for="intestacy-status-single">Single</label>
-      </div>
-      <div class="intestacy-radio-group">
-        <input type="radio" id="intestacy-status-divorced" name="intestacy-status" value="divorced">
-        <label for="intestacy-status-divorced">Divorced or Dissolved Civil Partnership</label>
-      </div>
-      <div class="intestacy-radio-group">
-        <input type="radio" id="intestacy-status-widowed" name="intestacy-status" value="widowed">
-        <label for="intestacy-status-widowed">Widowed</label>
-      </div>
-      <div id="intestacy-status-error" class="intestacy-error"></div>
-    `;
-    content.appendChild(statusSection);
-    this.elements.statusSection = statusSection;
-    this.elements.marriedRadio = statusSection.querySelector('#intestacy-status-married');
-    this.elements.cohabitingRadio = statusSection.querySelector('#intestacy-status-cohabiting');
-    this.elements.singleRadio = statusSection.querySelector('#intestacy-status-single');
-    this.elements.divorcedRadio = statusSection.querySelector('#intestacy-status-divorced');
-    this.elements.widowedRadio = statusSection.querySelector('#intestacy-status-widowed');
+    statusSection.id = 'intestacy-status-section';
+    statusSection.style.display = 'none';
+    
+    const statusHeading = document.createElement('h2');
+    statusHeading.textContent = 'What is your marital status?';
+    
+    const statusOptions = document.createElement('div');
+    statusOptions.className = 'intestacy-status-options';
+    
+    const options = [
+      { id: 'married', label: 'Married or in Civil Partnership' },
+      { id: 'cohabiting', label: 'Living with Partner (Cohabiting)' },
+      { id: 'single', label: 'Single/Divorced/Widowed' }
+    ];
+    
+    options.forEach(option => {
+      const optionLabel = document.createElement('label');
+      optionLabel.className = 'intestacy-status-option';
+      
+      const optionInput = document.createElement('input');
+      optionInput.type = 'radio';
+      optionInput.name = 'marital-status';
+      optionInput.value = option.id;
+      optionInput.className = 'intestacy-status-input';
+      
+      const optionText = document.createTextNode(option.label);
+      
+      optionLabel.appendChild(optionInput);
+      optionLabel.appendChild(optionText);
+      statusOptions.appendChild(optionLabel);
+    });
+    
+    // Add error message for status
+    const statusError = document.createElement('div');
+    statusError.className = 'intestacy-error intestacy-status-error';
+    statusError.id = 'intestacy-status-error';
+    statusError.style.display = 'none';
+    
+    // Add cohabiting warning
+    const cohabitingWarning = document.createElement('div');
+    cohabitingWarning.className = 'intestacy-cohabiting-warning';
+    cohabitingWarning.id = 'intestacy-cohabiting-warning';
+    cohabitingWarning.innerHTML = '<strong>Warning:</strong> As a cohabiting partner, you have no automatic inheritance rights under UK law.';
+    cohabitingWarning.style.display = 'none';
+    
+    const statusButton = document.createElement('button');
+    statusButton.className = 'intestacy-button intestacy-status-button';
+    statusButton.id = 'intestacy-status-button';
+    statusButton.textContent = 'Continue';
+    
+    statusSection.appendChild(statusHeading);
+    statusSection.appendChild(statusOptions);
+    statusSection.appendChild(statusError);
+    statusSection.appendChild(cohabitingWarning);
+    statusSection.appendChild(statusButton);
     
     // Create question section
     const questionSection = document.createElement('div');
     questionSection.className = 'intestacy-section intestacy-question-section';
-    questionSection.innerHTML = `
-      <div class="intestacy-question" id="intestacy-question"></div>
-      <div class="intestacy-radio-group">
-        <label>
-          <input type="radio" name="intestacy-answer" value="Yes"> Yes
-        </label>
-        <label>
-          <input type="radio" name="intestacy-answer" value="No"> No
-        </label>
-      </div>
-    `;
-    content.appendChild(questionSection);
-    this.elements.questionSection = questionSection;
-    this.elements.questionText = questionSection.querySelector('#intestacy-question');
-    this.elements.answerInputs = questionSection.querySelectorAll('input[name="intestacy-answer"]');
+    questionSection.id = 'intestacy-question-section';
+    questionSection.style.display = 'none';
     
-    // Create result section with chart container
+    const questionHeading = document.createElement('h2');
+    questionHeading.className = 'intestacy-question-heading';
+    questionHeading.id = 'intestacy-question-heading';
+    questionHeading.textContent = 'Family Information';
+    
+    const questionText = document.createElement('div');
+    questionText.className = 'intestacy-question-text';
+    questionText.id = 'intestacy-question-text';
+    
+    const questionOptions = document.createElement('div');
+    questionOptions.className = 'intestacy-question-options';
+    questionOptions.id = 'intestacy-question-options';
+    
+    const questionError = document.createElement('div');
+    questionError.className = 'intestacy-error intestacy-question-error';
+    questionError.id = 'intestacy-question-error';
+    questionError.style.display = 'none';
+    
+    const questionButtons = document.createElement('div');
+    questionButtons.className = 'intestacy-question-buttons';
+    
+    const yesButton = document.createElement('button');
+    yesButton.className = 'intestacy-button intestacy-yes-button';
+    yesButton.id = 'intestacy-yes-button';
+    yesButton.textContent = 'Yes';
+    
+    const noButton = document.createElement('button');
+    noButton.className = 'intestacy-button intestacy-no-button';
+    noButton.id = 'intestacy-no-button';
+    noButton.textContent = 'No';
+    
+    questionButtons.appendChild(yesButton);
+    questionButtons.appendChild(noButton);
+    
+    questionSection.appendChild(questionHeading);
+    questionSection.appendChild(questionText);
+    questionSection.appendChild(questionOptions);
+    questionSection.appendChild(questionError);
+    questionSection.appendChild(questionButtons);
+    
+    // Create result section
     const resultSection = document.createElement('div');
     resultSection.className = 'intestacy-section intestacy-result-section';
-    resultSection.innerHTML = `
-      <div class="intestacy-result" id="intestacy-result"></div>
-      <div class="intestacy-charts-container" id="intestacy-charts-container">
-        <div class="intestacy-pie-chart" id="intestacy-pie-chart">
-          <h3 class="intestacy-chart-title">Distribution Overview</h3>
-          <div id="intestacy-distribution-chart" class="intestacy-chart"></div>
-        </div>
-        <div class="intestacy-bar-chart" id="intestacy-bar-chart">
-          <h3 class="intestacy-chart-title">Detailed Breakdown</h3>
-          <div id="intestacy-breakdown-chart" class="intestacy-chart"></div>
-        </div>
-      </div>
-      <div class="intestacy-next-steps">
-        <h2>What Next?</h2>
-        <p>Having a proper Will is the only way to ensure your estate is distributed according to your wishes.</p>
-        <div id="intestacy-contact-info"></div>
-      </div>
-    `;
-    content.appendChild(resultSection);
-    this.elements.resultSection = resultSection;
-    this.elements.result = resultSection.querySelector('#intestacy-result');
-    this.elements.chartsContainer = resultSection.querySelector('#intestacy-charts-container');
-    this.elements.pieChart = resultSection.querySelector('#intestacy-pie-chart');
-    this.elements.barChart = resultSection.querySelector('#intestacy-bar-chart');
-    this.elements.contactInfo = resultSection.querySelector('#intestacy-contact-info');
+    resultSection.id = 'intestacy-result-section';
+    resultSection.style.display = 'none';
     
-    // Create buttons
-    const buttonSection = document.createElement('div');
-    buttonSection.className = 'intestacy-buttons';
-    buttonSection.innerHTML = `
-      <button type="button" id="intestacy-continue">Continue</button>
-      <button type="button" id="intestacy-restart">Start Again</button>
-    `;
-    this.container.appendChild(buttonSection);
-    this.elements.continueButton = buttonSection.querySelector('#intestacy-continue');
-    this.elements.restartButton = buttonSection.querySelector('#intestacy-restart');
+    const resultHeading = document.createElement('h2');
+    resultHeading.textContent = 'Inheritance Distribution';
     
-    // Create footer
+    const resultContent = document.createElement('div');
+    resultContent.className = 'intestacy-result-content';
+    resultContent.id = 'intestacy-result-content';
+    
+    const restartButton = document.createElement('button');
+    restartButton.className = 'intestacy-button intestacy-restart-button';
+    restartButton.id = 'intestacy-restart';
+    restartButton.textContent = 'Start Again';
+    
+    resultSection.appendChild(resultHeading);
+    resultSection.appendChild(resultContent);
+    resultSection.appendChild(restartButton);
+    
+    // Create footer with legal disclaimer
     const footer = document.createElement('div');
     footer.className = 'intestacy-footer';
-    footer.innerHTML = `
-      <p><strong>Legal Disclaimer:</strong> This calculator provides guidance based on UK intestacy rules. 
-      For legal advice, please consult a qualified professional.</p>
-    `;
-    this.container.appendChild(footer);
     
-    // Hide sections initially
-    this.elements.estateSection.style.display = 'none';
-    this.elements.statusSection.style.display = 'none';
-    this.elements.questionSection.style.display = 'none';
-    this.elements.resultSection.style.display = 'none';
+    const disclaimer = document.createElement('p');
+    disclaimer.className = 'intestacy-disclaimer';
+    disclaimer.innerHTML = 'This calculator provides a simplified view of intestacy rules in England and Wales. The actual distribution may vary based on specific circumstances. This is not legal advice.';
     
-    // Update progress bar initial state
-    this.updateProgress(1);
-  }
-  
-  /**
-   * Update the progress indicator
-   * @param {number} step - Current step
-   */
-  updateProgress(step) {
-    this.state.currentStep = step;
+    footer.appendChild(disclaimer);
     
-    // Calculate progress percentage
-    const progressPercent = ((step - 1) / (this.state.totalSteps)) * 100;
-    this.elements.progressBar.style.width = `${progressPercent}%`;
-    
-    // Update step indicators
-    this.elements.steps.forEach(stepElement => {
-      const stepNumber = parseInt(stepElement.dataset.step);
+    // Add contact information if provided
+    if (this.options.contactInfo) {
+      const contactInfo = document.createElement('div');
+      contactInfo.className = 'intestacy-contact-info';
+      contactInfo.innerHTML = this.options.contactInfo;
       
-      // Remove all classes first
-      stepElement.classList.remove('active', 'completed');
-      
-      // Add appropriate class
-      if (stepNumber === step) {
-        stepElement.classList.add('active');
-      } else if (stepNumber < step) {
-        stepElement.classList.add('completed');
-      }
-    });
+      footer.appendChild(contactInfo);
+    }
+    
+    // Add all sections to calculator
+    calculatorElement.appendChild(nameSection);
+    calculatorElement.appendChild(estateSection);
+    calculatorElement.appendChild(statusSection);
+    calculatorElement.appendChild(questionSection);
+    calculatorElement.appendChild(resultSection);
+    calculatorElement.appendChild(footer);
+    
+    // Replace container contents with calculator
+    this.container.innerHTML = '';
+    this.container.appendChild(calculatorElement);
+    
+    // Store references to UI elements
+    this.elements = {
+      calculator: calculatorElement,
+      nameSection: nameSection,
+      nameInput: nameInput,
+      nameButton: nameButton,
+      nameError: nameError,
+      estateSection: estateSection,
+      estateInput: estateInput,
+      estateButton: estateButton,
+      estateError: estateError,
+      statusSection: statusSection,
+      statusOptions: statusOptions,
+      statusInputs: statusOptions.querySelectorAll('input[name="marital-status"]'),
+      statusButton: statusButton,
+      statusError: statusError,
+      cohabitingWarning: cohabitingWarning,
+      questionSection: questionSection,
+      questionHeading: questionHeading,
+      questionText: questionText,
+      questionOptions: questionOptions,
+      questionError: questionError,
+      yesButton: yesButton,
+      noButton: noButton,
+      resultSection: resultSection,
+      resultContent: resultContent,
+      restartButton: restartButton
+    };
   }
   
   /**
    * Add event listeners to UI elements
    */
   addEventListeners() {
-    // Continue button
-    this.elements.continueButton.addEventListener('click', () => {
-      this.handleContinue();
-    });
-    
-    // Restart button
-    this.elements.restartButton.addEventListener('click', () => {
-      this.handleRestart();
+    // Name button click
+    this.elements.nameButton.addEventListener('click', () => {
+      this.handleNameSubmit();
     });
     
     // Name input enter key
-    this.elements.nameInput.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter') {
-        this.handleContinue();
+    this.elements.nameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        this.handleNameSubmit();
       }
+    });
+    
+    // Estate button click
+    this.elements.estateButton.addEventListener('click', () => {
+      this.handleEstateSubmit();
     });
     
     // Estate input enter key
-    this.elements.estateValueInput.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter') {
-        this.handleContinue();
-      }
-    });
-    
-    // Status input continue
-    this.elements.statusSection.addEventListener('click', (event) => {
-      if (event.target.matches('input[type="radio"]')) {
-        this.handleStatusSubmit();
-      }
-    });
-    
-    // Question continue
-    this.elements.answerInputs.forEach(input => {
-      input.addEventListener('click', () => {
-        this.handleQuestionAnswer();
-      });
-    });
-  }
-  
-  /**
-   * Apply the selected theme
-   */
-  applyTheme() {
-    this.container.classList.add(`intestacy-theme-${this.options.theme}`);
-  }
-  
-  /**
-   * Show the name input step
-   */
-  showNameInput() {
-    this.elements.nameSection.style.display = 'block';
-    this.elements.estateSection.style.display = 'none';
-    this.elements.statusSection.style.display = 'none';
-    this.elements.questionSection.style.display = 'none';
-    this.elements.resultSection.style.display = 'none';
-    
-    // Focus on input
-    setTimeout(() => this.elements.nameInput.focus(), 300);
-    
-    // Update progress
-    this.updateProgress(1);
-  }
-  
-  /**
-   * Show the estate value input step
-   */
-  showEstateInput() {
-    this.elements.nameSection.style.display = 'none';
-    this.elements.estateSection.style.display = 'block';
-    this.elements.statusSection.style.display = 'none';
-    this.elements.questionSection.style.display = 'none';
-    this.elements.resultSection.style.display = 'none';
-    
-    // Focus on input
-    setTimeout(() => this.elements.estateValueInput.focus(), 300);
-    
-    // Update progress
-    this.updateProgress(2);
-  }
-  
-  /**
-   * Show the relationship status input step
-   */
-  showStatusInput() {
-    this.elements.nameSection.style.display = 'none';
-    this.elements.estateSection.style.display = 'none';
-    this.elements.statusSection.style.display = 'block';
-    this.elements.questionSection.style.display = 'none';
-    this.elements.resultSection.style.display = 'none';
-    
-    // Update progress
-    this.updateProgress(3);
-  }
-  
-  /**
-   * Show a question
-   * @param {string} questionId - The ID of the question to show
-   */
-  showQuestion(questionId) {
-    this.state.currentQuestionId = questionId;
-    const questionText = this.calculator.getQuestionText(questionId);
-    
-    // Update the question text
-    this.elements.questionText.textContent = questionText;
-    this.elements.questionText.style.display = 'block';
-    
-    // Create radio buttons for the options
-    const questionOptionsHTML = this.calculator.getQuestionOptions(questionId).map(option => `
-      <div>
-        <input type="radio" id="intestacy-option-${option.value}" name="intestacy-question-${questionId}" value="${option.value}">
-        <label for="intestacy-option-${option.value}">${option.text}</label>
-      </div>
-    `).join('');
-    
-    this.elements.questionOptions.innerHTML = questionOptionsHTML;
-    
-    // Hide other sections
-    this.elements.nameSection.style.display = 'none';
-    this.elements.estateSection.style.display = 'none';
-    this.elements.statusSection.style.display = 'none';
-    this.elements.resultSection.style.display = 'none';
-    
-    // Show question section
-    this.elements.questionSection.style.display = 'block';
-    
-    // Clear any previous error
-    this.elements.questionError.style.display = 'none';
-    
-    // Update progress
-    this.updateProgress(4);
-  }
-  
-  /**
-   * Show the result
-   */
-  showResult() {
-    // Calculate distribution - now returns object with text and data
-    const distribution = this.calculator.calculateDistribution();
-    
-    // Get estate value for display
-    const estateValue = this.calculator.formatCurrency(this.state.estateValue);
-    
-    // Get inheritance hierarchy text for detailed explanation
-    const hierarchyText = this.calculator.getInheritanceHierarchyText(this.state.estateValue);
-    
-    // Format result with rich text and structured sections
-    const formattedResult = `
-      <h2>Distribution Results for ${this.state.name}</h2>
-      
-      <div class="intestacy-result-summary">
-        <p><strong>Estate Value:</strong> ${estateValue}</p>
-        <p><strong>Summary:</strong> ${distribution.text}</p>
-      </div>
-      
-      <div class="intestacy-result-details">
-        <h3>How Your Estate Will Be Distributed</h3>
-        ${this.formatDistributionDetails(distribution.data)}
-      </div>
-      
-      <div class="intestacy-result-explanation">
-        <h3>Understanding Your Inheritance</h3>
-        <p>${hierarchyText}</p>
-      </div>
-      
-      <div class="intestacy-result-advice">
-        <h3>Legal Advice</h3>
-        <p>Under intestacy rules, your estate will be distributed according to a strict legal formula that may not reflect your wishes.</p>
-        <p><strong>If you wish to change this distribution, you will need to create a Will.</strong></p>
-      </div>
-    `;
-    
-    // Update result text
-    this.elements.result.innerHTML = formattedResult;
-    
-    // Create visualizations if enabled
-    if (this.options.showCharts) {
-      this.createDistributionCharts(distribution.data);
-    } else {
-      this.elements.chartsContainer.style.display = 'none';
-    }
-    
-    // Update contact info
-    if (this.calculator.state.cohabiting) {
-      // Enhanced contact info for cohabiting partners
-      this.elements.contactInfo.innerHTML = `
-        <strong>URGENT:</strong> As a cohabiting partner, creating a Will is essential to protect your partner.
-        <br>Contact our firm at <strong>${this.options.contactPhone}</strong> or <a href="mailto:${this.options.contactEmail}">${this.options.contactEmail}</a> to discuss creating a Will.
-      `;
-      
-      // Ensure cohabiting warning remains visible
-      this.elements.cohabitingWarning.style.display = 'block';
-    } else {
-      this.elements.contactInfo.innerHTML = `
-        ${this.options.contactInfo}
-        <br>Call us at <strong>${this.options.contactPhone}</strong> or email <a href="mailto:${this.options.contactEmail}">${this.options.contactEmail}</a>.
-      `;
-    }
-    
-    // Show/hide sections
-    this.elements.nameSection.style.display = 'none';
-    this.elements.estateSection.style.display = 'none';
-    this.elements.statusSection.style.display = 'none';
-    this.elements.questionSection.style.display = 'none';
-    this.elements.resultSection.style.display = 'block';
-  }
-  
-  /**
-   * Format distribution details as rich text
-   * @param {Object} distributionData - Data for distribution
-   * @returns {string} HTML formatted distribution details
-   */
-  formatDistributionDetails(distributionData) {
-    if (!distributionData || !distributionData.labels || !distributionData.shares || distributionData.labels.length === 0) {
-      return '<p>No distribution details available.</p>';
-    }
-    
-    // Create a formatted list of beneficiaries and their shares
-    let detailsHtml = '<ul class="intestacy-beneficiaries-list">';
-    
-    for (let i = 0; i < distributionData.labels.length; i++) {
-      const percentage = Math.round((distributionData.shares[i] / distributionData.totalValue) * 100);
-      const formattedValue = this.calculator.formatCurrency(distributionData.shares[i]);
-      
-      detailsHtml += `
-        <li class="intestacy-beneficiary-item">
-          <div class="intestacy-beneficiary-icon" style="background-color: ${distributionData.colors[i]}"></div>
-          <div class="intestacy-beneficiary-details">
-            <strong>${distributionData.labels[i]}</strong>
-            <span>${formattedValue} (${percentage}%)</span>
-          </div>
-        </li>
-      `;
-    }
-    
-    detailsHtml += '</ul>';
-    return detailsHtml;
-  }
-  
-  /**
-   * Create distribution charts
-   * @param {Object} chartData - Data for the charts
-   */
-  createDistributionCharts(chartData) {
-    // Clear any existing charts
-    if (this.charts.distribution) {
-      this.charts.distribution.destroy();
-    }
-    if (this.charts.breakdown) {
-      this.charts.breakdown.destroy();
-    }
-    
-    // Clear chart containers
-    this.elements.pieChart.innerHTML = '';
-    this.elements.barChart.innerHTML = '';
-    
-    try {
-      // Add title to charts container
-      const chartTitle = document.createElement('h3');
-      chartTitle.textContent = 'Visual Distribution of Estate';
-      chartTitle.className = 'intestacy-chart-title';
-      this.elements.chartsContainer.insertBefore(chartTitle, this.elements.pieChart);
-      
-      // Create pie chart
-      this.charts.distribution = ChartUtils.createDistributionChart(
-        chartData, 
-        this.elements.pieChart
-      );
-      
-      // Create breakdown chart if there are multiple shares
-      if (chartData.shares.length > 1) {
-        const breakdownTitle = document.createElement('h3');
-        breakdownTitle.textContent = 'Breakdown of Shares';
-        breakdownTitle.className = 'intestacy-chart-title';
-        this.elements.barChart.appendChild(breakdownTitle);
-        
-        this.charts.breakdown = ChartUtils.createBreakdownChart(
-          chartData,
-          this.elements.barChart
-        );
-      } else {
-        this.elements.barChart.style.display = 'none';
-      }
-      
-      // Show charts container
-      this.elements.chartsContainer.style.display = 'flex';
-    } catch (error) {
-      console.error('Error creating charts:', error);
-      this.elements.chartsContainer.style.display = 'none';
-    }
-  }
-  
-  /**
-   * Handle the continue button click
-   */
-  handleContinue() {
-    switch (this.state.currentStep) {
-      case 1:
-        this.handleNameSubmit();
-        break;
-      case 2:
+    this.elements.estateInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
         this.handleEstateSubmit();
-        break;
-      case 3:
-        this.handleStatusSubmit();
-        break;
-      case 4:
-        this.handleQuestionAnswer();
-        break;
-    }
+      }
+    });
+    
+    // Status button click
+    this.elements.statusButton.addEventListener('click', () => {
+      this.handleStatusSubmit();
+    });
+    
+    // Yes button click
+    this.elements.yesButton.addEventListener('click', () => {
+      this.handleQuestionAnswer(true);
+    });
+    
+    // No button click
+    this.elements.noButton.addEventListener('click', () => {
+      this.handleQuestionAnswer(false);
+    });
+    
+    // Restart button click
+    this.elements.restartButton.addEventListener('click', () => {
+      this.reset();
+    });
+  }
+  
+  /**
+   * Apply theme to calculator
+   * @param {string} theme - The theme to apply ('light' or 'dark')
+   */
+  applyTheme(theme) {
+    this.container.classList.add(`intestacy-theme-${theme}`);
+  }
+  
+  /**
+   * Hide all sections
+   */
+  hideAllSections() {
+    const sections = [
+      'intestacy-name-section',
+      'intestacy-estate-section',
+      'intestacy-status-section',
+      'intestacy-question-section',
+      'intestacy-result-section'
+    ];
+    
+    sections.forEach(section => {
+      const element = this.elements.calculator.querySelector(`.${section}`);
+      if (element) {
+        element.style.display = 'none';
+      }
+    });
   }
   
   /**
@@ -618,16 +416,34 @@ class IntestacyUI {
     
     // Store the name
     this.state.name = name;
+    this.calculator.state.name = name;
+    
+    // Clear error
+    this.elements.nameError.style.display = 'none';
     
     // Show estate input
     this.showEstateInput();
   }
   
   /**
+   * Show the estate value input step
+   */
+  showEstateInput() {
+    this.elements.nameSection.style.display = 'none';
+    this.elements.estateSection.style.display = 'block';
+    this.elements.statusSection.style.display = 'none';
+    this.elements.questionSection.style.display = 'none';
+    this.elements.resultSection.style.display = 'none';
+    
+    // Focus on input
+    setTimeout(() => this.elements.estateInput.focus(), 300);
+  }
+  
+  /**
    * Handle estate value input submission
    */
   handleEstateSubmit() {
-    const estateValueRaw = this.elements.estateValueInput.value.trim();
+    const estateValueRaw = this.elements.estateInput.value.trim();
     
     // Remove currency symbols and commas
     const estateValue = estateValueRaw.replace(/[£$,]/g, '');
@@ -648,7 +464,7 @@ class IntestacyUI {
     
     // Store the estate value
     this.state.estateValue = numValue;
-    this.calculator.setEstateValue(numValue);
+    this.calculator.state.estateValue = numValue;
     
     // Clear error
     this.elements.estateError.style.display = 'none';
@@ -658,23 +474,29 @@ class IntestacyUI {
   }
   
   /**
+   * Show the relationship status input step
+   */
+  showStatusInput() {
+    this.elements.nameSection.style.display = 'none';
+    this.elements.estateSection.style.display = 'none';
+    this.elements.statusSection.style.display = 'block';
+    this.elements.questionSection.style.display = 'none';
+    this.elements.resultSection.style.display = 'none';
+  }
+  
+  /**
    * Handle relationship status submission
    */
   handleStatusSubmit() {
     let selectedStatus = '';
     
     // Find selected status
-    if (this.elements.marriedRadio.checked) {
-      selectedStatus = 'married';
-    } else if (this.elements.cohabitingRadio.checked) {
-      selectedStatus = 'cohabiting';
-    } else if (this.elements.singleRadio.checked) {
-      selectedStatus = 'single';
-    } else if (this.elements.divorcedRadio.checked) {
-      selectedStatus = 'divorced';
-    } else if (this.elements.widowedRadio.checked) {
-      selectedStatus = 'widowed';
-    }
+    const statusInputs = this.elements.statusInputs;
+    statusInputs.forEach(input => {
+      if (input.checked) {
+        selectedStatus = input.value;
+      }
+    });
     
     if (!selectedStatus) {
       this.elements.statusError.textContent = 'Please select your marital status';
@@ -688,23 +510,31 @@ class IntestacyUI {
     // Clear error
     this.elements.statusError.style.display = 'none';
     
-    // Process the answer
-    this.calculator.processAnswer('status', selectedStatus);
-    
-    // Show warning for cohabiting
-    if (selectedStatus === 'cohabiting') {
+    // Update calculator with the appropriate marital status
+    if (selectedStatus === 'married') {
+      this.calculator.state.married = true;
+      this.calculator.state.cohabiting = false;
+      this.elements.cohabitingWarning.style.display = 'none';
+    } else if (selectedStatus === 'cohabiting') {
+      this.calculator.state.married = false;
+      this.calculator.state.cohabiting = true;
+      
+      // Update and show the cohabiting warning with clearer message
+      this.elements.cohabitingWarning.innerHTML = '<strong>Warning:</strong> As a cohabiting partner, you have no automatic inheritance rights under UK law.';
       this.elements.cohabitingWarning.style.display = 'block';
     } else {
+      // Single
+      this.calculator.state.married = false;
+      this.calculator.state.cohabiting = false;
       this.elements.cohabitingWarning.style.display = 'none';
     }
     
     // Check if we can determine distribution already or need to ask more questions
     if (this.calculator.canDetermineDistribution()) {
       this.showResult();
-      this.updateProgress(5);
     } else {
       // Get the first question and show it
-      const firstQuestionId = this.calculator.getFirstQuestionId();
+      const firstQuestionId = 'children'; // Start with the children question
       if (firstQuestionId) {
         this.showQuestion(firstQuestionId);
       } else {
@@ -714,64 +544,169 @@ class IntestacyUI {
   }
   
   /**
-   * Handle question answer
+   * Show a question
+   * @param {string} questionId - The ID of the question to show
    */
-  handleQuestionAnswer() {
-    // Get the question id
-    const questionId = this.state.currentQuestionId;
-    if (!questionId) {
-      console.error('No question ID in state');
-      return;
+  showQuestion(questionId) {
+    this.state.currentQuestionId = questionId;
+    
+    // Get the question text from the calculator
+    const questionObj = this.calculator.questionMap[questionId];
+    const questionText = questionObj ? questionObj.text : "Unknown question";
+    
+    // Update the question text
+    this.elements.questionText.textContent = questionText;
+    
+    // Hide other sections
+    this.elements.nameSection.style.display = 'none';
+    this.elements.estateSection.style.display = 'none';
+    this.elements.statusSection.style.display = 'none';
+    this.elements.resultSection.style.display = 'none';
+    
+    // Show question section
+    this.elements.questionSection.style.display = 'block';
+    
+    // Ensure cohabiting warning remains visible if applicable
+    if (this.calculator.state.cohabiting) {
+      this.elements.cohabitingWarning.style.display = 'block';
+      // Move the warning to the question section so it's visible
+      this.elements.questionSection.insertBefore(this.elements.cohabitingWarning, this.elements.questionHeading);
     }
     
-    // Find selected answer
-    let selectedAnswer = '';
-    const answerInputs = this.elements.questionOptions.querySelectorAll(`input[name="intestacy-question-${questionId}"]`);
-    
-    answerInputs.forEach(input => {
-      if (input.checked) {
-        selectedAnswer = input.value;
-      }
-    });
-    
-    if (!selectedAnswer) {
-      this.elements.questionError.textContent = 'Please select an answer';
-      this.elements.questionError.style.display = 'block';
-      return;
-    }
-    
-    // Clear error
+    // Clear any previous error
     this.elements.questionError.style.display = 'none';
+  }
+  
+  /**
+   * Show the result
+   */
+  showResult() {
+    // Calculate distribution - now returns object with text and data
+    const distribution = this.calculator.calculateDistribution();
     
-    // Process the answer
-    this.calculator.processAnswer(questionId, selectedAnswer);
+    // Get estate value for display
+    const estateValue = this.calculator.formatCurrency(this.state.estateValue);
     
-    // Check if we can determine distribution now
-    if (this.calculator.canDetermineDistribution()) {
-      this.showResult();
-      this.updateProgress(5);
-    } else {
-      // Get the next question and show it
-      const nextQuestionId = this.calculator.getNextQuestionId(questionId, selectedAnswer);
-      if (nextQuestionId) {
-        this.showQuestion(nextQuestionId);
-      } else {
-        console.error('No next question defined');
-      }
+    // Format result with rich text and structured sections
+    // We'll handle the cohabiting warning separately, not in the HTML
+    let formattedResult = `
+      <h2>Distribution Results for ${this.state.name}</h2>
+      
+      <div class="intestacy-result-summary">
+        <p><strong>Estate Value:</strong> ${estateValue}</p>
+      </div>
+      
+      <div class="intestacy-result-details">
+        <h3>Detailed Distribution</h3>
+        ${this.formatDistributionDetails(distribution.data)}
+      </div>
+    `;
+    
+    // Update result text
+    this.elements.resultContent.innerHTML = formattedResult;
+    
+    // Hide other sections
+    this.elements.nameSection.style.display = 'none';
+    this.elements.estateSection.style.display = 'none';
+    this.elements.statusSection.style.display = 'none';
+    this.elements.questionSection.style.display = 'none';
+    
+    // Show result section
+    this.elements.resultSection.style.display = 'block';
+    
+    // Ensure cohabiting warning remains visible if applicable
+    if (this.calculator.state.cohabiting) {
+      this.elements.cohabitingWarning.style.display = 'block';
+      // Move the warning to the result section so it's visible at the top
+      this.elements.resultSection.insertBefore(this.elements.cohabitingWarning, this.elements.resultContent);
     }
   }
   
   /**
-   * Handle restart button click
+   * Format distribution details for display
+   * @param {Object} distributionData - Distribution data
+   * @returns {string} - HTML string with formatted details
    */
-  handleRestart() {
-    // Reset calculator
-    this.calculator = new IntestacyCalculator();
+  formatDistributionDetails(distributionData) {
+    if (!distributionData || !distributionData.shares || distributionData.shares.length === 0) {
+      return '<p>No distribution data available.</p>';
+    }
     
-    // Reset state
+    // Format as list with percentages and amounts
+    const totalValue = distributionData.totalValue || 
+      distributionData.shares.reduce((sum, share) => sum + share, 0);
+    
+    // Include the summary text from the distribution calculation but remove the duplicated warning
+    let summaryText = distributionData.text || '';
+    
+    // Remove any cohabiting warning div from the text to avoid duplication
+    summaryText = summaryText.replace(/<div class="intestacy-cohabiting-warning">.*?<\/div>/s, '');
+    
+    const summaryHtml = `<p>${summaryText}</p>`;
+    
+    let html = summaryHtml + '<ul class="intestacy-distribution-list">';
+    
+    for (let i = 0; i < distributionData.shares.length; i++) {
+      const share = distributionData.shares[i];
+      const label = distributionData.labels[i];
+      const percentage = (share / totalValue * 100).toFixed(1);
+      const formattedShare = this.calculator.formatCurrency(share);
+      
+      html += `
+        <li>
+          <span class="intestacy-recipient">${label}:</span> 
+          <span class="intestacy-amount">${formattedShare}</span>
+          <span class="intestacy-percentage">(${percentage}%)</span>
+        </li>
+      `;
+    }
+    
+    html += '</ul>';
+    
+    // Add disclaimer at the end
+    html += `
+      <div class="intestacy-result-disclaimer">
+        <p>This is a simplified calculation based on the intestacy rules in England and Wales. 
+        The actual distribution may be more complex depending on specific circumstances.</p>
+        <p>To ensure your assets are distributed according to your wishes, consider creating a Will.</p>
+      </div>
+    `;
+    
+    return html;
+  }
+  
+  /**
+   * Handle question answer
+   * @param {boolean} answer - The user's answer (true for Yes, false for No)
+   */
+  handleQuestionAnswer(answer) {
+    // Process the answer and get the next question or null if done
+    const nextQuestionId = this.calculator.processAnswer(this.state.currentQuestionId, answer);
+    
+    // Store the answer
+    this.state.answers[this.state.currentQuestionId] = answer;
+    
+    // Special handling for siblingsDeceasedWithChildren - ensure it goes to the result if we're stuck
+    if (this.state.currentQuestionId === 'siblingsDeceasedWithChildren') {
+      this.showResult();
+      return;
+    }
+    
+    if (nextQuestionId) {
+      // Show the next question
+      this.showQuestion(nextQuestionId);
+    } else {
+      // We have enough information to determine distribution
+      this.showResult();
+    }
+  }
+  
+  /**
+   * Reset the calculator to initial state
+   */
+  reset() {
+    // Reset the state
     this.state = {
-      currentStep: 1,
-      totalSteps: 4,
       name: '',
       estateValue: 0,
       marriageStatus: '',
@@ -779,22 +714,46 @@ class IntestacyUI {
       answers: {}
     };
     
-    // Reset inputs
+    // Reset the calculator
+    this.calculator = new IntestacyCalculator();
+    
+    // Clear inputs
     this.elements.nameInput.value = '';
-    this.elements.estateValueInput.value = '';
-    this.elements.nameError.textContent = '';
-    this.elements.estateError.textContent = '';
+    this.elements.estateInput.value = '';
     
-    this.elements.marriedRadio.checked = false;
-    this.elements.cohabitingRadio.checked = false;
-    this.elements.singleRadio.checked = false;
-    this.elements.divorcedRadio.checked = false;
-    this.elements.widowedRadio.checked = false;
+    // Uncheck all radio buttons
+    this.elements.statusInputs.forEach(input => {
+      input.checked = false;
+    });
     
-    // Hide cohabiting warning
-    this.elements.cohabitingWarning.style.display = 'none';
+    // Clear all errors
+    this.elements.nameError.style.display = 'none';
+    this.elements.estateError.style.display = 'none';
+    this.elements.statusError.style.display = 'none';
+    this.elements.questionError.style.display = 'none';
     
-    // Show first step
+    // Hide all sections first
+    this.hideAllSections();
+    
+    // Update progress bar
+    if (this.elements.progressBar) {
+      this.elements.progressBar.style.width = '0%';
+    }
+    
+    // Reset active step in progress indicator
+    if (this.elements.steps) {
+      const steps = this.elements.steps;
+      for (let i = 0; i < steps.length; i++) {
+        steps[i].classList.remove('intestacy-step-active');
+        steps[i].classList.remove('intestacy-step-complete');
+      }
+      // Set first step as active
+      if (steps.length > 0) {
+        steps[0].classList.add('intestacy-step-active');
+      }
+    }
+    
+    // Show the name input step
     this.showNameInput();
   }
 }

@@ -4,33 +4,99 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UK Intestacy Calculator - Custom Theme Example</title>
-  <link rel="stylesheet" href="custom-theme.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    h1, h2, h3 {
+      color: #bb86fc;
+    }
+    
+    .description {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 30px;
+    }
+    
+    .calculator-container {
+      margin-bottom: 40px;
+    }
+    
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #999;
+      border-top: 1px solid #333;
+      padding-top: 20px;
+    }
+    
+    code {
+      background-color: #2d2d2d;
+      color: #e0e0e0;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    
+    pre {
+      background-color: #2d2d2d;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>UK Intestacy Calculator with Custom Theme</h1>
-      <p>A demonstration of how to customize the calculator's appearance</p>
+      <h1>UK Intestacy Calculator Example</h1>
+      <p>Custom dark theme demonstration</p>
     </header>
     
     <div class="description">
-      <h2>About This Example</h2>
+      <h2>About This Calculator</h2>
       <p>
-        This example demonstrates how to customize the appearance of the intestacy calculator
-        to match your website's branding. The calculator below uses a purple-themed custom style.
+        This calculator helps you understand how your estate would be distributed if you die without a will in the UK.
+        It uses the current intestacy rules to determine who would inherit your assets.
       </p>
       <p>
-        You can customize the calculator by:
+        This example demonstrates how to integrate the calculator with a dark theme to match your website's styling.
       </p>
-      <ul>
-        <li>Adding custom CSS to override the default styles</li>
-        <li>Using the theme option when initializing the widget</li>
-        <li>Adding custom classes to the container</li>
-      </ul>
+      
+      <h3>Code:</h3>
+      <pre><code>
+import IntestacyWidget from '../src/integration/IntestacyWidget.js';
+
+document.addEventListener('DOMContentLoaded', function() {
+  var widget = new IntestacyWidget({
+    container: '#intestacy-calculator',
+    theme: 'dark',
+    contactInfo: 'Please contact us on 0161 928 3848 to discuss creating a Will.'
+  });
+});
+      </code></pre>
     </div>
     
-    <!-- Calculator container with custom class -->
-    <div id="intestacy-calculator" class="calculator-container custom-theme"></div>
+    <!-- Calculator container -->
+    <div id="intestacy-calculator" class="calculator-container"></div>
     
     <footer>
       <p>© WillsX 2025. All Rights Reserved.</p>
@@ -43,10 +109,11 @@
     
     // Initialize the widget when the DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
-      // Create a new instance of the widget with custom options
+      // Create a new instance of the widget
       var widget = new IntestacyWidget({
         container: '#intestacy-calculator',
-        contactInfo: 'Contact our legal team at <strong>0161 928 3848</strong> or <a href="mailto:mch@mchaleandco.co.uk">mch@mchaleandco.co.uk</a> to discuss creating a Will.'
+        theme: 'dark',
+        contactInfo: 'Please contact us on 0161 928 3848 to discuss creating a Will.'
       });
     });
   </script>

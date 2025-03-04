@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UK Intestacy Calculator - Email Compatible Example</title>
+  <title>UK Intestacy Calculator - Email-Compatible Example</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,106 +14,90 @@
     }
     
     .container {
-      max-width: 600px;
+      max-width: 1000px;
       margin: 0 auto;
-      background-color: #f9f9f9;
+    }
+    
+    header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    h1 {
+      color: #2c3e50;
+    }
+    
+    .description {
+      background-color: #f8f9fa;
       padding: 20px;
       border-radius: 5px;
-    }
-    
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    
-    .header h1 {
-      color: #2c3e50;
-      margin: 0;
-      font-size: 24px;
-    }
-    
-    .content {
       margin-bottom: 30px;
     }
     
-    .cta-button {
-      display: block;
-      background-color: #007bff;
-      color: white;
-      text-align: center;
-      padding: 15px 20px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      margin: 20px auto;
-      max-width: 300px;
+    .calculator-container {
+      margin-bottom: 40px;
     }
     
-    .cta-button:hover {
-      background-color: #0069d9;
-    }
-    
-    .footer {
+    footer {
+      margin-top: 40px;
       text-align: center;
-      font-size: 12px;
+      font-size: 14px;
       color: #666;
-      margin-top: 30px;
-      padding-top: 10px;
       border-top: 1px solid #eee;
-    }
-    
-    /* This is for demonstration purposes - in a real email, you'd use table-based layouts */
-    @media (max-width: 600px) {
-      .container {
-        width: 100%;
-        padding: 10px;
-      }
-      
-      .header h1 {
-        font-size: 20px;
-      }
+      padding-top: 20px;
     }
   </style>
 </head>
 <body>
-  <!-- 
-    Note: This is a simplified example for demonstration purposes.
-    Real email HTML would typically use table-based layouts for better
-    compatibility across email clients.
-  -->
   <div class="container">
-    <div class="header">
-      <h1>UK Intestacy Rules: Are You Protected?</h1>
+    <header>
+      <h1>UK Intestacy Calculator Example</h1>
+      <p>Email-compatible version for newsletters and email marketing</p>
+    </header>
+    
+    <div class="description">
+      <h2>About This Version</h2>
+      <p>
+        This version of the calculator is designed to be compatible with email marketing campaigns and newsletters.
+        Instead of embedding the interactive calculator directly, this example shows how to create a link to the calculator
+        with a brief description.
+      </p>
+      <p>
+        When using in emails, you would typically:
+      </p>
+      <ol>
+        <li>Create a landing page with the full calculator</li>
+        <li>Include a brief description and compelling CTA in your email</li>
+        <li>Link to the landing page for the interactive experience</li>
+      </ol>
     </div>
     
-    <div class="content">
-      <p>Dear [First Name],</p>
+    <!-- Example of email content -->
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 5px; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #2c3e50; margin-top: 0;">What Happens to Your Estate Without a Will?</h2>
       
-      <p>Did you know that if you die without a will in the UK, your estate will be distributed according to intestacy rules?</p>
+      <p>Did you know that if you die without a valid Will, your estate will be distributed according to intestacy rules?</p>
       
-      <p>These rules may not align with your wishes, potentially leaving loved ones without the inheritance you intended for them.</p>
+      <p>These rules may not reflect your wishes, and could leave loved ones without inheritance - especially unmarried partners.</p>
       
-      <p><strong>Find out how your estate would be distributed</strong> under current UK intestacy rules with our free calculator:</p>
+      <p style="background-color: #f8f9fa; padding: 10px; border-left: 4px solid #4b9cd3;">
+        Try our <strong>FREE Intestacy Calculator</strong> to see how your estate would be distributed without a Will.
+      </p>
       
-      <a href="https://example.com/intestacy-calculator" class="cta-button">Calculate Your Estate Distribution</a>
+      <p style="text-align: center;">
+        <a href="basic.html" style="display: inline-block; background-color: #4b9cd3; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+          Try the Calculator Now
+        </a>
+      </p>
       
-      <p>Our calculator will guide you through a few simple questions to determine how your assets would be distributed if you die without a will.</p>
-      
-      <p>Once you understand the potential impact, we can help you create a proper will to ensure your wishes are followed.</p>
-      
-      <p>Best regards,<br>
-      The Legal Team</p>
+      <p style="font-size: 14px; color: #666; margin-top: 20px;">
+        Contact us on 0161 928 3848 to discuss creating a Will that protects your loved ones.
+      </p>
     </div>
     
-    <div class="footer">
+    <footer>
       <p>© WillsX 2025. All Rights Reserved.</p>
-      <p>mch@mchaleandco.co.uk</p>
-    </div>
+    </footer>
   </div>
-  
-  <!-- 
-    Note: In a real implementation, the link would point to a hosted version of the calculator.
-    This example demonstrates how you would reference the calculator in an email newsletter.
-  -->
 </body>
 </html>
