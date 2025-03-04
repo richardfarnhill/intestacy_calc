@@ -35,13 +35,20 @@ const SECTIONS_TO_REMOVE = [
     '### Building',
     '## License',
     '## Future Development',
-    '## Getting Involved'
+    '## Getting Involved',
+    '### Basic Integration',
+    '### Usage',
+    '### Configuration Options',
+    '### Methods'
 ];
 
 // Additional content patterns to remove
 const CONTENT_PATTERNS = [
     /```bash[\s\S]*?```/g,    // Remove bash/command blocks
     /```shell[\s\S]*?```/g,   // Remove shell blocks
+    /```html[\s\S]*?```/g,    // Remove HTML code blocks
+    /```javascript[\s\S]*?```/g, // Remove JavaScript code blocks
+    /```js[\s\S]*?```/g,      // Remove JS code blocks
     /`npm .*?`/g,             // Remove npm commands
     /`yarn .*?`/g,            // Remove yarn commands
     /clone.*repository/gi,     // Remove clone references
@@ -50,7 +57,14 @@ const CONTENT_PATTERNS = [
     /\[.*?download.*?\]/g,    // Remove download links
     /This will start.*browser\./g,  // Remove development server references
     /This will create.*styles/gs,   // Remove build output references
-    /See \[DEVELOPMENT\.md\].*future enhancements\./g  // Remove development.md references
+    /See \[DEVELOPMENT\.md\].*future enhancements\./g,  // Remove development.md references
+    /Add a container element to your HTML:/g, // Remove integration instructions
+    /Then include the script and initialize the widget:/g, // Remove script inclusion instructions
+    /The widget accepts the following configuration options:/g, // Remove configuration instructions
+    /The widget instance provides the following methods:/g, // Remove methods instructions
+    /#### `.*?`[\s\S]*?(?=####|$)/g, // Remove method descriptions
+    /\| Option \| Type \| Default \| Description \|[\s\S]*?\|/g, // Remove configuration tables
+    /\|--------|------|---------|-------------|[\s\S]*?\|/g // Remove table formatting
 ];
 
 function removePrivateSections(content) {

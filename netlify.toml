@@ -25,9 +25,20 @@
     status = 200
     force = true
   [[redirects]]
-    from = "/docs/*"
-    to = "/docs/:splat"
+    from = "/docs/README.md"
+    to = "/docs/README.md"
     status = 200
+    force = true
+  [[redirects]]
+    from = "/docs/DEVELOPMENT.md"
+    to = "/docs/DEVELOPMENT.md"
+    status = 200
+    force = true
+  # Restrict access to other docs files
+  [[redirects]]
+    from = "/docs/*"
+    to = "/examples/index.html"
+    status = 404
     force = true
   # Fallback redirect
   [[redirects]]
