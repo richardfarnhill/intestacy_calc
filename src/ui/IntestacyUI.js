@@ -74,6 +74,10 @@ class IntestacyUI {
     // Add CSS class to container
     this.container.classList.add('intestacy-calculator');
     
+    // Set contact info
+    this.options.contactPhone = this.options.contactPhone || '0123 456 7890';
+    this.options.contactEmail = this.options.contactEmail || 'info@example.com';
+    
     // Create header
     const header = document.createElement('div');
     header.className = 'intestacy-header';
@@ -83,6 +87,19 @@ class IntestacyUI {
     `;
     this.container.appendChild(header);
     
+    
+    // Create cohabiting warning (hidden by default)
+    const cohabitingWarning = document.createElement('div');
+    cohabitingWarning.className = 'intestacy-cohabiting-warning';
+    cohabitingWarning.style.display = 'none';
+    cohabitingWarning.innerHTML = `
+      <strong>WARNING:</strong> As a cohabiting partner, you have NO automatic inheritance rights under UK law.
+      <p>Your partner will NOT automatically inherit anything from your estate if you die without a will.</p>
+      <p>To protect your partner, you should create a valid Will as soon as possible.</p>
+      <p class="intestacy-contact-highlight">Contact our firm at <strong>${this.options.contactPhone}</strong> or <strong>${this.options.contactEmail}</strong> to discuss creating a Will.</p>
+    `;
+    this.container.appendChild(cohabitingWarning);
+    this.elements.cohabitingWarning = cohabitingWarning;
     // Create main content area
     const content = document.createElement('div');
     content.className = 'intestacy-content';
@@ -126,6 +143,9 @@ class IntestacyUI {
         </label>
         <label>
           <input type="radio" name="intestacy-status" value="married"> Married/Civil Partnership
+        </label>
+        <label>
+          <input type="radio" name="intestacy-status" value="cohabiting"> Co-habiting
         </label>
         <label>
           <input type="radio" name="intestacy-status" value="divorced"> Divorced
@@ -311,6 +331,11 @@ class IntestacyUI {
     this.elements.statusSection.style.display = 'none';
     this.elements.questionSection.style.display = 'block';
     this.elements.resultSection.style.display = 'none';
+    
+    // Ensure cohabiting warning remains visible if applicable
+    if (this.calculator.state.cohabiting) {
+      this.elements.cohabitingWarning.style.display = 'block';
+    }
   }
   
   /**
@@ -331,7 +356,18 @@ class IntestacyUI {
     this.elements.result.innerHTML = formattedResult;
     
     // Update contact info
-    this.elements.contactInfo.textContent = this.options.contactInfo;
+    if (this.calculator.state.cohabiting) {
+      // Enhanced contact info for cohabiting partners
+      this.elements.contactInfo.innerHTML = `
+        <strong>URGENT:</strong> As a cohabiting partner, creating a Will is essential to protect your partner.
+        <br>Contact our firm at <strong>0123 456 7890</strong> or <strong>info@example.com</strong> to discuss creating a Will.
+      `;
+      
+      // Ensure cohabiting warning remains visible
+      this.elements.cohabitingWarning.style.display = 'block';
+    } else {
+      this.elements.contactInfo.textContent = this.options.contactInfo;
+    }
     
     // Show/hide sections
     this.elements.nameSection.style.display = 'none';
@@ -426,6 +462,14 @@ class IntestacyUI {
     this.calculator.state.name = this.state.name;
     this.calculator.state.estateValue = this.state.estateValue;
     this.calculator.state.married = (selectedStatus === 'married');
+    this.calculator.state.cohabiting = (selectedStatus === 'cohabiting');
+    
+    // Show or hide cohabiting warning
+    if (selectedStatus === 'cohabiting') {
+      this.elements.cohabitingWarning.style.display = 'block';
+    } else {
+      this.elements.cohabitingWarning.style.display = 'none';
+    }
     
     // Start the question flow
     this.showQuestion('children');
@@ -490,6 +534,9 @@ class IntestacyUI {
     this.elements.statusInputs.forEach(input => {
       input.checked = false;
     });
+    
+    // Hide cohabiting warning
+    this.elements.cohabitingWarning.style.display = 'none';
     
     // Show first step
     this.showNameInput();

@@ -19,6 +19,8 @@
         name: null,
         estateValue: null,
         married: null,
+        cohabiting: null,
+        // New property for cohabiting status
         children: null,
         grandchildren: null,
         greatGrandchildren: null,
@@ -66,12 +68,6 @@
         id: "halfSiblings",
         text: "Do you have any half siblings (one shared parent)?"
       }, {
-        id: "grandchildren",
-        text: "Do you have any grandchildren?"
-      }, {
-        id: "greatGrandchildren",
-        text: "Do you have any great-grandchildren?"
-      }, {
         id: "grandparents",
         text: "Do you have any living grandparents?"
       }, {
@@ -116,12 +112,10 @@
         "childrenDeceased": answer => answer ? "deceasedChildrenHadChildren" : null,
         "deceasedChildrenHadChildren": answer => null,
         "parentsAlive": answer => answer ? null : "siblings",
-        "siblings": answer => answer ? "fullSiblings" : "grandchildren",
+        "siblings": answer => answer ? "fullSiblings" : "grandparents",
         "fullSiblings": answer => answer ? "siblingsDeceasedWithChildren" : "halfSiblings",
         "siblingsDeceasedWithChildren": answer => null,
         "halfSiblings": answer => null,
-        "grandchildren": answer => answer ? null : "greatGrandchildren",
-        "greatGrandchildren": answer => answer ? null : "grandparents",
         "grandparents": answer => answer ? null : "auntsUncles",
         "auntsUncles": answer => answer ? "fullAuntsUncles" : null,
         "fullAuntsUncles": answer => answer ? "auntsUnclesDeceasedWithChildren" : "halfAuntsUncles",
@@ -188,6 +182,11 @@
       const estateValue = parseFloat(this.state.estateValue);
       const formattedValue = this.formatCurrency(estateValue);
 
+      // Cohabiting warning - check this before spouse rules
+      if (this.state.cohabiting) {
+        return `<div class="intestacy-cohabiting-warning">` + `Warning: As a cohabiting partner, you have no automatic inheritance rights under UK law.` + `</div>\n\n` + `Your estate of ${formattedValue} will be distributed as follows:\n` + `• Your cohabiting partner will not automatically inherit anything\n` + `• Your estate will pass to your relatives according to intestacy rules:\n` + this.getInheritanceHierarchyText(estateValue) + `\n\nTo protect your partner, you should create a valid Will.`;
+      }
+
       // Spouse rules
       if (this.state.married) {
         if (!this.state.children) {
@@ -224,12 +223,6 @@
         } else if (this.state.halfSiblings) {
           return `Your entire estate of ${formattedValue} will be divided equally between your half-siblings.`;
         }
-      }
-      if (this.state.grandchildren) {
-        return `Your entire estate of ${formattedValue} will be divided equally between your grandchildren.`;
-      }
-      if (this.state.greatGrandchildren) {
-        return `Your entire estate of ${formattedValue} will be divided equally between your great-grandchildren.`;
       }
       if (this.state.grandparents) {
         return `Your entire estate of ${formattedValue} will be divided equally between your grandparents.`;
@@ -279,6 +272,44 @@
     }
 
     /**
+     * Generate text describing the inheritance hierarchy for cohabiting cases
+     * @param {number} estateValue - The value of the estate
+     * @returns {string} - Description of how the estate will be distributed
+     */
+    getInheritanceHierarchyText(estateValue) {
+      const formattedValue = this.formatCurrency(estateValue);
+      if (this.state.children) {
+        const childrenText = !this.state.childrenDeceased ? "children" : "living children and the children of your deceased children (who will share their parent's portion per stirpes)";
+        return `  - Your entire estate of ${formattedValue} will be divided equally between your ${childrenText}.`;
+      }
+      if (this.state.parentsAlive) {
+        return `  - Your entire estate of ${formattedValue} will pass to your surviving parent(s) in equal shares.`;
+      }
+      if (this.state.siblings) {
+        if (this.state.fullSiblings) {
+          const siblingType = "full siblings";
+          const childrenText = this.state.siblingsDeceasedWithChildren ? " (their children will inherit their share per stirpes)" : "";
+          return `  - Your entire estate of ${formattedValue} will be divided equally between your ${siblingType}${childrenText}.`;
+        } else if (this.state.halfSiblings) {
+          return `  - Your entire estate of ${formattedValue} will be divided equally between your half-siblings.`;
+        }
+      }
+      if (this.state.grandparents) {
+        return `  - Your entire estate of ${formattedValue} will be divided equally between your grandparents.`;
+      }
+      if (this.state.auntsUncles) {
+        if (this.state.fullAuntsUncles) {
+          const auntsText = "aunts and uncles";
+          const childrenText = this.state.auntsUnclesDeceasedWithChildren ? " (their children will inherit their share per stirpes)" : "";
+          return `  - Your entire estate of ${formattedValue} will be divided equally between your ${auntsText}${childrenText}.`;
+        } else if (this.state.halfAuntsUncles) {
+          return `  - Your entire estate of ${formattedValue} will be divided equally between your half-aunts and half-uncles.`;
+        }
+      }
+      return `  - Your estate of ${formattedValue} will pass to the Crown (Bona Vacantia).`;
+    }
+
+    /**
      * Check if we have enough information to determine distribution
      * @returns {boolean} - True if we can determine distribution, false otherwise
      */
@@ -291,7 +322,7 @@
       }
 
       // Check the full hierarchy
-      return [this.state.parentsAlive !== null && this.state.parentsAlive, this.state.fullSiblings !== null && this.state.fullSiblings, this.state.halfSiblings !== null && this.state.halfSiblings, this.state.grandchildren !== null && this.state.grandchildren, this.state.greatGrandchildren !== null && this.state.greatGrandchildren, this.state.grandparents !== null && this.state.grandparents, this.state.fullAuntsUncles !== null && this.state.fullAuntsUncles, this.state.halfAuntsUncles !== null && this.state.halfAuntsUncles].some(condition => condition);
+      return [this.state.parentsAlive !== null && this.state.parentsAlive, this.state.fullSiblings !== null && this.state.fullSiblings, this.state.halfSiblings !== null && this.state.halfSiblings, this.state.grandparents !== null && this.state.grandparents, this.state.fullAuntsUncles !== null && this.state.fullAuntsUncles, this.state.halfAuntsUncles !== null && this.state.halfAuntsUncles].some(condition => condition);
     }
   }
 
@@ -432,6 +463,10 @@
       // Add CSS class to container
       this.container.classList.add('intestacy-calculator');
 
+      // Set contact info
+      this.options.contactPhone = this.options.contactPhone || '0123 456 7890';
+      this.options.contactEmail = this.options.contactEmail || 'info@example.com';
+
       // Create header
       const header = document.createElement('div');
       header.className = 'intestacy-header';
@@ -441,6 +476,18 @@
     `;
       this.container.appendChild(header);
 
+      // Create cohabiting warning (hidden by default)
+      const cohabitingWarning = document.createElement('div');
+      cohabitingWarning.className = 'intestacy-cohabiting-warning';
+      cohabitingWarning.style.display = 'none';
+      cohabitingWarning.innerHTML = `
+      <strong>WARNING:</strong> As a cohabiting partner, you have NO automatic inheritance rights under UK law.
+      <p>Your partner will NOT automatically inherit anything from your estate if you die without a will.</p>
+      <p>To protect your partner, you should create a valid Will as soon as possible.</p>
+      <p class="intestacy-contact-highlight">Contact our firm at <strong>${this.options.contactPhone}</strong> or <strong>${this.options.contactEmail}</strong> to discuss creating a Will.</p>
+    `;
+      this.container.appendChild(cohabitingWarning);
+      this.elements.cohabitingWarning = cohabitingWarning;
       // Create main content area
       const content = document.createElement('div');
       content.className = 'intestacy-content';
@@ -484,6 +531,9 @@
         </label>
         <label>
           <input type="radio" name="intestacy-status" value="married"> Married/Civil Partnership
+        </label>
+        <label>
+          <input type="radio" name="intestacy-status" value="cohabiting"> Co-habiting
         </label>
         <label>
           <input type="radio" name="intestacy-status" value="divorced"> Divorced
@@ -669,6 +719,11 @@
       this.elements.statusSection.style.display = 'none';
       this.elements.questionSection.style.display = 'block';
       this.elements.resultSection.style.display = 'none';
+
+      // Ensure cohabiting warning remains visible if applicable
+      if (this.calculator.state.cohabiting) {
+        this.elements.cohabitingWarning.style.display = 'block';
+      }
     }
 
     /**
@@ -689,7 +744,18 @@
       this.elements.result.innerHTML = formattedResult;
 
       // Update contact info
-      this.elements.contactInfo.textContent = this.options.contactInfo;
+      if (this.calculator.state.cohabiting) {
+        // Enhanced contact info for cohabiting partners
+        this.elements.contactInfo.innerHTML = `
+        <strong>URGENT:</strong> As a cohabiting partner, creating a Will is essential to protect your partner.
+        <br>Contact our firm at <strong>0123 456 7890</strong> or <strong>info@example.com</strong> to discuss creating a Will.
+      `;
+
+        // Ensure cohabiting warning remains visible
+        this.elements.cohabitingWarning.style.display = 'block';
+      } else {
+        this.elements.contactInfo.textContent = this.options.contactInfo;
+      }
 
       // Show/hide sections
       this.elements.nameSection.style.display = 'none';
@@ -781,6 +847,14 @@
       this.calculator.state.name = this.state.name;
       this.calculator.state.estateValue = this.state.estateValue;
       this.calculator.state.married = selectedStatus === 'married';
+      this.calculator.state.cohabiting = selectedStatus === 'cohabiting';
+
+      // Show or hide cohabiting warning
+      if (selectedStatus === 'cohabiting') {
+        this.elements.cohabitingWarning.style.display = 'block';
+      } else {
+        this.elements.cohabitingWarning.style.display = 'none';
+      }
 
       // Start the question flow
       this.showQuestion('children');
@@ -843,6 +917,9 @@
         input.checked = false;
       });
 
+      // Hide cohabiting warning
+      this.elements.cohabitingWarning.style.display = 'none';
+
       // Show first step
       this.showNameInput();
     }
@@ -864,6 +941,8 @@
         container: '#intestacy-calculator',
         theme: 'light',
         contactInfo: 'Please contact us to discuss creating a Will.',
+        contactPhone: '0123 456 7890',
+        contactEmail: 'info@example.com',
         ...options
       };
 
@@ -879,7 +958,12 @@
       this.loadStyles();
 
       // Initialize UI
-      this.ui = new IntestacyUI(this.options.container, this.options);
+      this.ui = new IntestacyUI(this.options.container, {
+        theme: this.options.theme,
+        contactInfo: this.options.contactInfo,
+        contactPhone: this.options.contactPhone,
+        contactEmail: this.options.contactEmail
+      });
     }
 
     /**
@@ -921,6 +1005,71 @@
       
       .intestacy-calculator * {
         box-sizing: border-box;
+      }
+      
+      /* Cohabiting warning styles */
+      .intestacy-cohabiting-warning {
+        background-color: #ffebee;
+        border: 2px solid #f44336;
+        color: #c62828;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 6px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+        }
+      }
+      
+      /* Add a left border accent for visual emphasis */
+      .intestacy-cohabiting-warning::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+        background-color: #d32f2f;
+      }
+      
+      .intestacy-cohabiting-warning strong:first-child {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #d32f2f;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .intestacy-cohabiting-warning p {
+        margin: 10px 0;
+        line-height: 1.5;
+        font-size: 15px;
+      }
+      
+      .intestacy-contact-highlight {
+        background-color: rgba(255, 255, 255, 0.7);
+        padding: 12px;
+        border-radius: 4px;
+        margin-top: 12px;
+        font-weight: bold;
+        border-left: 3px solid #d32f2f;
+      }
+      
+      .intestacy-contact-highlight strong {
+        color: #d32f2f;
       }
       
       /* Header */
@@ -1142,6 +1291,18 @@
       .intestacy-theme-dark .intestacy-footer {
         color: #ccc;
         border-top-color: #555;
+      }
+      
+      /* Dark theme adjustments for cohabiting warning */
+      .intestacy-theme-dark .intestacy-cohabiting-warning {
+        background-color: rgba(244, 67, 54, 0.15);
+        border-color: #f44336;
+        color: #ff8a80;
+      }
+      
+      .intestacy-theme-dark .intestacy-contact-highlight {
+        background-color: rgba(0, 0, 0, 0.3);
+        color: #fff;
       }
       
       /* Responsive styles */

@@ -2,10 +2,15 @@
  * Simple HTTP server for testing the intestacy calculator
  */
 
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const url = require('url');
+import http from 'http';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { parse } from 'url';
+
+// Get the directory name
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // MIME types for different file extensions
 const mimeTypes = {
@@ -23,44 +28,40 @@ const mimeTypes = {
 // Create the server
 const server = http.createServer((req, res) => {
   // Parse the URL
-  const parsedUrl = url.parse(req.url);
+  const parsedUrl = parse(req.url);
   
   // Extract the path from the URL
-  let pathname = `.${parsedUrl.pathname}`;
+  let pathname = path.join(__dirname, parsedUrl.pathname);
   
   // If path ends with '/', serve index.html
-  if (pathname === './') {
-    pathname = './index.html';
+  if (parsedUrl.pathname === '/' || parsedUrl.pathname === '') {
+    pathname = path.join(__dirname, 'index.html');
   }
   
   // Get the file extension
   const ext = path.parse(pathname).ext;
   
-  // Check if the file exists
-  fs.access(pathname, (err) => {
-    if (err) {
-      // If the file doesn't exist, return 404
-      res.statusCode = 404;
-      res.end(`File ${pathname} not found!`);
-      return;
-    }
-    
-    // Read the file
-    fs.readFile(pathname, (err, data) => {
-      if (err) {
-        // If there's an error reading the file, return 500
-        res.statusCode = 500;
-        res.end(`Error reading file: ${err.code}`);
-        return;
-      }
-      
+  // Check if the file exists and read it
+  fs.promises.access(pathname)
+    .then(() => fs.promises.readFile(pathname))
+    .then(data => {
       // Set the content type based on the file extension
       res.setHeader('Content-type', mimeTypes[ext] || 'text/plain');
       
       // Send the file data
       res.end(data);
+    })
+    .catch(err => {
+      if (err.code === 'ENOENT') {
+        // If the file doesn't exist, return 404
+        res.statusCode = 404;
+        res.end(`File ${pathname} not found!`);
+      } else {
+        // If there's another error, return 500
+        res.statusCode = 500;
+        res.end(`Error reading file: ${err.code}`);
+      }
     });
-  });
 });
 
 // Port to listen on

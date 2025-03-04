@@ -57,6 +57,8 @@ class IntestacyCalculator {
       name: null,
       estateValue: null,
       married: null,
+      cohabiting: null,
+      // New property for cohabiting status
       children: null,
       grandchildren: null,
       greatGrandchildren: null,
@@ -104,12 +106,6 @@ class IntestacyCalculator {
       id: "halfSiblings",
       text: "Do you have any half siblings (one shared parent)?"
     }, {
-      id: "grandchildren",
-      text: "Do you have any grandchildren?"
-    }, {
-      id: "greatGrandchildren",
-      text: "Do you have any great-grandchildren?"
-    }, {
       id: "grandparents",
       text: "Do you have any living grandparents?"
     }, {
@@ -154,12 +150,10 @@ class IntestacyCalculator {
       "childrenDeceased": answer => answer ? "deceasedChildrenHadChildren" : null,
       "deceasedChildrenHadChildren": answer => null,
       "parentsAlive": answer => answer ? null : "siblings",
-      "siblings": answer => answer ? "fullSiblings" : "grandchildren",
+      "siblings": answer => answer ? "fullSiblings" : "grandparents",
       "fullSiblings": answer => answer ? "siblingsDeceasedWithChildren" : "halfSiblings",
       "siblingsDeceasedWithChildren": answer => null,
       "halfSiblings": answer => null,
-      "grandchildren": answer => answer ? null : "greatGrandchildren",
-      "greatGrandchildren": answer => answer ? null : "grandparents",
       "grandparents": answer => answer ? null : "auntsUncles",
       "auntsUncles": answer => answer ? "fullAuntsUncles" : null,
       "fullAuntsUncles": answer => answer ? "auntsUnclesDeceasedWithChildren" : "halfAuntsUncles",
@@ -226,6 +220,11 @@ class IntestacyCalculator {
     var estateValue = parseFloat(this.state.estateValue);
     var formattedValue = this.formatCurrency(estateValue);
 
+    // Cohabiting warning - check this before spouse rules
+    if (this.state.cohabiting) {
+      return "<div class=\"intestacy-cohabiting-warning\">" + "Warning: As a cohabiting partner, you have no automatic inheritance rights under UK law." + "</div>\n\n" + "Your estate of ".concat(formattedValue, " will be distributed as follows:\n") + "\u2022 Your cohabiting partner will not automatically inherit anything\n" + "\u2022 Your estate will pass to your relatives according to intestacy rules:\n" + this.getInheritanceHierarchyText(estateValue) + "\n\nTo protect your partner, you should create a valid Will.";
+    }
+
     // Spouse rules
     if (this.state.married) {
       if (!this.state.children) {
@@ -262,12 +261,6 @@ class IntestacyCalculator {
       } else if (this.state.halfSiblings) {
         return "Your entire estate of ".concat(formattedValue, " will be divided equally between your half-siblings.");
       }
-    }
-    if (this.state.grandchildren) {
-      return "Your entire estate of ".concat(formattedValue, " will be divided equally between your grandchildren.");
-    }
-    if (this.state.greatGrandchildren) {
-      return "Your entire estate of ".concat(formattedValue, " will be divided equally between your great-grandchildren.");
     }
     if (this.state.grandparents) {
       return "Your entire estate of ".concat(formattedValue, " will be divided equally between your grandparents.");
@@ -317,6 +310,44 @@ class IntestacyCalculator {
   }
 
   /**
+   * Generate text describing the inheritance hierarchy for cohabiting cases
+   * @param {number} estateValue - The value of the estate
+   * @returns {string} - Description of how the estate will be distributed
+   */
+  getInheritanceHierarchyText(estateValue) {
+    var formattedValue = this.formatCurrency(estateValue);
+    if (this.state.children) {
+      var childrenText = !this.state.childrenDeceased ? "children" : "living children and the children of your deceased children (who will share their parent's portion per stirpes)";
+      return "  - Your entire estate of ".concat(formattedValue, " will be divided equally between your ").concat(childrenText, ".");
+    }
+    if (this.state.parentsAlive) {
+      return "  - Your entire estate of ".concat(formattedValue, " will pass to your surviving parent(s) in equal shares.");
+    }
+    if (this.state.siblings) {
+      if (this.state.fullSiblings) {
+        var siblingType = "full siblings";
+        var _childrenText4 = this.state.siblingsDeceasedWithChildren ? " (their children will inherit their share per stirpes)" : "";
+        return "  - Your entire estate of ".concat(formattedValue, " will be divided equally between your ").concat(siblingType).concat(_childrenText4, ".");
+      } else if (this.state.halfSiblings) {
+        return "  - Your entire estate of ".concat(formattedValue, " will be divided equally between your half-siblings.");
+      }
+    }
+    if (this.state.grandparents) {
+      return "  - Your entire estate of ".concat(formattedValue, " will be divided equally between your grandparents.");
+    }
+    if (this.state.auntsUncles) {
+      if (this.state.fullAuntsUncles) {
+        var auntsText = "aunts and uncles";
+        var _childrenText5 = this.state.auntsUnclesDeceasedWithChildren ? " (their children will inherit their share per stirpes)" : "";
+        return "  - Your entire estate of ".concat(formattedValue, " will be divided equally between your ").concat(auntsText).concat(_childrenText5, ".");
+      } else if (this.state.halfAuntsUncles) {
+        return "  - Your entire estate of ".concat(formattedValue, " will be divided equally between your half-aunts and half-uncles.");
+      }
+    }
+    return "  - Your estate of ".concat(formattedValue, " will pass to the Crown (Bona Vacantia).");
+  }
+
+  /**
    * Check if we have enough information to determine distribution
    * @returns {boolean} - True if we can determine distribution, false otherwise
    */
@@ -329,7 +360,7 @@ class IntestacyCalculator {
     }
 
     // Check the full hierarchy
-    return [this.state.parentsAlive !== null && this.state.parentsAlive, this.state.fullSiblings !== null && this.state.fullSiblings, this.state.halfSiblings !== null && this.state.halfSiblings, this.state.grandchildren !== null && this.state.grandchildren, this.state.greatGrandchildren !== null && this.state.greatGrandchildren, this.state.grandparents !== null && this.state.grandparents, this.state.fullAuntsUncles !== null && this.state.fullAuntsUncles, this.state.halfAuntsUncles !== null && this.state.halfAuntsUncles].some(condition => condition);
+    return [this.state.parentsAlive !== null && this.state.parentsAlive, this.state.fullSiblings !== null && this.state.fullSiblings, this.state.halfSiblings !== null && this.state.halfSiblings, this.state.grandparents !== null && this.state.grandparents, this.state.fullAuntsUncles !== null && this.state.fullAuntsUncles, this.state.halfAuntsUncles !== null && this.state.halfAuntsUncles].some(condition => condition);
   }
 }
 
@@ -465,12 +496,23 @@ class IntestacyUI {
     // Add CSS class to container
     this.container.classList.add('intestacy-calculator');
 
+    // Set contact info
+    this.options.contactPhone = this.options.contactPhone || '0123 456 7890';
+    this.options.contactEmail = this.options.contactEmail || 'info@example.com';
+
     // Create header
     var header = document.createElement('div');
     header.className = 'intestacy-header';
     header.innerHTML = "\n      <h1>UK Intestacy Calculator</h1>\n      <p>Find out how your estate would be distributed if you die without a will</p>\n    ";
     this.container.appendChild(header);
 
+    // Create cohabiting warning (hidden by default)
+    var cohabitingWarning = document.createElement('div');
+    cohabitingWarning.className = 'intestacy-cohabiting-warning';
+    cohabitingWarning.style.display = 'none';
+    cohabitingWarning.innerHTML = "\n      <strong>WARNING:</strong> As a cohabiting partner, you have NO automatic inheritance rights under UK law.\n      <p>Your partner will NOT automatically inherit anything from your estate if you die without a will.</p>\n      <p>To protect your partner, you should create a valid Will as soon as possible.</p>\n      <p class=\"intestacy-contact-highlight\">Contact our firm at <strong>".concat(this.options.contactPhone, "</strong> or <strong>").concat(this.options.contactEmail, "</strong> to discuss creating a Will.</p>\n    ");
+    this.container.appendChild(cohabitingWarning);
+    this.elements.cohabitingWarning = cohabitingWarning;
     // Create main content area
     var content = document.createElement('div');
     content.className = 'intestacy-content';
@@ -498,7 +540,7 @@ class IntestacyUI {
     // Create status input
     var statusSection = document.createElement('div');
     statusSection.className = 'intestacy-section intestacy-status-section';
-    statusSection.innerHTML = "\n      <label>What is your relationship status?</label>\n      <div class=\"intestacy-radio-group\">\n        <label>\n          <input type=\"radio\" name=\"intestacy-status\" value=\"single\"> Single\n        </label>\n        <label>\n          <input type=\"radio\" name=\"intestacy-status\" value=\"married\"> Married/Civil Partnership\n        </label>\n        <label>\n          <input type=\"radio\" name=\"intestacy-status\" value=\"divorced\"> Divorced\n        </label>\n        <label>\n          <input type=\"radio\" name=\"intestacy-status\" value=\"widowed\"> Widowed\n        </label>\n      </div>\n    ";
+    statusSection.innerHTML = "\n      <label>What is your relationship status?</label>\n      <div class=\"intestacy-radio-group\">\n        <label>\n          <input type=\"radio\" name=\"intestacy-status\" value=\"single\"> Single\n        </label>\n        <label>\n          <input type=\"radio\" name=\"intestacy-status\" value=\"married\"> Married/Civil Partnership\n        </label>\n        <label>\n          <input type=\"radio\" name=\"intestacy-status\" value=\"cohabiting\"> Co-habiting\n        </label>\n        <label>\n          <input type=\"radio\" name=\"intestacy-status\" value=\"divorced\"> Divorced\n        </label>\n        <label>\n          <input type=\"radio\" name=\"intestacy-status\" value=\"widowed\"> Widowed\n        </label>\n      </div>\n    ";
     content.appendChild(statusSection);
     this.elements.statusSection = statusSection;
     this.elements.statusInputs = statusSection.querySelectorAll('input[name="intestacy-status"]');
@@ -652,6 +694,11 @@ class IntestacyUI {
     this.elements.statusSection.style.display = 'none';
     this.elements.questionSection.style.display = 'block';
     this.elements.resultSection.style.display = 'none';
+
+    // Ensure cohabiting warning remains visible if applicable
+    if (this.calculator.state.cohabiting) {
+      this.elements.cohabitingWarning.style.display = 'block';
+    }
   }
 
   /**
@@ -668,7 +715,15 @@ class IntestacyUI {
     this.elements.result.innerHTML = formattedResult;
 
     // Update contact info
-    this.elements.contactInfo.textContent = this.options.contactInfo;
+    if (this.calculator.state.cohabiting) {
+      // Enhanced contact info for cohabiting partners
+      this.elements.contactInfo.innerHTML = "\n        <strong>URGENT:</strong> As a cohabiting partner, creating a Will is essential to protect your partner.\n        <br>Contact our firm at <strong>0123 456 7890</strong> or <strong>info@example.com</strong> to discuss creating a Will.\n      ";
+
+      // Ensure cohabiting warning remains visible
+      this.elements.cohabitingWarning.style.display = 'block';
+    } else {
+      this.elements.contactInfo.textContent = this.options.contactInfo;
+    }
 
     // Show/hide sections
     this.elements.nameSection.style.display = 'none';
@@ -760,6 +815,14 @@ class IntestacyUI {
     this.calculator.state.name = this.state.name;
     this.calculator.state.estateValue = this.state.estateValue;
     this.calculator.state.married = selectedStatus === 'married';
+    this.calculator.state.cohabiting = selectedStatus === 'cohabiting';
+
+    // Show or hide cohabiting warning
+    if (selectedStatus === 'cohabiting') {
+      this.elements.cohabitingWarning.style.display = 'block';
+    } else {
+      this.elements.cohabitingWarning.style.display = 'none';
+    }
 
     // Start the question flow
     this.showQuestion('children');
@@ -822,6 +885,9 @@ class IntestacyUI {
       input.checked = false;
     });
 
+    // Hide cohabiting warning
+    this.elements.cohabitingWarning.style.display = 'none';
+
     // Show first step
     this.showNameInput();
   }
@@ -838,7 +904,9 @@ class IntestacyWidget {
     this.options = _objectSpread2({
       container: '#intestacy-calculator',
       theme: 'light',
-      contactInfo: 'Please contact us to discuss creating a Will.'
+      contactInfo: 'Please contact us to discuss creating a Will.',
+      contactPhone: '0123 456 7890',
+      contactEmail: 'info@example.com'
     }, options);
 
     // Initialize the widget
@@ -853,7 +921,12 @@ class IntestacyWidget {
     this.loadStyles();
 
     // Initialize UI
-    this.ui = new IntestacyUI(this.options.container, this.options);
+    this.ui = new IntestacyUI(this.options.container, {
+      theme: this.options.theme,
+      contactInfo: this.options.contactInfo,
+      contactPhone: this.options.contactPhone,
+      contactEmail: this.options.contactEmail
+    });
   }
 
   /**
@@ -879,7 +952,7 @@ class IntestacyWidget {
    * @returns {string} - CSS styles
    */
   getStyles() {
-    return "\n      /**\n       * Intestacy Calculator Styles\n       */\n      \n      /* Base styles */\n      .intestacy-calculator {\n        font-family: Arial, sans-serif;\n        max-width: 800px;\n        margin: 0 auto;\n        padding: 20px;\n        box-sizing: border-box;\n      }\n      \n      .intestacy-calculator * {\n        box-sizing: border-box;\n      }\n      \n      /* Header */\n      .intestacy-header {\n        margin-bottom: 30px;\n        text-align: center;\n      }\n      \n      .intestacy-header h1 {\n        font-size: 28px;\n        margin: 0 0 10px 0;\n        color: #333;\n      }\n      \n      .intestacy-header p {\n        font-size: 16px;\n        margin: 0;\n        color: #666;\n      }\n      \n      /* Content sections */\n      .intestacy-content {\n        background-color: #f9f9f9;\n        border-radius: 8px;\n        padding: 20px;\n        margin-bottom: 20px;\n        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n      }\n      \n      .intestacy-section {\n        margin-bottom: 20px;\n      }\n      \n      /* Form elements */\n      .intestacy-calculator label {\n        display: block;\n        font-size: 16px;\n        font-weight: bold;\n        margin-bottom: 8px;\n        color: #333;\n      }\n      \n      .intestacy-calculator input[type=\"text\"],\n      .intestacy-calculator input[type=\"number\"] {\n        width: 100%;\n        padding: 10px;\n        font-size: 16px;\n        border: 1px solid #ccc;\n        border-radius: 4px;\n        margin-bottom: 5px;\n      }\n      \n      .intestacy-calculator input[type=\"text\"]:focus,\n      .intestacy-calculator input[type=\"number\"]:focus {\n        border-color: #007bff;\n        outline: none;\n        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);\n      }\n      \n      /* Radio buttons */\n      .intestacy-radio-group {\n        margin-top: 10px;\n      }\n      \n      .intestacy-radio-group label {\n        display: block;\n        font-weight: normal;\n        margin-bottom: 10px;\n        cursor: pointer;\n      }\n      \n      .intestacy-radio-group input[type=\"radio\"] {\n        margin-right: 8px;\n      }\n      \n      /* Error messages */\n      .intestacy-error {\n        color: #dc3545;\n        font-size: 14px;\n        margin-top: 5px;\n        min-height: 20px;\n      }\n      \n      /* Question section */\n      .intestacy-question {\n        font-size: 18px;\n        margin-bottom: 15px;\n        color: #333;\n      }\n      \n      /* Result section */\n      .intestacy-result {\n        background-color: #fff;\n        padding: 20px;\n        border-radius: 5px;\n        margin-bottom: 20px;\n        border-left: 4px solid #007bff;\n      }\n      \n      .intestacy-result h2 {\n        font-size: 22px;\n        margin-top: 0;\n        margin-bottom: 15px;\n        color: #333;\n      }\n      \n      .intestacy-result p {\n        margin-bottom: 15px;\n        line-height: 1.5;\n      }\n      \n      .intestacy-next-steps {\n        margin-top: 20px;\n      }\n      \n      .intestacy-next-steps h2 {\n        font-size: 20px;\n        margin-top: 0;\n        margin-bottom: 10px;\n        color: #333;\n      }\n      \n      /* Buttons */\n      .intestacy-buttons {\n        display: flex;\n        justify-content: space-between;\n        margin-bottom: 20px;\n      }\n      \n      .intestacy-calculator button {\n        padding: 10px 20px;\n        font-size: 16px;\n        border: none;\n        border-radius: 4px;\n        cursor: pointer;\n        transition: background-color 0.2s;\n      }\n      \n      #intestacy-continue {\n        background-color: #007bff;\n        color: white;\n      }\n      \n      #intestacy-continue:hover {\n        background-color: #0069d9;\n      }\n      \n      #intestacy-restart {\n        background-color: #6c757d;\n        color: white;\n      }\n      \n      #intestacy-restart:hover {\n        background-color: #5a6268;\n      }\n      \n      /* Footer */\n      .intestacy-footer {\n        font-size: 14px;\n        color: #666;\n        text-align: center;\n        margin-top: 30px;\n        padding-top: 15px;\n        border-top: 1px solid #eee;\n      }\n      \n      /* Light theme (default) */\n      .intestacy-theme-light {\n        /* Default styles are already light theme */\n      }\n      \n      /* Dark theme */\n      .intestacy-theme-dark {\n        background-color: #333;\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-header h1 {\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-header p {\n        color: #ccc;\n      }\n      \n      .intestacy-theme-dark .intestacy-content {\n        background-color: #444;\n        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n      }\n      \n      .intestacy-theme-dark .intestacy-calculator label {\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-calculator input[type=\"text\"],\n      .intestacy-theme-dark .intestacy-calculator input[type=\"number\"] {\n        background-color: #555;\n        border-color: #666;\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-question {\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-result {\n        background-color: #555;\n        border-left-color: #0d6efd;\n      }\n      \n      .intestacy-theme-dark .intestacy-result h2 {\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-next-steps h2 {\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-footer {\n        color: #ccc;\n        border-top-color: #555;\n      }\n      \n      /* Responsive styles */\n      @media (max-width: 768px) {\n        .intestacy-calculator {\n          padding: 15px;\n        }\n        \n        .intestacy-header h1 {\n          font-size: 24px;\n        }\n        \n        .intestacy-content {\n          padding: 15px;\n        }\n        \n        .intestacy-buttons {\n          flex-direction: column;\n          gap: 10px;\n        }\n        \n        .intestacy-calculator button {\n          width: 100%;\n        }\n      }\n      \n      @media (max-width: 480px) {\n        .intestacy-header h1 {\n          font-size: 22px;\n        }\n        \n        .intestacy-question {\n          font-size: 16px;\n        }\n        \n        .intestacy-result h2 {\n          font-size: 20px;\n        }\n      }\n    ";
+    return "\n      /**\n       * Intestacy Calculator Styles\n       */\n      \n      /* Base styles */\n      .intestacy-calculator {\n        font-family: Arial, sans-serif;\n        max-width: 800px;\n        margin: 0 auto;\n        padding: 20px;\n        box-sizing: border-box;\n      }\n      \n      .intestacy-calculator * {\n        box-sizing: border-box;\n      }\n      \n      /* Cohabiting warning styles */\n      .intestacy-cohabiting-warning {\n        background-color: #ffebee;\n        border: 2px solid #f44336;\n        color: #c62828;\n        padding: 20px;\n        margin: 20px 0;\n        border-radius: 6px;\n        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n        position: relative;\n        overflow: hidden;\n        animation: pulse 2s infinite;\n      }\n      \n      @keyframes pulse {\n        0% {\n          box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4);\n        }\n        70% {\n          box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);\n        }\n        100% {\n          box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);\n        }\n      }\n      \n      /* Add a left border accent for visual emphasis */\n      .intestacy-cohabiting-warning::before {\n        content: \"\";\n        position: absolute;\n        left: 0;\n        top: 0;\n        bottom: 0;\n        width: 6px;\n        background-color: #d32f2f;\n      }\n      \n      .intestacy-cohabiting-warning strong:first-child {\n        display: block;\n        font-size: 18px;\n        margin-bottom: 10px;\n        color: #d32f2f;\n        text-transform: uppercase;\n        letter-spacing: 0.5px;\n      }\n      \n      .intestacy-cohabiting-warning p {\n        margin: 10px 0;\n        line-height: 1.5;\n        font-size: 15px;\n      }\n      \n      .intestacy-contact-highlight {\n        background-color: rgba(255, 255, 255, 0.7);\n        padding: 12px;\n        border-radius: 4px;\n        margin-top: 12px;\n        font-weight: bold;\n        border-left: 3px solid #d32f2f;\n      }\n      \n      .intestacy-contact-highlight strong {\n        color: #d32f2f;\n      }\n      \n      /* Header */\n      .intestacy-header {\n        margin-bottom: 30px;\n        text-align: center;\n      }\n      \n      .intestacy-header h1 {\n        font-size: 28px;\n        margin: 0 0 10px 0;\n        color: #333;\n      }\n      \n      .intestacy-header p {\n        font-size: 16px;\n        margin: 0;\n        color: #666;\n      }\n      \n      /* Content sections */\n      .intestacy-content {\n        background-color: #f9f9f9;\n        border-radius: 8px;\n        padding: 20px;\n        margin-bottom: 20px;\n        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n      }\n      \n      .intestacy-section {\n        margin-bottom: 20px;\n      }\n      \n      /* Form elements */\n      .intestacy-calculator label {\n        display: block;\n        font-size: 16px;\n        font-weight: bold;\n        margin-bottom: 8px;\n        color: #333;\n      }\n      \n      .intestacy-calculator input[type=\"text\"],\n      .intestacy-calculator input[type=\"number\"] {\n        width: 100%;\n        padding: 10px;\n        font-size: 16px;\n        border: 1px solid #ccc;\n        border-radius: 4px;\n        margin-bottom: 5px;\n      }\n      \n      .intestacy-calculator input[type=\"text\"]:focus,\n      .intestacy-calculator input[type=\"number\"]:focus {\n        border-color: #007bff;\n        outline: none;\n        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);\n      }\n      \n      /* Radio buttons */\n      .intestacy-radio-group {\n        margin-top: 10px;\n      }\n      \n      .intestacy-radio-group label {\n        display: block;\n        font-weight: normal;\n        margin-bottom: 10px;\n        cursor: pointer;\n      }\n      \n      .intestacy-radio-group input[type=\"radio\"] {\n        margin-right: 8px;\n      }\n      \n      /* Error messages */\n      .intestacy-error {\n        color: #dc3545;\n        font-size: 14px;\n        margin-top: 5px;\n        min-height: 20px;\n      }\n      \n      /* Question section */\n      .intestacy-question {\n        font-size: 18px;\n        margin-bottom: 15px;\n        color: #333;\n      }\n      \n      /* Result section */\n      .intestacy-result {\n        background-color: #fff;\n        padding: 20px;\n        border-radius: 5px;\n        margin-bottom: 20px;\n        border-left: 4px solid #007bff;\n      }\n      \n      .intestacy-result h2 {\n        font-size: 22px;\n        margin-top: 0;\n        margin-bottom: 15px;\n        color: #333;\n      }\n      \n      .intestacy-result p {\n        margin-bottom: 15px;\n        line-height: 1.5;\n      }\n      \n      .intestacy-next-steps {\n        margin-top: 20px;\n      }\n      \n      .intestacy-next-steps h2 {\n        font-size: 20px;\n        margin-top: 0;\n        margin-bottom: 10px;\n        color: #333;\n      }\n      \n      /* Buttons */\n      .intestacy-buttons {\n        display: flex;\n        justify-content: space-between;\n        margin-bottom: 20px;\n      }\n      \n      .intestacy-calculator button {\n        padding: 10px 20px;\n        font-size: 16px;\n        border: none;\n        border-radius: 4px;\n        cursor: pointer;\n        transition: background-color 0.2s;\n      }\n      \n      #intestacy-continue {\n        background-color: #007bff;\n        color: white;\n      }\n      \n      #intestacy-continue:hover {\n        background-color: #0069d9;\n      }\n      \n      #intestacy-restart {\n        background-color: #6c757d;\n        color: white;\n      }\n      \n      #intestacy-restart:hover {\n        background-color: #5a6268;\n      }\n      \n      /* Footer */\n      .intestacy-footer {\n        font-size: 14px;\n        color: #666;\n        text-align: center;\n        margin-top: 30px;\n        padding-top: 15px;\n        border-top: 1px solid #eee;\n      }\n      \n      /* Light theme (default) */\n      .intestacy-theme-light {\n        /* Default styles are already light theme */\n      }\n      \n      /* Dark theme */\n      .intestacy-theme-dark {\n        background-color: #333;\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-header h1 {\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-header p {\n        color: #ccc;\n      }\n      \n      .intestacy-theme-dark .intestacy-content {\n        background-color: #444;\n        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n      }\n      \n      .intestacy-theme-dark .intestacy-calculator label {\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-calculator input[type=\"text\"],\n      .intestacy-theme-dark .intestacy-calculator input[type=\"number\"] {\n        background-color: #555;\n        border-color: #666;\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-question {\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-result {\n        background-color: #555;\n        border-left-color: #0d6efd;\n      }\n      \n      .intestacy-theme-dark .intestacy-result h2 {\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-next-steps h2 {\n        color: #f5f5f5;\n      }\n      \n      .intestacy-theme-dark .intestacy-footer {\n        color: #ccc;\n        border-top-color: #555;\n      }\n      \n      /* Dark theme adjustments for cohabiting warning */\n      .intestacy-theme-dark .intestacy-cohabiting-warning {\n        background-color: rgba(244, 67, 54, 0.15);\n        border-color: #f44336;\n        color: #ff8a80;\n      }\n      \n      .intestacy-theme-dark .intestacy-contact-highlight {\n        background-color: rgba(0, 0, 0, 0.3);\n        color: #fff;\n      }\n      \n      /* Responsive styles */\n      @media (max-width: 768px) {\n        .intestacy-calculator {\n          padding: 15px;\n        }\n        \n        .intestacy-header h1 {\n          font-size: 24px;\n        }\n        \n        .intestacy-content {\n          padding: 15px;\n        }\n        \n        .intestacy-buttons {\n          flex-direction: column;\n          gap: 10px;\n        }\n        \n        .intestacy-calculator button {\n          width: 100%;\n        }\n      }\n      \n      @media (max-width: 480px) {\n        .intestacy-header h1 {\n          font-size: 22px;\n        }\n        \n        .intestacy-question {\n          font-size: 16px;\n        }\n        \n        .intestacy-result h2 {\n          font-size: 20px;\n        }\n      }\n    ";
   }
 
   /**

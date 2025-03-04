@@ -111,6 +111,18 @@ describe('IntestacyCalculator', () => {
       expect(result).toContain('Your entire estate of £500,000.00 will be divided equally between your children.');
     });
     
+    test('should handle unmarried with children where some children are deceased with their own children', () => {
+      calculator.state.name = 'John Doe';
+      calculator.state.estateValue = 500000;
+      calculator.state.married = false;
+      calculator.state.children = true;
+      calculator.state.childrenDeceased = true;
+      calculator.state.deceasedChildrenHadChildren = true;
+      
+      const result = calculator.calculateDistribution();
+      expect(result).toContain('Your entire estate of £500,000.00 will be divided equally between your living children and the children of your deceased children (who will share their parent\'s portion per stirpes).');
+    });
+    
     test('should handle unmarried with no children but living parents', () => {
       calculator.state.name = 'John Doe';
       calculator.state.estateValue = 500000;
@@ -122,6 +134,77 @@ describe('IntestacyCalculator', () => {
       expect(result).toContain('Your entire estate of £500,000.00 will pass to your surviving parent(s) in equal shares.');
     });
     
+    test('should handle unmarried with no children, no parents, but full siblings', () => {
+      calculator.state.name = 'John Doe';
+      calculator.state.estateValue = 500000;
+      calculator.state.married = false;
+      calculator.state.children = false;
+      calculator.state.parentsAlive = false;
+      calculator.state.siblings = true;
+      calculator.state.fullSiblings = true;
+      
+      const result = calculator.calculateDistribution();
+      expect(result).toContain('Your entire estate of £500,000.00 will be divided equally between your full siblings.');
+    });
+    
+    test('should handle unmarried with no children, no parents, no full siblings, but half siblings', () => {
+      calculator.state.name = 'John Doe';
+      calculator.state.estateValue = 500000;
+      calculator.state.married = false;
+      calculator.state.children = false;
+      calculator.state.parentsAlive = false;
+      calculator.state.siblings = true;
+      calculator.state.fullSiblings = false;
+      calculator.state.halfSiblings = true;
+      
+      const result = calculator.calculateDistribution();
+      expect(result).toContain('Your entire estate of £500,000.00 will be divided equally between your half-siblings.');
+    });
+    
+    test('should handle unmarried with no children, no parents, no siblings, but living grandparents', () => {
+      calculator.state.name = 'John Doe';
+      calculator.state.estateValue = 500000;
+      calculator.state.married = false;
+      calculator.state.children = false;
+      calculator.state.parentsAlive = false;
+      calculator.state.siblings = false;
+      calculator.state.grandparents = true;
+      
+      const result = calculator.calculateDistribution();
+      expect(result).toContain('Your entire estate of £500,000.00 will be divided equally between your grandparents.');
+    });
+    
+    test('should handle unmarried with no children, no parents, no siblings, no grandparents, but full aunts/uncles', () => {
+      calculator.state.name = 'John Doe';
+      calculator.state.estateValue = 500000;
+      calculator.state.married = false;
+      calculator.state.children = false;
+      calculator.state.parentsAlive = false;
+      calculator.state.siblings = false;
+      calculator.state.grandparents = false;
+      calculator.state.auntsUncles = true;
+      calculator.state.fullAuntsUncles = true;
+      
+      const result = calculator.calculateDistribution();
+      expect(result).toContain('Your entire estate of £500,000.00 will be divided equally between your aunts and uncles.');
+    });
+    
+    test('should handle unmarried with no children, no parents, no siblings, no grandparents, no full aunts/uncles, but half aunts/uncles', () => {
+      calculator.state.name = 'John Doe';
+      calculator.state.estateValue = 500000;
+      calculator.state.married = false;
+      calculator.state.children = false;
+      calculator.state.parentsAlive = false;
+      calculator.state.siblings = false;
+      calculator.state.grandparents = false;
+      calculator.state.auntsUncles = true;
+      calculator.state.fullAuntsUncles = false;
+      calculator.state.halfAuntsUncles = true;
+      
+      const result = calculator.calculateDistribution();
+      expect(result).toContain('Your entire estate of £500,000.00 will be divided equally between your half-aunts and half-uncles.');
+    });
+    
     test('should handle bona vacantia case', () => {
       calculator.state.name = 'John Doe';
       calculator.state.estateValue = 500000;
@@ -129,13 +212,40 @@ describe('IntestacyCalculator', () => {
       calculator.state.children = false;
       calculator.state.parentsAlive = false;
       calculator.state.siblings = false;
-      calculator.state.grandchildren = false;
-      calculator.state.greatGrandchildren = false;
       calculator.state.grandparents = false;
       calculator.state.auntsUncles = false;
       
       const result = calculator.calculateDistribution();
       expect(result).toContain('Your estate of £500,000.00 will pass to the Crown (Bona Vacantia).');
+    });
+    
+    test('should handle cohabiting with children', () => {
+      calculator.state.name = 'John Doe';
+      calculator.state.estateValue = 500000;
+      calculator.state.married = false;
+      calculator.state.cohabiting = true;
+      calculator.state.children = true;
+      
+      const result = calculator.calculateDistribution();
+      expect(result).toContain('class="intestacy-cohabiting-warning"');
+      expect(result).toContain('Warning: As a cohabiting partner, you have no automatic inheritance rights under UK law');
+      expect(result).toContain('Your cohabiting partner will not automatically inherit anything');
+      expect(result).toContain('Your entire estate of £500,000.00 will be divided equally between your children');
+    });
+    
+    test('should handle cohabiting with no children but living parents', () => {
+      calculator.state.name = 'John Doe';
+      calculator.state.estateValue = 500000;
+      calculator.state.married = false;
+      calculator.state.cohabiting = true;
+      calculator.state.children = false;
+      calculator.state.parentsAlive = true;
+      
+      const result = calculator.calculateDistribution();
+      expect(result).toContain('class="intestacy-cohabiting-warning"');
+      expect(result).toContain('Warning: As a cohabiting partner, you have no automatic inheritance rights under UK law');
+      expect(result).toContain('Your cohabiting partner will not automatically inherit anything');
+      expect(result).toContain('Your entire estate of £500,000.00 will pass to your surviving parent(s) in equal shares');
     });
   });
   

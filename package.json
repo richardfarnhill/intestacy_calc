@@ -6,13 +6,21 @@
   "module": "src/integration/IntestacyWidget.js",
   "type": "module",
   "scripts": {
-    "build": "rollup -c && npm run copy-index",
-    "copy-index": "cp index.html dist/",
+    "build": "rollup -c && npm run copy-examples && npm run copy-docs",
+    "copy-index": "copy index.html dist\\",
     "dev": "rollup -c -w",
-    "test": "jest",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "lint": "eslint src/**/*.js",
     "serve": "node server.js",
-    "start": "npm run serve"
+    "start": "npm run serve",
+    "copy-examples": "copyfiles -u 1 \"examples/**/*\" dist/",
+    "copy-docs": "copyfiles -u 1 \"docs/**/*\" dist/docs/"
+  },
+  "jest": {
+    "transform": {},
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "<rootDir>/tests/mocks/styleMock.js"
+    }
   },
   "keywords": [
     "intestacy",
@@ -32,6 +40,7 @@
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-terser": "^0.4.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.50.0",
     "http-server": "^14.1.0",
     "jest": "^29.7.0",

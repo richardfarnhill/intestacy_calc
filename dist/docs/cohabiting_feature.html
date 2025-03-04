@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cohabiting Status Feature - UK Intestacy Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    h1, h2, h3 {
+      color: #2c3e50;
+    }
+    
+    h1 {
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+    
+    h2 {
+      margin-top: 30px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    
+    code {
+      background-color: #f5f5f5;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    
+    pre {
+      background-color: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    
+    .warning {
+      background-color: #f8d7da;
+      border: 2px solid #dc3545;
+      color: #721c24;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    
+    .note {
+      background-color: #d1ecf1;
+      border: 1px solid #bee5eb;
+      color: #0c5460;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    
+    strong {
+      font-weight: bold;
+    }
+    
+    .nav {
+      margin-bottom: 30px;
+    }
+    
+    .nav a {
+      display: inline-block;
+      margin-right: 15px;
+      color: #007bff;
+      text-decoration: none;
+    }
+    
+    .nav a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="../index.html">Home</a>
+    <a href="index.html">Documentation</a>
+    <a href="development.html">Development Plans</a>
+    <a href="cohabiting_feature.html">Cohabiting Feature</a>
+  </div>
+
+  <h1>Cohabiting Status Feature</h1>
+
+  <h2>Overview</h2>
+  <p>The UK Intestacy Calculator now includes special handling for users who are in a cohabiting relationship. This feature was added to highlight the limited inheritance rights of cohabiting partners under UK law and to encourage these users to create a valid Will to protect their partner.</p>
+
+  <h2>Legal Context</h2>
+  <p>Under UK intestacy rules, cohabiting partners (unmarried couples living together) have <strong>no automatic inheritance rights</strong> if their partner dies without a will. This means that the estate would pass to children, parents, siblings, etc., following the standard intestacy rules, potentially leaving the surviving partner with nothing.</p>
+  
+  <p>This is in stark contrast to married couples or those in civil partnerships, who have significant inheritance rights under intestacy rules.</p>
+
+  <div class="warning">
+    <strong>WARNING:</strong> Cohabiting partners have NO automatic inheritance rights under UK law. If you are in a cohabiting relationship, creating a Will is essential to protect your partner.
+  </div>
+
+  <h2>Implementation Details</h2>
+
+  <h3>User Interface</h3>
+  <ol>
+    <li>
+      <strong>Relationship Status Selection</strong>:
+      <ul>
+        <li>A new 'Co-habiting' option has been added to the relationship status radio buttons</li>
+        <li>When selected, this immediately triggers a prominent warning message</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Persistent Warning</strong>:
+      <ul>
+        <li>A highly visible warning appears immediately when a user selects 'Co-habiting'</li>
+        <li>The warning remains visible throughout the entire question flow</li>
+        <li>The warning is styled with a red border and background to draw attention</li>
+        <li>An animation effect (pulsing) is applied to emphasize the importance</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Warning Content</strong>:
+      <ul>
+        <li>Clear statement that cohabiting partners have NO automatic inheritance rights</li>
+        <li>Explanation that the partner will NOT inherit anything automatically</li>
+        <li>Recommendation to create a valid Will as soon as possible</li>
+        <li>Contact information for the firm to discuss creating a Will</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Enhanced Results Page</strong>:
+      <ul>
+        <li>Additional emphasis in the results section for cohabiting users</li>
+        <li>Special contact information with "URGENT" messaging</li>
+        <li>Clear explanation of how the estate will be distributed (to relatives, not the partner)</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h3>Technical Implementation</h3>
+  <ol>
+    <li>
+      <strong>State Management</strong>:
+      <ul>
+        <li>Added a new <code>cohabiting</code> boolean property to the calculator's state</li>
+        <li>This property is set to <code>true</code> when the user selects 'Co-habiting' as their relationship status</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Distribution Calculation</strong>:
+      <ul>
+        <li>Special handling in the <code>calculateDistribution</code> method for cohabiting users</li>
+        <li>Warning message included in the distribution results</li>
+        <li>Clear explanation that the estate will pass to relatives according to intestacy rules</li>
+      </ul>
+    </li>
+    <li>
+      <strong>CSS Styling</strong>:
+      <ul>
+        <li>Custom CSS class <code>.intestacy-cohabiting-warning</code> for styling the warning message</li>
+        <li>Animation effects to draw attention to the warning</li>
+        <li>Responsive design that works on all devices</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Persistence</strong>:
+      <ul>
+        <li>The warning remains visible throughout the question flow</li>
+        <li>Warning is reset when the user starts over</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h2>Configuration</h2>
+  <p>The contact information displayed in the warning is currently using placeholder values:</p>
+  <ul>
+    <li>Phone: 0123 456 7890</li>
+    <li>Email: info@example.com</li>
+  </ul>
+  <p>These will be replaced with actual firm contact details when the admin dashboard is implemented.</p>
+
+  <div class="note">
+    <strong>Note:</strong> The contact information is configurable and will be managed through the upcoming admin dashboard.
+  </div>
+
+  <h2>Future Enhancements</h2>
+  <ol>
+    <li>
+      <strong>Admin Dashboard Integration</strong>:
+      <ul>
+        <li>Allow customization of the warning message and contact information through the admin dashboard</li>
+        <li>Enable co-branding of the warning message</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Direct Will Creation Link</strong>:
+      <ul>
+        <li>Add a direct link or button for cohabiting users to start the Will creation process</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Educational Content</strong>:
+      <ul>
+        <li>Provide more detailed information about the legal implications of cohabitation</li>
+        <li>Include case studies or examples to illustrate the potential issues</li>
+      </ul>
+    </li>
+  </ol>
+
+  <footer style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 14px; color: #777;">
+    <p>UK Intestacy Calculator Documentation &copy; 2025</p>
+  </footer>
+</body>
+</html>

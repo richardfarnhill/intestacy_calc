@@ -234,6 +234,40 @@
   border-top-color: #555;
 }
 
+/* Cohabiting warning message */
+.intestacy-cohabiting-warning {
+  background-color: #f8d7da;
+  border: 2px solid #dc3545;
+  color: #721c24;
+  padding: 15px;
+  margin: 0 0 20px 0;
+  border-radius: 4px;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  animation: pulse 2s infinite;
+}
+
+.intestacy-cohabiting-warning strong {
+  font-size: 1.1em;
+  color: #dc3545;
+}
+
+.intestacy-cohabiting-warning p {
+  margin: 10px 0;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+  }
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
   .intestacy-calculator {

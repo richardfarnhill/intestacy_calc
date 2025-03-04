@@ -16,6 +16,8 @@ class IntestacyWidget {
       container: '#intestacy-calculator',
       theme: 'light',
       contactInfo: 'Please contact us to discuss creating a Will.',
+      contactPhone: '0123 456 7890',
+      contactEmail: 'info@example.com',
       ...options
     };
     
@@ -32,8 +34,13 @@ class IntestacyWidget {
     
     // Initialize UI
     this.ui = new IntestacyUI(
-      this.options.container, 
-      this.options
+      this.options.container,
+      {
+        theme: this.options.theme,
+        contactInfo: this.options.contactInfo,
+        contactPhone: this.options.contactPhone,
+        contactEmail: this.options.contactEmail
+      }
     );
   }
   
@@ -76,6 +83,71 @@ class IntestacyWidget {
       
       .intestacy-calculator * {
         box-sizing: border-box;
+      }
+      
+      /* Cohabiting warning styles */
+      .intestacy-cohabiting-warning {
+        background-color: #ffebee;
+        border: 2px solid #f44336;
+        color: #c62828;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 6px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+        animation: pulse 2s infinite;
+      }
+      
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(244, 67, 54, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(244, 67, 54, 0);
+        }
+      }
+      
+      /* Add a left border accent for visual emphasis */
+      .intestacy-cohabiting-warning::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 6px;
+        background-color: #d32f2f;
+      }
+      
+      .intestacy-cohabiting-warning strong:first-child {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #d32f2f;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .intestacy-cohabiting-warning p {
+        margin: 10px 0;
+        line-height: 1.5;
+        font-size: 15px;
+      }
+      
+      .intestacy-contact-highlight {
+        background-color: rgba(255, 255, 255, 0.7);
+        padding: 12px;
+        border-radius: 4px;
+        margin-top: 12px;
+        font-weight: bold;
+        border-left: 3px solid #d32f2f;
+      }
+      
+      .intestacy-contact-highlight strong {
+        color: #d32f2f;
       }
       
       /* Header */
@@ -297,6 +369,18 @@ class IntestacyWidget {
       .intestacy-theme-dark .intestacy-footer {
         color: #ccc;
         border-top-color: #555;
+      }
+      
+      /* Dark theme adjustments for cohabiting warning */
+      .intestacy-theme-dark .intestacy-cohabiting-warning {
+        background-color: rgba(244, 67, 54, 0.15);
+        border-color: #f44336;
+        color: #ff8a80;
+      }
+      
+      .intestacy-theme-dark .intestacy-contact-highlight {
+        background-color: rgba(0, 0, 0, 0.3);
+        color: #fff;
       }
       
       /* Responsive styles */

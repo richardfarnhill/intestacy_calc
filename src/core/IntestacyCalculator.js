@@ -13,6 +13,7 @@ class IntestacyCalculator {
       name: null,
       estateValue: null,
       married: null,
+      cohabiting: null, // New property for cohabiting status
       children: null,
       grandchildren: null,
       greatGrandchildren: null,
@@ -42,8 +43,6 @@ class IntestacyCalculator {
       { id: "fullSiblings", text: "Do you have any full siblings (same two parents)?" },
       { id: "siblingsDeceasedWithChildren", text: "Are any of your siblings deceased with children of their own?" },
       { id: "halfSiblings", text: "Do you have any half siblings (one shared parent)?" },
-      { id: "grandchildren", text: "Do you have any grandchildren?" },
-      { id: "greatGrandchildren", text: "Do you have any great-grandchildren?" },
       { id: "grandparents", text: "Do you have any living grandparents?" },
       { id: "auntsUncles", text: "Do you have any living aunts or uncles?" },
       { id: "fullAuntsUncles", text: "Do you have any full aunts or uncles (siblings of your parents)?" },
@@ -79,12 +78,10 @@ class IntestacyCalculator {
       "childrenDeceased": answer => answer ? "deceasedChildrenHadChildren" : null,
       "deceasedChildrenHadChildren": answer => null,
       "parentsAlive": answer => answer ? null : "siblings",
-      "siblings": answer => answer ? "fullSiblings" : "grandchildren",
+      "siblings": answer => answer ? "fullSiblings" : "grandparents",
       "fullSiblings": answer => answer ? "siblingsDeceasedWithChildren" : "halfSiblings",
       "siblingsDeceasedWithChildren": answer => null,
       "halfSiblings": answer => null,
-      "grandchildren": answer => answer ? null : "greatGrandchildren",
-      "greatGrandchildren": answer => answer ? null : "grandparents",
       "grandparents": answer => answer ? null : "auntsUncles",
       "auntsUncles": answer => answer ? "fullAuntsUncles" : null,
       "fullAuntsUncles": answer => answer ? "auntsUnclesDeceasedWithChildren" : "halfAuntsUncles",
@@ -139,6 +136,20 @@ class IntestacyCalculator {
   calculateDistribution() {
     const estateValue = parseFloat(this.state.estateValue);
     const formattedValue = this.formatCurrency(estateValue);
+    
+    // Cohabiting warning - check this before spouse rules
+    if (this.state.cohabiting) {
+      return (
+        `<div class="intestacy-cohabiting-warning">` +
+        `Warning: As a cohabiting partner, you have no automatic inheritance rights under UK law.` +
+        `</div>\n\n` +
+        `Your estate of ${formattedValue} will be distributed as follows:\n` +
+        `• Your cohabiting partner will not automatically inherit anything\n` +
+        `• Your estate will pass to your relatives according to intestacy rules:\n` +
+        this.getInheritanceHierarchyText(estateValue) +
+        `\n\nTo protect your partner, you should create a valid Will.`
+      );
+    }
     
     // Spouse rules
     if (this.state.married) {
@@ -195,14 +206,6 @@ class IntestacyCalculator {
       }
     }
     
-    if (this.state.grandchildren) {
-      return `Your entire estate of ${formattedValue} will be divided equally between your grandchildren.`;
-    }
-    
-    if (this.state.greatGrandchildren) {
-      return `Your entire estate of ${formattedValue} will be divided equally between your great-grandchildren.`;
-    }
-    
     if (this.state.grandparents) {
       return `Your entire estate of ${formattedValue} will be divided equally between your grandparents.`;
     }
@@ -256,6 +259,59 @@ class IntestacyCalculator {
   }
   
   /**
+   * Generate text describing the inheritance hierarchy for cohabiting cases
+   * @param {number} estateValue - The value of the estate
+   * @returns {string} - Description of how the estate will be distributed
+   */
+  getInheritanceHierarchyText(estateValue) {
+    const formattedValue = this.formatCurrency(estateValue);
+    
+    if (this.state.children) {
+      const childrenText = !this.state.childrenDeceased
+        ? "children"
+        : "living children and the children of your deceased children (who will share their parent's portion per stirpes)";
+      
+      return `  - Your entire estate of ${formattedValue} will be divided equally between your ${childrenText}.`;
+    }
+    
+    if (this.state.parentsAlive) {
+      return `  - Your entire estate of ${formattedValue} will pass to your surviving parent(s) in equal shares.`;
+    }
+    
+    if (this.state.siblings) {
+      if (this.state.fullSiblings) {
+        const siblingType = "full siblings";
+        const childrenText = this.state.siblingsDeceasedWithChildren
+          ? " (their children will inherit their share per stirpes)"
+          : "";
+        
+        return `  - Your entire estate of ${formattedValue} will be divided equally between your ${siblingType}${childrenText}.`;
+      } else if (this.state.halfSiblings) {
+        return `  - Your entire estate of ${formattedValue} will be divided equally between your half-siblings.`;
+      }
+    }
+    
+    if (this.state.grandparents) {
+      return `  - Your entire estate of ${formattedValue} will be divided equally between your grandparents.`;
+    }
+    
+    if (this.state.auntsUncles) {
+      if (this.state.fullAuntsUncles) {
+        const auntsText = "aunts and uncles";
+        const childrenText = this.state.auntsUnclesDeceasedWithChildren
+          ? " (their children will inherit their share per stirpes)"
+          : "";
+        
+        return `  - Your entire estate of ${formattedValue} will be divided equally between your ${auntsText}${childrenText}.`;
+      } else if (this.state.halfAuntsUncles) {
+        return `  - Your entire estate of ${formattedValue} will be divided equally between your half-aunts and half-uncles.`;
+      }
+    }
+    
+    return `  - Your estate of ${formattedValue} will pass to the Crown (Bona Vacantia).`;
+  }
+
+  /**
    * Check if we have enough information to determine distribution
    * @returns {boolean} - True if we can determine distribution, false otherwise
    */
@@ -276,8 +332,6 @@ class IntestacyCalculator {
       this.state.parentsAlive !== null && this.state.parentsAlive,
       this.state.fullSiblings !== null && this.state.fullSiblings,
       this.state.halfSiblings !== null && this.state.halfSiblings,
-      this.state.grandchildren !== null && this.state.grandchildren,
-      this.state.greatGrandchildren !== null && this.state.greatGrandchildren,
       this.state.grandparents !== null && this.state.grandparents,
       this.state.fullAuntsUncles !== null && this.state.fullAuntsUncles,
       this.state.halfAuntsUncles !== null && this.state.halfAuntsUncles
