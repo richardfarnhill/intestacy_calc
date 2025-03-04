@@ -12,6 +12,7 @@
     "start": "npm run serve"
   },
   "jest": {
+    "testEnvironment": "jsdom",
     "transform": {},
     "moduleNameMapper": {
       "\\.(css|less|scss|sass)$": "<rootDir>/tests/mocks/styleMock.js"

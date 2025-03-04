@@ -465,8 +465,26 @@ class IntestacyCalculator {
    * @returns {boolean} - True if we can determine distribution, false otherwise
    */
   canDetermineDistribution() {
-    if (this.state.married && !this.state.children) {
-      return true;
+    // For married people, we MUST know if they have children
+    if (this.state.married) {
+      // If we don't know if they have children, we need to ask
+      if (this.state.children === null) {
+        return false;
+      }
+      
+      // If they have children, we need to know if estate > statutory legacy
+      if (this.state.children) {
+        // If estate value is known and above statutory legacy, need childrenDeceased info
+        if (this.state.estateValue > this.STATUTORY_LEGACY) {
+          return (
+            this.state.childrenDeceased !== null && 
+            (!this.state.childrenDeceased || this.state.deceasedChildrenHadChildren !== null)
+          );
+        }
+        return true; // Under statutory legacy threshold, spouse gets everything
+      }
+      
+      return true; // Married with no children, spouse gets everything
     }
     
     if (this.state.children) {
