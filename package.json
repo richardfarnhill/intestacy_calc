@@ -6,7 +6,8 @@
   "module": "src/integration/IntestacyWidget.js",
   "type": "module",
   "scripts": {
-    "build": "rollup -c && npm run copy-examples && npm run copy-docs",
+    "process-docs": "node scripts/process-docs.js",
+    "build": "npm run process-docs && rollup -c && npm run copy-examples && npm run copy-docs",
     "copy-index": "copy index.html dist\\",
     "dev": "rollup -c -w",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
@@ -31,8 +32,9 @@
     "estate",
     "will"
   ],
-  "author": "",
-  "license": "MIT",
+  "author": "Richard Farnhill",
+  "license": "UNLICENSED",
+  "private": true,
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
