@@ -109,6 +109,14 @@ To guide our development efforts, we've classified each planned enhancement base
 
 ### Technical Enhancements
 
+- **Testing Improvements 🔥 (P1):**
+  - Enhance integration tests to verify the complete question flow
+  - Add more unit tests for both the UI and calculator components
+  - Implement automated checks for method existence and compatibility between components
+- **Type Safety Implementation 🔥 (P1):**
+  - Adopt TypeScript for better type safety and developer experience
+  - Add static type checking to prevent method mismatch issues
+  - Improve code documentation with proper type annotations
 - **Testing Suite ⚡ (P3):**
   - Expand unit test coverage
   - Add end-to-end tests
@@ -120,12 +128,14 @@ To guide our development efforts, we've classified each planned enhancement base
 
 ## Recommended Next Steps
 
-Based on the priority matrix, we recommend focusing on **Enhanced Responses (P1)** as our next development area. This feature has high impact with relatively low implementation effort and would provide immediate value to users by:
+Based on the priority matrix, we recommend focusing on **Enhanced Responses (P1)** and **Testing Improvements (P1)** as our next development areas. These features have high impact with relatively low implementation effort and would provide immediate value to users and developers by:
 
 1. Providing more detailed explanations of inheritance distributions
-3. Enabling PDF report downloads for users to save or share results. However, This would require the email integration feature and the integration with a CRM / Database
+2. Enabling PDF report downloads for users to save or share results
+3. Preventing critical bugs through improved testing and type safety
+4. Ensuring component compatibility through automated checks
 
-This enhancement directly improves user understanding and increases the likelihood of conversion, making it an ideal next step.
+These enhancements directly improve user understanding, increase the likelihood of conversion, and strengthen code quality, making them ideal next steps.
 
 ## Implementation Timeline
 
@@ -138,9 +148,13 @@ This enhancement directly improves user understanding and increases the likeliho
 #### March 2025
 - PDF report generation and download functionality
 - **Completed** Accessibility improvements: WCAG 2.1 compliance
+- **HIGH PRIORITY** Testing improvements: Enhanced integration tests for question flow
+- **HIGH PRIORITY** Testing improvements: Additional unit tests for UI and calculator components
 
 #### April 2025
 - Integration into wider Wills project
+- **HIGH PRIORITY** Type safety: TypeScript adoption and implementation
+- **HIGH PRIORITY** Testing improvements: Automated checks for method compatibility
 
 #### May 2025
 - Accessibility improvements: Screen reader optimizations
@@ -151,7 +165,7 @@ This enhancement directly improves user understanding and increases the likeliho
 - Basic analytics integration 
 
 #### July 2025
-- 
+- Complete TypeScript migration and documentation
 
 #### August 2025
 - Email report generation functionality
