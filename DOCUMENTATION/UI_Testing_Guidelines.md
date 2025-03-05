@@ -84,4 +84,9 @@ When UI elements are intentionally removed:
 The following UI elements have been intentionally removed or simplified:
 
 1. **Progress Indicators**: All progress bars and step indicators have been removed.
-2. **Input Boxes for Boolean Questions**: Hidden via CSS in favor of Yes/No buttons only. 
+2. **Input Boxes for Boolean Questions**: Hidden via CSS in favor of Yes/No buttons only.
+
+## Bug Tracking
+- A rudimentary bug tracking system has been implemented to log issues and track their resolution.
+- Ensure that all bugs are documented in the `BUGS.md` file. 
+

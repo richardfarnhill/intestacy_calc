@@ -1,5 +1,10 @@
 # Changelog for Intestacy Calculator
 
+## Version 1.3.0 - [5 March 2024]
+
+### New Features
+- **Bug Tracking System**: Implemented a rudimentary bug tracking system to log issues and track their resolution.
+
 ## Version 1.2.2 - [4 March 2025]
 
 ### Bug Fixes
@@ -16,12 +21,7 @@
   - Updated documentation to reflect current test practices
 
 ## Version 1.2.1 - [Previous Release]
-
-## Version 1.2.0 - [Previous Release]
-
-## Version 1.0.10 - [Previous Release]
-
-## Version 1.0.0 - [Initial Release]
+ - Versioning (SemVer) only started here
 
 ### Test Improvements
 - **Fixed Integration Tests**:
@@ -174,23 +174,23 @@ These enhancements directly improve user understanding, increase the likelihood 
 ### Upcoming Development
 
 #### March 2025
-- PDF report generation and download functionality
-- **Completed** Accessibility improvements: WCAG 2.1 compliance
-- **HIGH PRIORITY** Testing improvements: Enhanced integration tests for question flow
-- **HIGH PRIORITY** Testing improvements: Additional unit tests for UI and calculator components
+- PDF report generation and download functionality (P1)
+- [x] Accessibility improvements: WCAG 2.1 compliance
+- [x] Testing improvements: Enhanced integration tests for question flow
+- [x] Testing improvements: Additional unit tests for UI and calculator components
 
 #### April 2025
-- Integration into wider Wills project
-- **HIGH PRIORITY** Type safety: TypeScript adoption and implementation
-- **HIGH PRIORITY** Testing improvements: Automated checks for method compatibility
+- Integration into wider Wills project (P1)
+- Type safety: TypeScript adoption and implementation (P2)
+- [In Progress] Testing improvements: Automated checks for method compatibility (P2)
 
 #### May 2025
-- Accessibility improvements: Screen reader optimizations
-- Accessibility improvements: Keyboard navigation
+- Accessibility improvements: Screen reader optimizations (P3)
+- Accessibility improvements: Keyboard navigation (P3)
 
 #### June 2025
-- Multi-language support: Framework implementation and particularly Polish and Romanian language support
-- Basic analytics integration 
+- Multi-language support: Framework implementation and particularly Polish and Romanian language support (P2)
+- Basic analytics integration (P2)
 
 #### July 2025
 - Complete TypeScript migration and documentation
@@ -208,7 +208,6 @@ These enhancements directly improve user understanding, increase the likelihood 
 - A/B testing framework for UI variations
 
 #### November 2025
-- White-label configuration options
 - Custom branding capabilities
 
 #### December 2025
