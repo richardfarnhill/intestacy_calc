@@ -396,6 +396,31 @@ class IntestacyCalculator {
   }
   
   /**
+   * Answer a question and update the state
+   * @param {string} questionId - The ID of the question being answered
+   * @param {boolean} answer - The user's answer (true for Yes, false for No)
+   */
+  answerQuestion(questionId, answer) {
+    // Update the state with the user's answer
+    this.state[questionId] = answer;
+    
+    // Store the current question ID for getNextQuestionId to use
+    this._lastQuestionId = questionId;
+  }
+  
+  /**
+   * Get the next question ID based on the last answered question
+   * @returns {string|null} - The ID of the next question to ask, or null if there is no next question
+   */
+  getNextQuestionId() {
+    if (!this._lastQuestionId || !this.questionFlow[this._lastQuestionId]) {
+      return null;
+    }
+    
+    return this.questionFlow[this._lastQuestionId](this.state[this._lastQuestionId]);
+  }
+  
+  /**
    * Get the text for a specific question by ID
    * @param {string} questionId - The ID of the question
    * @returns {string} - The question text
