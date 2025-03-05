@@ -52,17 +52,17 @@ The project includes a `netlify.toml` file that configures the deployment:
     force = true
   [[redirects]]
     from = "/docs"
-    to = "/examples/docs/index.html"
+    to = "/DOCUMENTATION/README.md"
     status = 200
     force = true
   [[redirects]]
     from = "/docs/"
-    to = "/examples/docs/index.html"
+    to = "/DOCUMENTATION/README.md"
     status = 200
     force = true
   [[redirects]]
     from = "/docs/*"
-    to = "/examples/docs/:splat"
+    to = "/DOCUMENTATION/:splat"
     status = 200
     force = true
   # Fallback redirect
