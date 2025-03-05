@@ -9,7 +9,8 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "lint": "eslint src/**/*.js",
     "serve": "node server.js",
-    "start": "npm run serve"
+    "start": "npm run serve",
+    "test-prompt": "node scripts/test-prompt.js"
   },
   "jest": {
     "testEnvironment": "jsdom",

@@ -356,6 +356,12 @@
   border-radius: 0 4px 4px 0;
 }
 
+/* Hide input boxes in question section */
+.intestacy-question-section input,
+.intestacy-question-options {
+  display: none !important;
+}
+
 /* Result styles - already enhanced */
 /* ... existing result styles ... */
 
