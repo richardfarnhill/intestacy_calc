@@ -6,10 +6,10 @@
  * for testing after UI-related files are modified.
  */
 
-const fs = require('fs');
-const path = require('path');
-const readline = require('readline');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import readline from 'readline';
+import { execSync } from 'child_process';
 
 // UI-related file patterns
 const UI_FILE_PATTERNS = [
