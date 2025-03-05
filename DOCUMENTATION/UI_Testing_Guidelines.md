@@ -20,9 +20,9 @@
 
 ### After UI Changes
 
-1. **Run Tests**: Always run tests after UI changes to verify they still pass.
+1. **Run Tests**: When MAJOR changes have been implemented, proceed to run tests after UI changes to verify they still pass.
 
-2. **Prompt for Testing**: After making UI changes, prompt the user for permission to run tests.
+2. **Prompt for Testing**: After making UI changes, always prompt the user for permission to run tests.
 
 3. **Review Test Failures**: If tests fail, determine whether the tests need updating or if the UI changes have introduced bugs.
 
@@ -33,6 +33,18 @@
 2. **Remove Obsolete Tests**: Remove or update tests that no longer apply to the current UI.
 
 3. **Test Refactoring**: When refactoring UI components, refactor tests in parallel.
+
+4. **Test Timing**: 
+   - Use appropriate timeouts for asynchronous operations
+   - Default timeout for UI transitions should be at least 500ms
+   - Increase timeouts for complex operations or slower environments
+   - Document any non-standard timeout values in test comments
+
+5. **Error State Testing**:
+   - Verify error messages appear and disappear correctly
+   - Check error message content matches expected validation messages
+   - Ensure error states are properly cleared when moving between sections
+   - Test that error messages are accessible to screen readers
 
 ## Specific UI Component Guidelines
 
@@ -56,4 +68,20 @@
 
 - The UI has been simplified to use only button inputs for boolean questions in the question flow.
 - Input boxes in the question section are hidden via CSS to maintain a clean interface.
-- Tests should be updated to reflect these UI decisions. 
+- Progress indicators have been intentionally removed from the UI as they were deemed unnecessary and visually distracting.
+- Tests have been updated to reflect these UI decisions.
+
+## Handling Removed UI Elements
+
+When UI elements are intentionally removed:
+
+1. **Update Tests**: Remove or modify tests that check for the existence of these elements.
+2. **Document Removals**: Document the removal in this guide to prevent future confusion.
+3. **Add Comments**: Add comments in test files explaining why certain tests were modified or removed.
+
+## Current UI Simplifications
+
+The following UI elements have been intentionally removed or simplified:
+
+1. **Progress Indicators**: All progress bars and step indicators have been removed.
+2. **Input Boxes for Boolean Questions**: Hidden via CSS in favor of Yes/No buttons only. 

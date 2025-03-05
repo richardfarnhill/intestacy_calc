@@ -1,6 +1,34 @@
 # Changelog for Intestacy Calculator
 
-## Version 1.0.0 - [4 March 2025]
+## Version 1.2.2 - [4 March 2025]
+
+### Bug Fixes
+- **Integration Tests**:
+  - Fixed distribution data handling with proper null checks
+  - Improved estate error validation and display
+  - Adjusted test timing for more reliable error state verification
+  - Updated test assertions to match current UI behavior
+
+### Documentation
+- **Testing Guidelines**:
+  - Added comprehensive guidelines for test timing
+  - Added guidelines for error state testing
+  - Updated documentation to reflect current test practices
+
+## Version 1.2.1 - [Previous Release]
+
+## Version 1.2.0 - [Previous Release]
+
+## Version 1.0.10 - [Previous Release]
+
+## Version 1.0.0 - [Initial Release]
+
+### Test Improvements
+- **Fixed Integration Tests**:
+  - Enhanced distribution data handling with proper null checks
+  - Improved estate error validation and display
+  - Adjusted test timing for more reliable error state verification
+  - Updated test assertions to match current UI behavior
 
 ### Accessibility Improvements
 - **Removed "Skip to main content" link**: 

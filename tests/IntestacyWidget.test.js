@@ -3,6 +3,7 @@
  */
 
 import IntestacyWidget from '../src/integration/IntestacyWidget.js';
+import { jest } from '@jest/globals';
 
 // Mock document functions
 document.querySelector = jest.fn().mockImplementation((selector) => {

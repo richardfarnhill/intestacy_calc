@@ -665,6 +665,11 @@ class IntestacyUI {
     this.elements.questionSection.style.display = 'none';
     this.elements.resultSection.style.display = 'none';
     
+    // Clear any previous error state
+    this.elements.estateError.style.display = 'none';
+    this.elements.estateError.textContent = '';
+    this.elements.estateInput.setAttribute('aria-invalid', 'false');
+    
     // Focus on heading first for screen readers to announce the section
     const estateHeading = this.elements.estateSection.querySelector('h2');
     if (estateHeading) {
@@ -682,6 +687,32 @@ class IntestacyUI {
   }
   
   /**
+   * Show the name input step
+   */
+  showNameInput() {
+    this.elements.nameSection.style.display = 'block';
+    this.elements.estateSection.style.display = 'none';
+    this.elements.statusSection.style.display = 'none';
+    this.elements.questionSection.style.display = 'none';
+    this.elements.resultSection.style.display = 'none';
+    
+    // Focus on heading first for screen readers to announce the section
+    const nameHeading = this.elements.nameSection.querySelector('h2');
+    if (nameHeading) {
+      nameHeading.setAttribute('tabindex', '-1');
+      nameHeading.focus();
+      // Then move focus to the input after announcing
+      setTimeout(() => {
+        nameHeading.removeAttribute('tabindex');
+        this.elements.nameInput.focus();
+      }, 100);
+    } else {
+      // Fallback to direct focus on input
+      setTimeout(() => this.elements.nameInput.focus(), 300);
+    }
+  }
+  
+  /**
    * Handle estate value input submission
    */
   handleEstateSubmit() {
@@ -690,24 +721,28 @@ class IntestacyUI {
     // Remove currency symbols and commas
     const estateValue = estateValueRaw.replace(/[£$,]/g, '');
     
-    // Validate
+    // Clear previous error state
+    this.elements.estateError.style.display = 'none';
+    this.elements.estateError.textContent = '';
+    this.elements.estateInput.setAttribute('aria-invalid', 'false');
+    
+    // Validate empty value
     if (!estateValue) {
       this.elements.estateError.textContent = 'Please enter your estate value';
       this.elements.estateError.style.display = 'block';
-      // Set aria-invalid on the input
+      this.elements.estateError.setAttribute('role', 'alert');
       this.elements.estateInput.setAttribute('aria-invalid', 'true');
-      // Set focus back to the input for correction
       this.elements.estateInput.focus();
       return;
     }
     
     // Validate estate value is a number
-    if (!validateEstateValue(estateValue)) {
-      this.elements.estateError.textContent = 'Please enter a valid number for your estate value';
+    const isValid = /^\d+$/.test(estateValue.replace(/[,.]/g, ''));
+    if (!isValid) {
+      this.elements.estateError.textContent = 'Please enter a valid number';
       this.elements.estateError.style.display = 'block';
-      // Set aria-invalid on the input
+      this.elements.estateError.setAttribute('role', 'alert');
       this.elements.estateInput.setAttribute('aria-invalid', 'true');
-      // Set focus back to the input for correction
       this.elements.estateInput.focus();
       return;
     }
@@ -716,10 +751,6 @@ class IntestacyUI {
     const estateValueNumber = parseFloat(estateValue);
     this.state.estateValue = estateValueNumber;
     this.calculator.state.estateValue = estateValueNumber;
-    
-    // Clear error and reset aria attributes
-    this.elements.estateError.style.display = 'none';
-    this.elements.estateInput.setAttribute('aria-invalid', 'false');
     
     // Show marital status input
     this.showStatusInput();
@@ -942,7 +973,7 @@ class IntestacyUI {
    * @returns {string} - HTML string with formatted details
    */
   formatDistributionDetails(distributionData) {
-    if (!distributionData || !distributionData.shares || distributionData.shares.length === 0) {
+    if (!distributionData || !distributionData.shares || distributionData.shares.length === 0 || !distributionData.beneficiaries) {
       return '<p>No distribution data available.</p>';
     }
     
@@ -959,6 +990,11 @@ class IntestacyUI {
     const summaryHtml = `<p>${summaryText}</p>`;
     
     let html = summaryHtml + '<ul class="intestacy-distribution-list" role="list" aria-label="Distribution Breakdown">';
+    
+    // Ensure beneficiaries array exists and matches shares length
+    if (distributionData.beneficiaries.length !== distributionData.shares.length) {
+      return summaryHtml + '<p>Invalid distribution data.</p>';
+    }
     
     for (let i = 0; i < distributionData.beneficiaries.length; i++) {
       const beneficiary = distributionData.beneficiaries[i];
