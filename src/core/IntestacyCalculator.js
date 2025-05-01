@@ -142,6 +142,7 @@ class IntestacyCalculator {
       shares: [],
       labels: [],
       colors: [],
+      beneficiaries: [], // Add beneficiaries array
       totalValue: estateValue
     };
     
@@ -172,6 +173,7 @@ class IntestacyCalculator {
         distributionData.shares = [estateValue];
         distributionData.labels = ['Spouse/Civil Partner'];
         distributionData.colors = ['#4B9CD3'];
+        distributionData.beneficiaries = ['Spouse/Civil Partner'];
         
         return {
           text: `Your entire estate of ${formattedValue} will pass to your spouse/civil partner.`,
@@ -183,6 +185,7 @@ class IntestacyCalculator {
           distributionData.shares = [estateValue];
           distributionData.labels = ['Spouse/Civil Partner'];
           distributionData.colors = ['#4B9CD3'];
+          distributionData.beneficiaries = ['Spouse/Civil Partner'];
           
           return {
             text: `Your entire estate of ${formattedValue} will pass to your spouse/civil partner.`,
@@ -198,6 +201,7 @@ class IntestacyCalculator {
         distributionData.shares = [spouseShare, childrenShare];
         distributionData.labels = ['Spouse/Civil Partner', 'Children'];
         distributionData.colors = ['#4B9CD3', '#95D47A'];
+        distributionData.beneficiaries = ['Spouse/Civil Partner', 'Children'];
         
         // Improved text for per stirpes distribution
         const childrenText = !this.state.childrenDeceased 
@@ -227,6 +231,7 @@ class IntestacyCalculator {
       distributionData.shares = [estateValue];
       distributionData.labels = ['Children'];
       distributionData.colors = ['#95D47A'];
+      distributionData.beneficiaries = ['Children'];
       
       return {
         text: `Your entire estate of ${formattedValue} will be divided equally between your ${childrenText}.`,
@@ -239,6 +244,7 @@ class IntestacyCalculator {
       distributionData.shares = [estateValue];
       distributionData.labels = ['Parents'];
       distributionData.colors = ['#F3C969'];
+      distributionData.beneficiaries = ['Parents'];
       
       return {
         text: `Your entire estate of ${formattedValue} will pass to your surviving parent(s) in equal shares.`,
@@ -258,6 +264,7 @@ class IntestacyCalculator {
         distributionData.shares = [estateValue];
         distributionData.labels = ['Siblings'];
         distributionData.colors = ['#E36588'];
+        distributionData.beneficiaries = ['Siblings'];
         
         return {
           text: `Your entire estate of ${formattedValue} will be divided equally between your ${siblingType}${childrenText}.`,
@@ -268,6 +275,7 @@ class IntestacyCalculator {
         distributionData.shares = [estateValue];
         distributionData.labels = ['Half-Siblings'];
         distributionData.colors = ['#E36588'];
+        distributionData.beneficiaries = ['Half-Siblings'];
         
         return {
           text: `Your entire estate of ${formattedValue} will be divided equally between your half-siblings.`,
@@ -281,6 +289,7 @@ class IntestacyCalculator {
       distributionData.shares = [estateValue];
       distributionData.labels = ['Grandparents'];
       distributionData.colors = ['#9B6EBF'];
+      distributionData.beneficiaries = ['Grandparents'];
       
       return {
         text: `Your entire estate of ${formattedValue} will be divided equally between your grandparents.`,
@@ -300,6 +309,7 @@ class IntestacyCalculator {
         distributionData.shares = [estateValue];
         distributionData.labels = ['Aunts and Uncles'];
         distributionData.colors = ['#F78E69'];
+        distributionData.beneficiaries = ['Aunts and Uncles'];
         
         return {
           text: `Your entire estate of ${formattedValue} will be divided equally between your ${auntsText}${childrenText}.`,
@@ -310,6 +320,7 @@ class IntestacyCalculator {
         distributionData.shares = [estateValue];
         distributionData.labels = ['Half-Aunts and Half-Uncles'];
         distributionData.colors = ['#F78E69'];
+        distributionData.beneficiaries = ['Half-Aunts and Half-Uncles'];
         
         return {
           text: `Your entire estate of ${formattedValue} will be divided equally between your half-aunts and half-uncles.`,
@@ -322,6 +333,7 @@ class IntestacyCalculator {
     distributionData.shares = [estateValue];
     distributionData.labels = ['Crown (Bona Vacantia)'];
     distributionData.colors = ['#8C8C8C'];
+    distributionData.beneficiaries = ['Crown (Bona Vacantia)'];
     
     return {
       text: `Your estate of ${formattedValue} will pass to the Crown (Bona Vacantia).`,
