@@ -6,10 +6,12 @@
 **Date Reported:** 5 March 2024  
 **Reported By:** [Your Name]  
 **Version:** 1.2.2  
-**Environment:** [Specify environment, e.g., Windows, Chrome]
+**Environment:** [Specify environment, e.g., Windows, Chrome]  
+**Status:** Fixed  
+**Resolution Date:** 5 March 2024
 
 #### Description:
-The estate calculation is incorrect, as evidenced by the results displayed in the application. The distribution results show "No distribution data available" despite a valid estate value being entered.
+The estate calculation was incorrect, as evidenced by the results displayed in the application. The distribution results showed "No distribution data available" despite a valid estate value being entered.
 
 #### Steps to Reproduce:
 1. Open the UK Intestacy Calculator.
@@ -23,7 +25,22 @@ The estate calculation is incorrect, as evidenced by the results displayed in th
 The application should display a detailed distribution of the estate value, including beneficiaries and their respective shares.
 
 #### Actual Result:
-The application displays the following message:
+The application displayed the following message:
+"No distribution data available"
+
+#### Resolution:
+- Added beneficiaries array to distribution data structure
+- Ensured beneficiaries array matches shares array length
+- Updated calculation logic to properly populate beneficiaries information
+- Added validation to prevent "No distribution data available" message when valid data exists
+
+#### Verification:
+Test case verified with:
+- Name: "bob"
+- Estate Value: £457,080
+- Marital Status: Married
+- Children: Yes
+- Result: Correct distribution showing spouse and children shares
 
 #### Screenshot:
 ![Estate Calculation Incorrect](attachment_path_here)

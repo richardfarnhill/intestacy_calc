@@ -129,6 +129,31 @@
 - GDPR Data Protection
 - UK Legal Standards Adherence
 
+## Distribution Data Structure
+
+The calculator returns distribution data in the following format:
+
+```javascript
+{
+  shares: number[],      // Array of monetary amounts for each beneficiary
+  labels: string[],      // Array of labels for each share
+  colors: string[],      // Array of colors for visualization
+  beneficiaries: string[], // Array of beneficiary names/types
+  totalValue: number     // Total estate value
+}
+```
+
+### Example Distribution Data
+```javascript
+{
+  "shares": [389540, 67540],
+  "labels": ["Spouse/Civil Partner", "Children"],
+  "colors": ["#4B9CD3", "#95D47A"],
+  "beneficiaries": ["Spouse/Civil Partner", "Children"],
+  "totalValue": 457080
+}
+```
+
 ---
 
 **Last Updated**: 4 March 2025  

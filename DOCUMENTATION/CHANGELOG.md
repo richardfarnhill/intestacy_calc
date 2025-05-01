@@ -217,3 +217,10 @@ These enhancements directly improve user understanding, increase the likelihood 
 ## Notice for Developers
 
 This document is for authorized developers only. All development work is subject to the proprietary license and confidentiality agreements. This software is not open source, and unauthorized modifications or distributions are strictly prohibited.
+
+## [Unreleased]
+
+### Fixed
+- Fixed estate calculation distribution display issue where "No distribution data available" was shown despite valid estate value
+- Added beneficiaries array to distribution data to properly display inheritance details
+- Ensured beneficiaries array matches shares array length for consistent display
