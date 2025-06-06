@@ -294,6 +294,8 @@ class IntestacyUI {
     
     const questionLegend = document.createElement('legend');
     questionLegend.className = 'intestacy-visuallyhidden';
+    // Add inline styles to ensure the legend does not affect layout
+    questionLegend.style.cssText = 'display: none !important; width: 0 !important; height: 0 !important; margin: 0 !important; padding: 0 !important;';
     
     questionFieldset.appendChild(questionLegend);
     
