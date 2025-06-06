@@ -1022,11 +1022,14 @@ class IntestacyUI {
     html += '</ul>';
     
     // Add an accessible explanation for screen readers
-    if (distributionData.beneficiaries.length > 0) {
+    if (distributionData.beneficiaries && distributionData.beneficiaries.length > 0) {
+      const formattedTotalValue = this.calculator.formatCurrency(totalValue);
+      // Join the list of beneficiaries for the accessible text
+      const beneficiaryList = distributionData.beneficiaries.join(' and ');
+
       html += `
         <div class="intestacy-distribution-summary sr-only" aria-live="polite">
-          The estate valued at ${this.calculator.formatCurrency(totalValue)} will be distributed among 
-          ${distributionData.beneficiaries.length} beneficiaries.
+          The estate valued at ${formattedTotalValue} will be distributed to: ${beneficiaryList}.
         </div>
       `;
     }

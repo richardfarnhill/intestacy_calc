@@ -175,8 +175,9 @@ describe('IntestacyCalculator', () => {
       const result = calculator.calculateDistribution();
       expect(result.text).toContain('Your spouse/civil partner will receive:');
       expect(result.text).toContain('First £322,000.00 as statutory legacy');
-      expect(result.text).toContain('Plus a life interest in £89,000.00 (half of the remainder)');
-      expect(result.text).toContain('Your children will share: £89,000.00 (half of the remainder). The capital of your spouse\'s life interest portion will pass to the children upon your spouse\'s death.');
+      expect(result.text).toContain('Plus an absolute interest in £89,000.00 (half of the remainder)');
+      expect(result.text).toContain('Your children will share: £89,000.00 (half of the remainder). The children\'s share of the residue is held on statutory trusts.');
+      expect(result.text).toContain('• The capital of your spouse\'s absolute interest portion will pass to the children upon your spouse\'s death.');
       expect(result.data.shares).toEqual([322000 + (500000 - 322000) / 2, (500000 - 322000) / 2]);
       expect(result.data.labels).toEqual(['Spouse/Civil Partner', 'Children']);
       expect(result.data.beneficiaries).toEqual(['Spouse/Civil Partner', 'Children']);
@@ -246,8 +247,9 @@ describe('IntestacyCalculator', () => {
       const result = calculator.calculateDistribution();
       expect(result.text).toContain('Your spouse/civil partner will receive:');
       expect(result.text).toContain('First £322,000.00 as statutory legacy');
-      expect(result.text).toContain('Plus a life interest in £139,000.00 (half of the remainder)');
-      expect(result.text).toContain('Your living children will share: £139,000.00 (half of the remainder). The capital of your spouse\'s life interest portion will pass to the children upon your spouse\'s death.');
+      expect(result.text).toContain('Plus an absolute interest in £139,000.00 (half of the remainder)');
+      expect(result.text).toContain('Your living children will share: £139,000.00 (half of the remainder). The children\'s share of the residue is held on statutory trusts.');
+      expect(result.text).toContain('• The capital of your spouse\'s absolute interest portion will pass to the children upon your spouse\'s death.');
       expect(result.data.labels).toEqual(['Spouse/Civil Partner', 'Children']);
     });
     

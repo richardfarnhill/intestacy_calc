@@ -263,8 +263,9 @@ class IntestacyCalculator {
             `Your estate will be distributed as follows:\n` +
             `• Your spouse/civil partner will receive:\n` +
             `  - First ${this.formatCurrency(this.STATUTORY_LEGACY)} as statutory legacy\n` +
-            `  - Plus a life interest in ${this.formatCurrency(remainder / 2)} (half of the remainder)\n` +
-            `• ${childrenDistributionText} will share: ${this.formatCurrency(childrenShare)} (half of the remainder). The capital of your spouse's life interest portion will pass to the children upon your spouse's death.`
+            `  - Plus an absolute interest in ${this.formatCurrency(remainder / 2)} (half of the remainder)\n` +
+            `• ${childrenDistributionText} will share: ${this.formatCurrency(childrenShare)} (half of the remainder). The children's share of the residue is held on statutory trusts.\n` +
+            `• The capital of your spouse's absolute interest portion will pass to the children upon your spouse's death.`
           ),
           data: distributionData
         };
@@ -480,7 +481,7 @@ class IntestacyCalculator {
     
     // Determine the next question based on the flow logic
     if (this.questionFlow[questionId]) {
-      const nextQuestionId = this.questionFlowquestionId;
+      const nextQuestionId = this.questionFlow[questionId](this.state[questionId]);
 
       // Special condition for married with children and estate <= statutory legacy
       if (this.state.married && this.state.children && questionId === 'children' && answer === true) {
