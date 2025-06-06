@@ -16,8 +16,8 @@ class IntestacyWidget {
       container: '#intestacy-calculator',
       theme: 'light',
       contactInfo: 'Please contact us to discuss creating a Will.',
-      contactPhone: '0123 456 7890',
-      contactEmail: 'info@example.com',
+      contactPhone: '0161 348 7581',
+      contactEmail: 'hello@WillSolicitor.co.uk',
       ...options
     };
     

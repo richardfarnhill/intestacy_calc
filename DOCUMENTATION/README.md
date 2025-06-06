@@ -50,6 +50,15 @@ The demo provides several examples showcasing different implementation approache
 This calculator is provided for demonstration purposes only. It is not intended for unauthorized deployment.
 For licensing inquiries or to discuss implementing this calculator on your website, please contact the owner.
 
+## Contact Information
+
+For inquiries or support, please contact us at:
+
+*   **Phone:** 0161 348 7581
+*   **Email:** hello@WillSolcitor.co.uk
+
+Alternatively, you can use the contact form on our website: [https://willsolicitor.co.uk/contact](https://willsolicitor.co.uk/contact)
+
 ## Usage (Authorized Licensees Only)
 
 ### Basic Integration
@@ -70,7 +79,6 @@ Then include the script and initialize the widget:
     var widget = new IntestacyWidget({
       container: '#intestacy-calculator',
       theme: 'light',
-      contactInfo: 'Please contact us on 0161 928 3848 or mch@mchaleandco.co.uk to discuss creating a Will.'
     });
   });
 </script>
@@ -143,3 +151,8 @@ Proprietary. All rights reserved.
 ## Future Development
 
 See [DEVELOPMENT.md](DEVELOPMENT.md) for planned future enhancements and development roadmap. 
+
+## Legal Disclaimer
+
+This calculator is provided for demonstration purposes only. It is not intended for unauthorized deployment.
+For licensing inquiries or to discuss implementing this calculator on your website, please contact the owner. 
