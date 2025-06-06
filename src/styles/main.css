@@ -356,7 +356,19 @@
   border-radius: 0 4px 4px 0;
 }
 
-/* Hide input boxes in question section */
+/* Ensure the visually hidden legend in the question fieldset doesn't affect layout */
+.intestacy-question-section fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.intestacy-question-section legend {
+  /* The visually hidden class should handle hiding, but these styles ensure no layout impact */
+  padding: 0;
+}
+
+/* Hide input boxes in question section (excluding buttons which are not inputs) */
 .intestacy-question-section input,
 .intestacy-question-options {
   display: none !important;
@@ -371,6 +383,15 @@
   justify-content: space-between;
   margin-top: 30px;
   gap: 30px;
+}
+
+/* Adjust spacing within the question section */
+.intestacy-question-text {
+    margin-bottom: 15px;
+}
+
+.intestacy-question-buttons {
+    margin-top: 20px;
 }
 
 .intestacy-calculator button {

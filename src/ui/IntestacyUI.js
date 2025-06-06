@@ -294,7 +294,6 @@ class IntestacyUI {
     
     const questionLegend = document.createElement('legend');
     questionLegend.className = 'intestacy-visuallyhidden';
-    questionLegend.textContent = 'Answer the question';
     
     questionFieldset.appendChild(questionLegend);
     
@@ -933,16 +932,15 @@ class IntestacyUI {
     const questionLegend = this.elements.questionSection.querySelector('.intestacy-visuallyhidden');
     if (questionLegend) {
         questionLegend.classList.add('intestacy-visuallyhidden'); // Ensure class is present
-        questionLegend.textContent = 'Answer the question'; // Keep text for screen readers, rely on CSS to hide
+        // Text content is set in createUIStructure for accessibility, rely on CSS to hide visually
     }
 
     // Adjust styling for spacing - adding inline styles as a temporary measure
     // This is not ideal and should be handled by CSS classes
-    this.elements.questionText.style.marginBottom = '15px'; // Add space below the question text
     
     // Add a defensive check before accessing style
     if (this.elements.questionButtons) {
-        this.elements.questionButtons.style.marginTop = '20px'; // Add space above the buttons
+        // Spacing should be handled by CSS classes, removing temporary inline style
     }
 
     // Hide other sections

@@ -15,6 +15,9 @@ This deployment guide is intended for authorized licensees only. Unauthorized de
 
 ### Recent Updates
 
+- **Spouse's Interest Description Corrected**: Updated spouse's inheritance description from "life interest" to "absolute interest" aligning with UK law.
+- **Question Section UI Fixed**: Resolved issues with unnecessary text and incorrect padding in the question section.
+- **Cohabiting No Children Distribution Fixed**: Corrected distribution logic and display for cohabiting individuals without children.
 - **Improved Routing Configuration**: Fixed routing issues to ensure all examples and resources are properly accessible
 - **Streamlined UI**: Removed redundant documentation sections from the examples page
 - **Consolidated Documentation**: Single source of truth for documentation files to simplify maintenance

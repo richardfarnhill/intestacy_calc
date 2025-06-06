@@ -52,5 +52,5 @@
 ---
 
 **Last Updated**: 6 June 2025  
-**Version**: 1.2.2  
+**Version**: 1.3.1  
 **Compliance**: WCAG 2.1 AA | GDPR | UK Legal Standards

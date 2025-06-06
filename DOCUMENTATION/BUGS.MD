@@ -72,10 +72,12 @@ An unnecessary text box or label-like element appeared, along with the text "Ans
 
 #### Resolution:
 - Ensured the visually hidden legend element for accessibility is correctly hidden via CSS class.
-- Added temporary inline styles to improve spacing between the question text and buttons.
+- Removed the explicit text content setting for the visually hidden legend in the UI creation logic.
+- Adjusted CSS for the question section fieldset and legend to prevent layout impact from hidden elements.
+- Added specific CSS margins for spacing between the question text and buttons.
 
 #### Verification:
-Tested the question section UI visually to confirm the removal of the extraneous element/text and improved spacing.
+Tested the question section UI visually in example files to confirm the removal of the extraneous element/text and correct spacing.
 
 ### Bug ID: 003
 **Date Reported:** 6 June 2025
@@ -109,4 +111,35 @@ The distribution results incorrectly listed children as the beneficiaries, even 
 
 #### Verification:
 - Verified the UI output for a cohabiting individual with no children and no other relatives; the distribution correctly shows the Crown as the beneficiary.
-- Confirmed the new test case `tests/cohabiting-no-children-test.js` passes when running the test suite.
+- Confirmed the new test case (`tests/cohabiting-no-children-test.js`) passes when running the test suite.
+
+### Bug ID: 004
+**Date Reported:** 6 June 2025
+**Reported By:** User
+**Version:** [Current Version]
+**Environment:** [User's Environment]
+**Status:** Fixed
+**Resolution Date:** 6 June 2025
+
+#### Description:
+Old contact phone number, email address, and copyright notice were still present in example HTML files and the README, despite being updated in the core UI.
+
+#### Steps to Reproduce:
+1. View example HTML files (e.g., basic.html, simple-include.html, custom-theme.html, email-compatible.html, index.html).
+2. View the README.md file.
+3. Observe outdated contact phone number (0161 928 3848), email address (mch@mchaleandco.co.uk), and copyright notice (© WillsX 2025. All Rights Reserved.).
+
+#### Expected Result:
+All example files and README should display the current contact phone number (0161 348 7581), email address (hello@WillSolcitor.co.uk), and copyright notice (WillSolicitor.co.uk (a trading style of McHale Legal Limited)).
+
+#### Actual Result:
+Outdated contact information and copyright notice were found in several example files and the README.
+
+#### Resolution:
+- Updated contactInfo option in example HTML files to use the correct phone number.
+- Updated copyright text in example HTML files and README.
+- Removed outdated email address from README.
+- Removed commented-out line with old contact info from README example.
+
+#### Verification:
+Performed codebase search (grep) for old contact details and copyright notice, confirming no matches were found in code files.

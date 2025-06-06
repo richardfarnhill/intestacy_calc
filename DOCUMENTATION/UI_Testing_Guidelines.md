@@ -89,3 +89,8 @@ The following UI elements have been intentionally removed or simplified:
 - A rudimentary bug tracking system has been implemented to log issues and track their resolution.
 - Ensure that all bugs are documented in the `BUGS.md` file. 
 
+---
+
+**Last Updated**: 6 June 2025
+**Version**: 1.3.1
+
