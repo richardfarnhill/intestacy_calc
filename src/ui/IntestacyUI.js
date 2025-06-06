@@ -57,6 +57,9 @@ class IntestacyUI {
     // Create the UI structure
     this.createUIStructure();
     
+    // Cache references to UI elements after they are created
+    this._cacheElements();
+    
     // Add event listeners
     this.addEventListeners();
     
@@ -325,9 +328,11 @@ class IntestacyUI {
     noButton.type = 'button';
     noButton.setAttribute('aria-label', 'No to the question');
     
+    // Append buttons to their container
     questionButtons.appendChild(yesButton);
     questionButtons.appendChild(noButton);
-    
+
+    // Append elements to the question section
     questionSection.appendChild(questionHeading);
     questionSection.appendChild(questionText);
     questionSection.appendChild(questionFieldset);
@@ -452,6 +457,58 @@ class IntestacyUI {
       resultContent: resultContent,
       restartButton: restartButton
     };
+  }
+  
+  /**
+   * Cache references to key UI elements by querying the DOM.
+   * This should be called after the UI structure is created.
+   */
+  _cacheElements() {
+    // Cache main calculator container
+    this.elements.calculator = this.container.querySelector('.intestacy-calculator');
+
+    // Cache section elements
+    this.elements.nameSection = this.elements.calculator.querySelector('.intestacy-name-section');
+    this.elements.estateSection = this.elements.calculator.querySelector('.intestacy-estate-section');
+    this.elements.statusSection = this.elements.calculator.querySelector('.intestacy-status-section');
+    this.elements.questionSection = this.elements.calculator.querySelector('.intestacy-question-section');
+    this.elements.resultSection = this.elements.calculator.querySelector('.intestacy-result-section');
+
+    // Cache elements within the name section
+    this.elements.nameInput = this.elements.nameSection.querySelector('.intestacy-name-input');
+    this.elements.nameError = this.elements.nameSection.querySelector('.intestacy-name-error');
+    this.elements.nameButton = this.elements.nameSection.querySelector('.intestacy-name-button');
+
+    // Cache elements within the estate section
+    this.elements.estateInput = this.elements.estateSection.querySelector('.intestacy-estate-input');
+    this.elements.estateError = this.elements.estateSection.querySelector('.intestacy-estate-error');
+    this.elements.estateButton = this.elements.estateSection.querySelector('.intestacy-estate-button');
+
+    // Cache elements within the status section
+    this.elements.statusFieldset = this.elements.statusSection.querySelector('.intestacy-status-fieldset');
+    this.elements.statusInputs = this.elements.statusSection.querySelectorAll('.intestacy-status-input'); // NodeList
+    this.elements.statusError = this.elements.statusSection.querySelector('.intestacy-status-error');
+    this.elements.cohabitingWarning = this.elements.statusSection.querySelector('.intestacy-cohabiting-warning');
+    this.elements.statusButton = this.elements.statusSection.querySelector('.intestacy-status-button');
+
+    // Cache elements within the question section
+    this.elements.questionHeading = this.elements.questionSection.querySelector('.intestacy-question-heading');
+    this.elements.questionText = this.elements.questionSection.querySelector('.intestacy-question-text');
+    this.elements.questionFieldset = this.elements.questionSection.querySelector('.intestacy-question-fieldset');
+    this.elements.questionOptions = this.elements.questionSection.querySelector('.intestacy-question-options');
+    this.elements.questionError = this.elements.questionSection.querySelector('.intestacy-question-error');
+    this.elements.questionButtons = this.elements.questionSection.querySelector('.intestacy-question-buttons');
+    this.elements.yesButton = this.elements.questionButtons.querySelector('.intestacy-yes-button');
+    this.elements.noButton = this.elements.questionButtons.querySelector('.intestacy-no-button');
+
+    // Cache elements within the result section
+    this.elements.resultContent = this.elements.resultSection.querySelector('.intestacy-result-content');
+    this.elements.restartButton = this.elements.resultSection.querySelector('.intestacy-restart-button');
+
+    // Cache contact info elements
+    this.elements.contactInfoText = this.elements.resultSection.querySelector('.intestacy-contact-info');
+    this.elements.contactPhoneLink = this.elements.resultSection.querySelector('.intestacy-contact-phone');
+    this.elements.contactEmailLink = this.elements.resultSection.querySelector('.intestacy-contact-email');
   }
   
   /**
@@ -857,11 +914,27 @@ class IntestacyUI {
     
     // Get the question text from the calculator
     const questionObj = this.calculator.questionMap[questionId];
-    const questionText = questionObj ? questionObj.text : "Unknown question";
+    const questionTextContent = questionObj ? questionObj.text : "Unknown question";
     
-    // Update the question text
-    this.elements.questionText.textContent = questionText;
+    // Update the question text element's content
+    this.elements.questionText.textContent = questionTextContent; // Use textContent to avoid potential HTML injection if question text changes
     
+    // Ensure the visually hidden legend is correctly classed and empty if it's somehow rendering content
+    const questionLegend = this.elements.questionSection.querySelector('.intestacy-visuallyhidden');
+    if (questionLegend) {
+        questionLegend.classList.add('intestacy-visuallyhidden'); // Ensure class is present
+        questionLegend.textContent = 'Answer the question'; // Keep text for screen readers, rely on CSS to hide
+    }
+
+    // Adjust styling for spacing - adding inline styles as a temporary measure
+    // This is not ideal and should be handled by CSS classes
+    this.elements.questionText.style.marginBottom = '15px'; // Add space below the question text
+    
+    // Add a defensive check before accessing style
+    if (this.elements.questionButtons) {
+        this.elements.questionButtons.style.marginTop = '20px'; // Add space above the buttons
+    }
+
     // Hide other sections
     this.elements.nameSection.style.display = 'none';
     this.elements.estateSection.style.display = 'none';
@@ -874,7 +947,7 @@ class IntestacyUI {
     // Ensure cohabiting warning remains visible if applicable
     if (this.calculator.state.cohabiting) {
       this.elements.cohabitingWarning.style.display = 'block';
-      // Move the warning to the question section so it's visible
+      // Move the warning to the question section so it\'s visible
       this.elements.questionSection.insertBefore(this.elements.cohabitingWarning, this.elements.questionHeading);
     }
     

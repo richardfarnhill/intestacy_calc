@@ -889,3 +889,249 @@ describe('IntestacyCalculator', () => {
     });
   });
 });
+
+describe('Intestacy Calculator - Single Person', () => {
+  let calculator;
+
+  beforeEach(() => {
+    calculator = new IntestacyCalculator();
+  });
+
+  test('should distribute estate to parents if single with no children but parents alive', () => {
+    calculator.state = {
+      name: 'Single Person',
+      estateValue: 300000,
+      married: false,
+      cohabiting: false,
+      children: false,
+      grandchildren: false,
+      greatGrandchildren: false,
+      parentsAlive: true,
+      siblings: false,
+      fullSiblings: false,
+      halfSiblings: false,
+      grandparents: false,
+      auntsUncles: false,
+      fullAuntsUncles: false,
+      halfAuntsUncles: false,
+      currentQuestion: 0,
+      childrenDeceased: false,
+      deceasedChildrenHadChildren: false,
+      siblingsDeceasedWithChildren: false,
+      auntsUnclesDeceasedWithChildren: false
+    };
+
+    const distribution = calculator.calculateDistribution();
+
+    // Expect the distribution to go to parents
+    expect(distribution.data.beneficiaries).toEqual(['Parents']);
+    expect(distribution.data.shares).toEqual([300000]);
+    expect(distribution.data.labels).toEqual(['Parents']);
+    expect(distribution.text).toContain('Your entire estate of £300,000.00 will pass to your surviving parent(s) in equal shares.');
+  });
+});
+
+describe('Intestacy Calculator - Single Person with Siblings', () => {
+  let calculator;
+
+  beforeEach(() => {
+    calculator = new IntestacyCalculator();
+  });
+
+  test('should distribute estate to full siblings if single with no children, no parents but full siblings alive', () => {
+    calculator.state = {
+      name: 'Single Person with Siblings',
+      estateValue: 400000,
+      married: false,
+      cohabiting: false,
+      children: false,
+      grandchildren: false,
+      greatGrandchildren: false,
+      parentsAlive: false,
+      siblings: true,
+      fullSiblings: true,
+      halfSiblings: false,
+      grandparents: false,
+      auntsUncles: false,
+      fullAuntsUncles: false,
+      halfAuntsUncles: false,
+      currentQuestion: 0,
+      childrenDeceased: false,
+      deceasedChildrenHadChildren: false,
+      siblingsDeceasedWithChildren: false,
+      auntsUnclesDeceasedWithChildren: false
+    };
+
+    const distribution = calculator.calculateDistribution();
+
+    // Expect the distribution to go to full siblings
+    expect(distribution.data.beneficiaries).toEqual(['Full Siblings']);
+    expect(distribution.data.shares).toEqual([400000]);
+    expect(distribution.data.labels).toEqual(['Full Siblings']);
+    expect(distribution.text).toContain('Your entire estate of £400,000.00 will be divided equally between your living full siblings.');
+  });
+});
+
+describe('Intestacy Calculator - Single Person with Grandparents', () => {
+  let calculator;
+
+  beforeEach(() => {
+    calculator = new IntestacyCalculator();
+  });
+
+  test('should distribute estate to grandparents if single with no children, no parents, no siblings but grandparents alive', () => {
+    calculator.state = {
+      name: 'Single Person with Grandparents',
+      estateValue: 250000,
+      married: false,
+      cohabiting: false,
+      children: false,
+      grandchildren: false,
+      greatGrandchildren: false,
+      parentsAlive: false,
+      siblings: false,
+      fullSiblings: false,
+      halfSiblings: false,
+      grandparents: true,
+      auntsUncles: false,
+      fullAuntsUncles: false,
+      halfAuntsUncles: false,
+      currentQuestion: 0,
+      childrenDeceased: false,
+      deceasedChildrenHadChildren: false,
+      siblingsDeceasedWithChildren: false,
+      auntsUnclesDeceasedWithChildren: false
+    };
+
+    const distribution = calculator.calculateDistribution();
+
+    // Expect the distribution to go to grandparents
+    expect(distribution.data.beneficiaries).toEqual(['Grandparents']);
+    expect(distribution.data.shares).toEqual([250000]);
+    expect(distribution.data.labels).toEqual(['Grandparents']);
+    expect(distribution.text).toContain('Your entire estate of £250,000.00 will be divided equally between your grandparents.');
+  });
+});
+
+describe('Intestacy Calculator - Single Person with Aunts and Uncles', () => {
+  let calculator;
+
+  beforeEach(() => {
+    calculator = new IntestacyCalculator();
+  });
+
+  test('should distribute estate to full aunts and uncles if single with no children, no parents, no siblings, no grandparents but full aunts and uncles alive', () => {
+    calculator.state = {
+      name: 'Single Person with Aunts/Uncles',
+      estateValue: 150000,
+      married: false,
+      cohabiting: false,
+      children: false,
+      grandchildren: false,
+      greatGrandchildren: false,
+      parentsAlive: false,
+      siblings: false,
+      fullSiblings: false,
+      halfSiblings: false,
+      grandparents: false,
+      auntsUncles: true,
+      fullAuntsUncles: true,
+      halfAuntsUncles: false,
+      currentQuestion: 0,
+      childrenDeceased: false,
+      deceasedChildrenHadChildren: false,
+      siblingsDeceasedWithChildren: false,
+      auntsUnclesDeceasedWithChildren: false
+    };
+
+    const distribution = calculator.calculateDistribution();
+
+    // Expect the distribution to go to full aunts and uncles
+    expect(distribution.data.beneficiaries).toEqual(['Full Aunts and Uncles']);
+    expect(distribution.data.shares).toEqual([150000]);
+    expect(distribution.data.labels).toEqual(['Full Aunts and Uncles']);
+    expect(distribution.text).toContain('Your entire estate of £150,000.00 will be divided equally between your living full aunts and uncles.');
+  });
+});
+
+describe('Intestacy Calculator - Single Person with Half Aunts and Uncles', () => {
+  let calculator;
+
+  beforeEach(() => {
+    calculator = new IntestacyCalculator();
+  });
+
+  test('should distribute estate to half aunts and uncles if single with no children, no parents, no siblings, no grandparents, no full aunts/uncles but half aunts/uncles alive', () => {
+    calculator.state = {
+      name: 'Single Person with Half Aunts/Uncles',
+      estateValue: 100000,
+      married: false,
+      cohabiting: false,
+      children: false,
+      grandchildren: false,
+      greatGrandchildren: false,
+      parentsAlive: false,
+      siblings: false,
+      fullSiblings: false,
+      halfSiblings: false,
+      grandparents: false,
+      auntsUncles: true,
+      fullAuntsUncles: false,
+      halfAuntsUncles: true,
+      currentQuestion: 0,
+      childrenDeceased: false,
+      deceasedChildrenHadChildren: false,
+      siblingsDeceasedWithChildren: false,
+      auntsUnclesDeceasedWithChildren: false
+    };
+
+    const distribution = calculator.calculateDistribution();
+
+    // Expect the distribution to go to half aunts and uncles
+    expect(distribution.data.beneficiaries).toEqual(['Half-Aunts and Half-Uncles']);
+    expect(distribution.data.shares).toEqual([100000]);
+    expect(distribution.data.labels).toEqual(['Half-Aunts and Half-Uncles']);
+    expect(distribution.text).toContain('Your entire estate of £100,000.00 will be divided equally between your living half-aunts and half-uncles.');
+  });
+});
+
+describe('Intestacy Calculator - Single Person with No Relatives', () => {
+  let calculator;
+
+  beforeEach(() => {
+    calculator = new IntestacyCalculator();
+  });
+
+  test('should distribute estate to the Crown if single with no children and no other relatives', () => {
+    calculator.state = {
+      name: 'Single Person with No Relatives',
+      estateValue: 50000,
+      married: false,
+      cohabiting: false,
+      children: false,
+      grandchildren: false,
+      greatGrandchildren: false,
+      parentsAlive: false,
+      siblings: false,
+      fullSiblings: false,
+      halfSiblings: false,
+      grandparents: false,
+      auntsUncles: false,
+      fullAuntsUncles: false,
+      halfAuntsUncles: false,
+      currentQuestion: 0,
+      childrenDeceased: false,
+      deceasedChildrenHadChildren: false,
+      siblingsDeceasedWithChildren: false,
+      auntsUnclesDeceasedWithChildren: false
+    };
+
+    const distribution = calculator.calculateDistribution();
+
+    // Expect the distribution to go to the Crown
+    expect(distribution.data.beneficiaries).toEqual(['Crown (Bona Vacantia)']);
+    expect(distribution.data.shares).toEqual([50000]);
+    expect(distribution.data.labels).toEqual(['Crown (Bona Vacantia)']);
+    expect(distribution.text).toContain('Your estate of £50,000.00 will pass to the Crown (Bona Vacantia).');
+  });
+});

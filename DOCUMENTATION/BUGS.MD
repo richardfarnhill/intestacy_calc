@@ -48,3 +48,65 @@ Test case verified with:
 #### Additional Notes:
 - Manual testing is required to identify the root cause of the issue.
 - Please ensure that the distribution logic is reviewed and corrected as necessary.
+
+### Bug ID: 002
+**Date Reported:** 6 June 2025
+**Reported By:** User
+**Version:** [Current Version]
+**Environment:** [User's Environment]
+**Status:** Fixed
+**Resolution Date:** 6 June 2025
+
+#### Description:
+UI issue in the question section where an unnecessary text box/label appeared below the question text, and there were spacing problems.
+
+#### Steps to Reproduce:
+1. Navigate to a question step in the calculator.
+2. Observe the layout and elements displayed below the main question text.
+
+#### Expected Result:
+Only the question text and the Yes/No buttons should be displayed with appropriate spacing.
+
+#### Actual Result:
+An unnecessary text box or label-like element appeared, along with the text "Answer the question", and the spacing was incorrect.
+
+#### Resolution:
+- Ensured the visually hidden legend element for accessibility is correctly hidden via CSS class.
+- Added temporary inline styles to improve spacing between the question text and buttons.
+
+#### Verification:
+Tested the question section UI visually to confirm the removal of the extraneous element/text and improved spacing.
+
+### Bug ID: 003
+**Date Reported:** 6 June 2025
+**Reported By:** User
+**Version:** [Current Version]
+**Environment:** [User's Environment]
+**Status:** Fixed
+**Resolution Date:** 6 June 2025
+
+#### Description:
+Incorrect distribution details displayed for cohabiting individuals with no children. The calculator incorrectly indicated that the estate would be distributed to children, despite the user having no children.
+
+#### Steps to Reproduce:
+1. Open the UK Intestacy Calculator.
+2. Enter an estate value.
+3. Select 'Co-habiting' as the relationship status.
+4. Indicate that there are no children.
+5. Proceed through any remaining questions.
+6. Observe the detailed distribution results.
+
+#### Expected Result:
+The detailed distribution should show the estate passing to the next class of beneficiaries according to the standard intestacy hierarchy (e.g., parents, siblings, etc.), or to the Crown if no other relatives exist. The distribution should NOT indicate children as beneficiaries.
+
+#### Actual Result:
+The distribution results incorrectly listed children as the beneficiaries, even though the user had no children.
+
+#### Resolution:
+- Adjusted `_populateDistributionData` to correctly identify the first class of beneficiaries in the standard hierarchy when the user is cohabiting and has no children.
+- Modified `getInheritanceHierarchyText` to generate the correct textual description for the distribution in the same scenario.
+- Added a dedicated test case (`tests/cohabiting-no-children-test.js`) for this specific scenario.
+
+#### Verification:
+- Verified the UI output for a cohabiting individual with no children and no other relatives; the distribution correctly shows the Crown as the beneficiary.
+- Confirmed the new test case `tests/cohabiting-no-children-test.js` passes when running the test suite.

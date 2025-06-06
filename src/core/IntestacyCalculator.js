@@ -180,7 +180,10 @@ class IntestacyCalculator {
       };
       
       // Populate distribution data based on the inheritance hierarchy
-      this._populateDistributionData(distributionData, estateValue);
+      // Only populate if there's no inheriting spouse (cohabiting doesn't inherit automatically)
+      if (!this.state.married || (this.state.married && this.state.children && estateValue > this.STATUTORY_LEGACY)) {
+         this._populateDistributionData(distributionData, estateValue);
+      }
       
       const cohabitingWarningMessage = 'As a cohabiting partner, you have no automatic inheritance rights under UK law.';
       distributionData.warnings.push(cohabitingWarningMessage);
@@ -193,7 +196,8 @@ class IntestacyCalculator {
           `Your estate of ${formattedValue} will be distributed as follows:\n` +
           `• Your cohabiting partner will not automatically inherit anything\n` +
           `• Your estate will pass to your relatives according to intestacy rules:\n` +
-          this.getInheritanceHierarchyText(estateValue) +
+          // Only show hierarchy text if there are non-cohabiting beneficiaries
+          (distributionData.beneficiaries.length > 0 ? this.getInheritanceHierarchyText(estateValue) : `  - Your estate of ${formattedValue} will pass to the Crown (Bona Vacantia).`) +
           `\n\nTo protect your partner, you should create a valid Will.`
         ),
         data: distributionData
@@ -412,60 +416,75 @@ class IntestacyCalculator {
    * @private
    */
   _populateDistributionData(distributionData, estateValue) {
-    distributionData.shares = [estateValue]; // Estate is not split in these scenarios
+    // This function populates the data for the visual distribution (pie chart/list)
+    // It determines the *first* class of beneficiaries according to the hierarchy.
+    
+    // If there's a married partner who inherits everything, we don't use this hierarchy
+    // This is handled in calculateDistribution before calling this.
+    
+    distributionData.shares = [estateValue]; // Estate is not split in these scenarios - one class inherits all.
 
     if (this.state.children) {
       distributionData.labels = ['Children'];
-      distributionData.colors = ['#95D47A'];
+      distributionData.colors = ['#95D47A']; // Green
       distributionData.beneficiaries = ['Children'];
       return;
     }
     
     if (this.state.parentsAlive) {
       distributionData.labels = ['Parents'];
-      distributionData.colors = ['#F3C969'];
+      distributionData.colors = ['#F3C969']; // Yellow
       distributionData.beneficiaries = ['Parents'];
       return;
     }
     
     // Siblings - full take precedence over half
-    if (this.state.fullSiblings) {
-      distributionData.labels = ['Full Siblings'];
-      distributionData.colors = ['#E36588'];
-      distributionData.beneficiaries = ['Full Siblings'];
-      return;
+    if (this.state.siblings) { // Check if there are ANY siblings first
+        if (this.state.fullSiblings) {
+            distributionData.labels = ['Full Siblings'];
+            distributionData.colors = ['#E36588']; // Red-ish
+            distributionData.beneficiaries = ['Full Siblings'];
+            return;
+        } else if (this.state.halfSiblings) { // If no full, check for half
+            distributionData.labels = ['Half-Siblings'];
+            distributionData.colors = ['#E36588']; // Same color category for siblings
+            distributionData.beneficiaries = ['Half-Siblings'];
+            return;
+        }
+        // If this.state.siblings is true, but neither fullSiblings nor halfSiblings are true,
+        // this implies an inconsistency in the state or question flow, but for safety,
+        // we'll continue down the hierarchy.
     }
-    if (this.state.halfSiblings) { // Implies no full siblings
-      distributionData.labels = ['Half-Siblings'];
-      distributionData.colors = ['#E36588']; // Same color category for siblings
-      distributionData.beneficiaries = ['Half-Siblings'];
-      return;
-    }
+
     
     if (this.state.grandparents) {
       distributionData.labels = ['Grandparents'];
-      distributionData.colors = ['#9B6EBF'];
+      distributionData.colors = ['#9B6EBF']; // Purple
       distributionData.beneficiaries = ['Grandparents'];
       return;
     }
     
     // Aunts/Uncles - full take precedence over half
-    if (this.state.fullAuntsUncles) {
-      distributionData.labels = ['Full Aunts and Uncles'];
-      distributionData.colors = ['#F78E69'];
-      distributionData.beneficiaries = ['Full Aunts and Uncles'];
-      return;
-    }
-    if (this.state.halfAuntsUncles) { // Implies no full aunts/uncles
-      distributionData.labels = ['Half-Aunts and Uncles'];
-      distributionData.colors = ['#F78E69']; // Same color category for aunts/uncles
-      distributionData.beneficiaries = ['Half-Aunts and Uncles'];
-      return;
+    if (this.state.auntsUncles) { // Check if there are ANY aunts/uncles first
+        if (this.state.fullAuntsUncles) {
+            distributionData.labels = ['Full Aunts and Uncles'];
+            distributionData.colors = ['#F78E69']; // Orange
+            distributionData.beneficiaries = ['Full Aunts and Uncles'];
+            return;
+        } else if (this.state.halfAuntsUncles) { // If no full, check for half
+            distributionData.labels = ['Half-Aunts and Uncles'];
+            distributionData.colors = ['#F78E69']; // Same color category for aunts/uncles
+            distributionData.beneficiaries = ['Half-Aunts and Uncles'];
+            return;
+        }
+         // If this.state.auntsUncles is true, but neither fullAuntsUncles nor halfAuntsUncles are true,
+        // this implies an inconsistency in the state or question flow, but for safety,
+        // we'll continue down the hierarchy.
     }
     
-    // Default to Crown (Bona Vacantia)
+    // Default to Crown (Bona Vacantia) if no other beneficiaries found
     distributionData.labels = ['Crown (Bona Vacantia)'];
-    distributionData.colors = ['#8C8C8C'];
+    distributionData.colors = ['#8C8C8C']; // Grey
     distributionData.beneficiaries = ['Crown (Bona Vacantia)'];
   }
   
@@ -541,7 +560,9 @@ class IntestacyCalculator {
   getInheritanceHierarchyText(estateValue) {
     const formattedValue = this.formatCurrency(estateValue);
     
-    // This logic mirrors the main calculateDistribution for text consistency
+    // This logic mirrors the main calculateDistribution for text consistency,
+    // focusing on the standard intestacy hierarchy when a spouse doesn't inherit all.
+
     if (this.state.children) {
       let childrenDistributionText = "your living children";
       if (this.state.childrenDeceased) {
@@ -558,42 +579,50 @@ class IntestacyCalculator {
       return `  - Your entire estate of ${formattedValue} will pass to your surviving parent(s) in equal shares.`;
     }
     
-    if (this.state.siblings) {
-      if (this.state.fullSiblings) {
-        let siblingDistributionText = "your living full siblings";
-        if (this.state.siblingsDeceasedWithChildren) {
-            siblingDistributionText = "your living full siblings and the children of your deceased full siblings (who will share their parent's portion per stirpes)";
+    // Siblings - full take precedence over half
+    if (this.state.siblings) { // Check if there are ANY siblings first
+        if (this.state.fullSiblings) {
+            let siblingDistributionText = "your living full siblings";
+            if (this.state.siblingsDeceasedWithChildren) {
+                siblingDistributionText = "your living full siblings and the children of your deceased full siblings (who will share their parent's portion per stirpes)";
+            }
+            return `  - Your entire estate of ${formattedValue} will be divided equally between ${siblingDistributionText}.`;
+        } else if (this.state.halfSiblings) { // If no full, check for half
+            let halfSiblingDistributionText = "your living half-siblings";
+            if (this.state.siblingsDeceasedWithChildren) {
+                halfSiblingDistributionText = "your living half-siblings and the children of your deceased half-siblings (who will share their parent's portion per stirpes)";
+            }
+            return `  - Your entire estate of ${formattedValue} will be divided equally between ${halfSiblingDistributionText}.`;
         }
-        return `  - Your entire estate of ${formattedValue} will be divided equally between ${siblingDistributionText}.`;
-      } else if (this.state.halfSiblings) {
-        let halfSiblingDistributionText = "your living half-siblings";
-        if (this.state.siblingsDeceasedWithChildren) {
-            halfSiblingDistributionText = "your living half-siblings and the children of your deceased half-siblings (who will share their parent's portion per stirpes)";
-        }
-        return `  - Your entire estate of ${formattedValue} will be divided equally between ${halfSiblingDistributionText}.`;
-      }
+         // If this.state.siblings is true, but neither fullSiblings nor halfSiblings are true,
+        // this implies an inconsistency in the state or question flow, but for safety,
+        // we'll continue down the hierarchy.
     }
     
     if (this.state.grandparents) {
       return `  - Your entire estate of ${formattedValue} will be divided equally between your grandparents.`;
     }
 
-    if (this.state.auntsUncles) {
-      if (this.state.fullAuntsUncles) {
-        let fullAuntsUnclesDistributionText = "your living full aunts and uncles";
-        if (this.state.auntsUnclesDeceasedWithChildren) {
-            fullAuntsUnclesDistributionText = "your living full aunts and uncles and the children of your deceased full aunts and uncles (who will share their parent's portion per stirpes)";
+    if (this.state.auntsUncles) { // Check if there are ANY aunts/uncles first
+        if (this.state.fullAuntsUncles) {
+            let fullAuntsUnclesDistributionText = "your living full aunts and uncles";
+            if (this.state.auntsUnclesDeceasedWithChildren) {
+                fullAuntsUnclesDistributionText = "your living full aunts and uncles and the children of your deceased full aunts and uncles (who will share their parent's portion per stirpes)";
+            }
+            return `  - Your entire estate of ${formattedValue} will be divided equally between ${fullAuntsUnclesDistributionText}.`;
+        } else if (this.state.halfAuntsUncles) { // If no full, check for half
+            let halfAuntsUnclesDistributionText = "your living half-aunts and half-uncles";
+            if (this.state.auntsUnclesDeceasedWithChildren) {
+                 halfAuntsUnclesDistributionText = "your living half-aunts and half-uncles and the children of your deceased half-aunts and half-uncles (who will share their parent's portion per stirpes)";
+            }
+            return `  - Your entire estate of ${formattedValue} will be divided equally between ${halfAuntsUnclesDistributionText}.`;
         }
-        return `  - Your entire estate of ${formattedValue} will be divided equally between ${fullAuntsUnclesDistributionText}.`;
-      } else if (this.state.halfAuntsUncles) {
-        let halfAuntsUnclesDistributionText = "your living half-aunts and half-uncles";
-        if (this.state.auntsUnclesDeceasedWithChildren) {
-             halfAuntsUnclesDistributionText = "your living half-aunts and half-uncles and the children of your deceased half-aunts and half-uncles (who will share their parent's portion per stirpes)";
-        }
-        return `  - Your entire estate of ${formattedValue} will be divided equally between ${halfAuntsUnclesDistributionText}.`;
-      }
+         // If this.state.auntsUncles is true, but neither fullAuntsUncles nor halfAuntsUncles are true,
+        // this implies an inconsistency in the state or question flow, but for safety,
+        // we'll continue down the hierarchy.
     }
     
+    // Default to Crown (Bona Vacantia) if no other beneficiaries found
     return `  - Your estate of ${formattedValue} will pass to the Crown (Bona Vacantia).`;
   }
 

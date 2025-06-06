@@ -66,8 +66,7 @@
 
 ## Implementation Notes
 
-- The UI has been simplified to use only button inputs for boolean questions in the question flow.
-- Input boxes in the question section are hidden via CSS to maintain a clean interface.
+- The UI for boolean questions in the question flow uses only Yes/No buttons. Any associated input boxes or labels should be visually hidden via CSS to maintain a clean interface.
 - Progress indicators have been intentionally removed from the UI as they were deemed unnecessary and visually distracting.
 - Tests have been updated to reflect these UI decisions.
 
@@ -84,7 +83,7 @@ When UI elements are intentionally removed:
 The following UI elements have been intentionally removed or simplified:
 
 1. **Progress Indicators**: All progress bars and step indicators have been removed.
-2. **Input Boxes for Boolean Questions**: Hidden via CSS in favor of Yes/No buttons only.
+2. **Extra Input/Label in Question Section**: The visual appearance of an extra input box or "Answer the question" label in the question section has been resolved to show only the question text and Yes/No buttons.
 
 ## Bug Tracking
 - A rudimentary bug tracking system has been implemented to log issues and track their resolution.

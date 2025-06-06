@@ -4,8 +4,8 @@
 
 ### Core Functionality
 - Pure JavaScript implementation with zero backend dependencies
-- Accurate calculation of estate distribution per UK intestacy rules
-- Step-by-step question flow with conditional logic
+- Accurate calculation of estate distribution per UK intestacy rules with clear and correct descriptions (e.g., "absolute interest" for spouse where applicable)
+- Step-by-step question flow with conditional logic and streamlined user interface
 - Clear results display with inheritance breakdowns
 
 ### Cohabiting Partner Handling
@@ -25,6 +25,7 @@
 - ARIA labels for screen readers
 - Keyboard-navigable controls
 - High contrast color scheme
+- Improved accessible summaries for distribution results
 
 ## Future Roadmap
 
@@ -50,6 +51,6 @@
 
 ---
 
-**Last Updated**: 4 March 2025  
+**Last Updated**: 6 June 2025  
 **Version**: 1.2.2  
 **Compliance**: WCAG 2.1 AA | GDPR | UK Legal Standards

@@ -37,6 +37,8 @@ The demo provides several examples showcasing different implementation approache
 
 ## Recent Updates
 
+- Fixed calculation logic for married individuals with children to correctly state "absolute interest" instead of "life interest" for the spouse's share.
+- Resolved UI issue in the question section, removing the unnecessary text/label and improving spacing.
 - Consolidated documentation files to reduce redundancy
 - Improved Netlify routing configuration for seamless navigation
 - Streamlined UI by removing redundant documentation links
