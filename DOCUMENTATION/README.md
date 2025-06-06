@@ -2,7 +2,7 @@
 This software is proprietary and confidential. No license is granted for its use, modification, or distribution.
 Unauthorized deployment or distribution of this calculator is strictly prohibited.
 
-Copyright © 2025 Richard Farnhill. All rights reserved.
+WillSolicitor.co.uk (a trading style of McHale Legal Limited)
 
 # UK Intestacy Calculator Widget
 

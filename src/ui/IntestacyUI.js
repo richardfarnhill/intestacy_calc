@@ -1115,19 +1115,6 @@ class IntestacyUI {
       `;
     }
     
-    // Add copyright notice
-    const copyrightNotice = document.createElement('p');
-    copyrightNotice.className = 'intestacy-copyright';
-    copyrightNotice.textContent = '© WillSolicitor.co.uk (a trading style of McHale Legal Limited) 2025. All Rights Reserved.';
-    
-    html += `
-      <div class="intestacy-contact-info" role="region" aria-label="Contact Information">
-        <p>${this.options.contactInfo}</p>
-        <p><a href="tel:${this.options.contactPhone}" class="intestacy-contact-phone">${this.options.contactPhone}</a></p>
-        <p><a href="mailto:${this.options.contactEmail}" class="intestacy-contact-email">${this.options.contactEmail}</a></p>
-      </div>
-    `;
-    
     return html;
   }
   
