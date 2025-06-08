@@ -715,3 +715,7 @@
 .intestacy-theme-dark .intestacy-beneficiary-percentage {
   color: #aaa;
 }
+
+.intestacy-question-fieldset {
+  display: none !important;
+}

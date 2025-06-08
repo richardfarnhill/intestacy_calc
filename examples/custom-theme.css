@@ -79,3 +79,7 @@
   font-weight: bold;
   color: #4a148c;
 }
+
+.intestacy-question-fieldset {
+  display: none !important;
+}

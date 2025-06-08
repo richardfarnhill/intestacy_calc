@@ -498,7 +498,6 @@ class IntestacyUI {
     // Cache elements within the question section
     this.elements.questionHeading = this.elements.questionSection.querySelector('.intestacy-question-heading');
     this.elements.questionText = this.elements.questionSection.querySelector('.intestacy-question-text');
-    this.elements.questionFieldset = this.elements.questionSection.querySelector('.intestacy-question-fieldset');
     this.elements.questionError = this.elements.questionSection.querySelector('.intestacy-question-error');
     this.elements.questionButtons = this.elements.questionSection.querySelector('.intestacy-question-buttons');
     this.elements.yesButton = this.elements.questionButtons.querySelector('.intestacy-yes-button');
