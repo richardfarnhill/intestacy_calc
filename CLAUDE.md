@@ -4,10 +4,17 @@
 
 **UK Intestacy Calculator Widget** - A JavaScript widget that calculates estate distribution under UK intestacy rules. Pure frontend implementation with no backend dependencies. The project is proprietary and only for authorized deployment by WillSolicitor.co.uk.
 
+This is part of a larger initiative to create a suite of professional tools and lead magnets:
+- **Primary Product:** UK Intestacy Calculator (current)
+- **Planned:** Advisor Architect (guidance tool for complex matters)
+- **Planned:** Will Builder (lead magnet for lead capture)
+- **Planned:** Other estate planning tools (see ROADMAP.md)
+
 ### Key Resources
 - **Live Demo:** https://intestacycalculator.netlify.app/
 - **Current Version:** 1.3.1
 - **Repository:** Private (richardfarnhill/intestacy_calc)
+- **Planning:** See PLANNING_homepage.md for new homepage design (in development)
 
 ---
 
