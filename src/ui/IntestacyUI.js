@@ -4,7 +4,7 @@
  */
 
 import IntestacyCalculator from '../core/IntestacyCalculator.js';
-import { validateEstateValue, validateName, stringToBoolean } from '../core/ValidationUtils.js';
+import { validateEstateValue, validateName } from '../core/ValidationUtils.js';
 
 class IntestacyUI {
   /**
@@ -56,10 +56,7 @@ class IntestacyUI {
   init() {
     // Create the UI structure
     this.createUIStructure();
-    
-    // Cache references to UI elements after they are created
-    this._cacheElements();
-    
+
     // Add event listeners
     this.addEventListeners();
     
@@ -443,6 +440,7 @@ class IntestacyUI {
       estateButton: estateButton,
       estateError: estateError,
       statusSection: statusSection,
+      statusFieldset: statusFieldset,
       statusOptions: statusOptions,
       statusInputs: statusOptions.querySelectorAll('input[name="marital-status"]'),
       statusButton: statusButton,
@@ -452,6 +450,7 @@ class IntestacyUI {
       questionHeading: questionHeading,
       questionText: questionText,
       questionError: questionError,
+      questionButtons: questionButtons,
       yesButton: yesButton,
       noButton: noButton,
       resultSection: resultSection,
@@ -462,57 +461,7 @@ class IntestacyUI {
     // Cache copyright element
     this.elements.copyrightNotice = this.elements.calculator.querySelector('.intestacy-copyright');
   }
-  
-  /**
-   * Cache references to key UI elements by querying the DOM.
-   * This should be called after the UI structure is created.
-   */
-  _cacheElements() {
-    // Cache main calculator container
-    this.elements.calculator = this.container.querySelector('.intestacy-calculator');
 
-    // Cache section elements
-    this.elements.nameSection = this.elements.calculator.querySelector('.intestacy-name-section');
-    this.elements.estateSection = this.elements.calculator.querySelector('.intestacy-estate-section');
-    this.elements.statusSection = this.elements.calculator.querySelector('.intestacy-status-section');
-    this.elements.questionSection = this.elements.calculator.querySelector('.intestacy-question-section');
-    this.elements.resultSection = this.elements.calculator.querySelector('.intestacy-result-section');
-
-    // Cache elements within the name section
-    this.elements.nameInput = this.elements.nameSection.querySelector('.intestacy-name-input');
-    this.elements.nameError = this.elements.nameSection.querySelector('.intestacy-name-error');
-    this.elements.nameButton = this.elements.nameSection.querySelector('.intestacy-name-button');
-
-    // Cache elements within the estate section
-    this.elements.estateInput = this.elements.estateSection.querySelector('.intestacy-estate-input');
-    this.elements.estateError = this.elements.estateSection.querySelector('.intestacy-estate-error');
-    this.elements.estateButton = this.elements.estateSection.querySelector('.intestacy-estate-button');
-
-    // Cache elements within the status section
-    this.elements.statusFieldset = this.elements.statusSection.querySelector('.intestacy-status-fieldset');
-    this.elements.statusInputs = this.elements.statusSection.querySelectorAll('.intestacy-status-input'); // NodeList
-    this.elements.statusError = this.elements.statusSection.querySelector('.intestacy-status-error');
-    this.elements.cohabitingWarning = this.elements.statusSection.querySelector('.intestacy-cohabiting-warning');
-    this.elements.statusButton = this.elements.statusSection.querySelector('.intestacy-status-button');
-
-    // Cache elements within the question section
-    this.elements.questionHeading = this.elements.questionSection.querySelector('.intestacy-question-heading');
-    this.elements.questionText = this.elements.questionSection.querySelector('.intestacy-question-text');
-    this.elements.questionError = this.elements.questionSection.querySelector('.intestacy-question-error');
-    this.elements.questionButtons = this.elements.questionSection.querySelector('.intestacy-question-buttons');
-    this.elements.yesButton = this.elements.questionButtons.querySelector('.intestacy-yes-button');
-    this.elements.noButton = this.elements.questionButtons.querySelector('.intestacy-no-button');
-
-    // Cache elements within the result section
-    this.elements.resultContent = this.elements.resultSection.querySelector('.intestacy-result-content');
-    this.elements.restartButton = this.elements.resultSection.querySelector('.intestacy-restart-button');
-
-    // Cache contact info elements
-    this.elements.contactInfoText = this.elements.resultSection.querySelector('.intestacy-contact-info');
-    this.elements.contactPhoneLink = this.elements.resultSection.querySelector('.intestacy-contact-phone');
-    this.elements.contactEmailLink = this.elements.resultSection.querySelector('.intestacy-contact-email');
-  }
-  
   /**
    * Add event listeners to UI elements
    */
@@ -886,21 +835,29 @@ class IntestacyUI {
     // Clear error
     this.elements.statusError.style.display = 'none';
     
-    // Handle cohabiting status
-    if (selectedStatus === 'cohabiting') {
+    // Map the radio button selection to calculator state
+    if (selectedStatus === 'married') {
+      this.calculator.state.married = true;
+      this.calculator.state.cohabiting = false;
+      this.elements.cohabitingWarning.style.display = 'none';
+      this.moveToQuestions();
+    } else if (selectedStatus === 'cohabiting') {
+      this.calculator.state.married = false;
       this.calculator.state.cohabiting = true;
       this.elements.cohabitingWarning.style.display = 'block';
-      
+
       // Announce the warning to screen readers
       this.elements.cohabitingWarning.setAttribute('tabindex', '-1');
       this.elements.cohabitingWarning.focus();
-      
+
       // Move on after the warning has been read (or after a delay)
       setTimeout(() => {
         this.elements.cohabitingWarning.removeAttribute('tabindex');
         this.moveToQuestions();
       }, 2000);
     } else {
+      // single/divorced/widowed
+      this.calculator.state.married = false;
       this.calculator.state.cohabiting = false;
       this.elements.cohabitingWarning.style.display = 'none';
       this.moveToQuestions();
@@ -994,7 +951,7 @@ class IntestacyUI {
       
       <div class="intestacy-result-details" role="region" aria-label="Detailed Distribution">
         <h3>Detailed Distribution</h3>
-        ${this.formatDistributionDetails(distribution.data)}
+        ${this.formatDistributionDetails(distribution.data, distribution.text)}
       </div>
     `;
     
@@ -1046,7 +1003,7 @@ class IntestacyUI {
    * @param {Object} distributionData - Distribution data
    * @returns {string} - HTML string with formatted details
    */
-  formatDistributionDetails(distributionData) {
+  formatDistributionDetails(distributionData, summaryText = '') {
     if (!distributionData || !distributionData.shares || distributionData.shares.length === 0 || !distributionData.beneficiaries) {
       return '<p>No distribution data available.</p>';
     }
@@ -1055,10 +1012,7 @@ class IntestacyUI {
     const totalValue = distributionData.totalValue || 
       distributionData.shares.reduce((sum, share) => sum + share, 0);
     
-    // Include the summary text from the distribution calculation but remove the duplicated warning
-    let summaryText = distributionData.text || '';
-    
-    // Remove any cohabiting warning div from the text to avoid duplication
+    // Remove any cohabiting warning div from the summary text to avoid duplication
     summaryText = summaryText.replace(/<div class="intestacy-cohabiting-warning">.*?<\/div>/s, '');
     
     const summaryHtml = `<p>${summaryText}</p>`;

@@ -111,9 +111,9 @@ describe('IntestacyCalculator', () => {
 
   describe('processAnswer', () => {
     test('should update state and return next question', () => {
-      const nextQuestion = calculator.processAnswer('married', true);
-      expect(calculator.state.married).toBe(true);
-      expect(nextQuestion).toBe('children');
+      const nextQuestion = calculator.processAnswer('children', true);
+      expect(calculator.state.children).toBe(true);
+      expect(nextQuestion).toBe('childrenDeceased');
     });
     
     test('should handle end of question flow', () => {
@@ -611,8 +611,8 @@ describe('IntestacyCalculator', () => {
       expect(result.text).toContain('Your entire estate of £500,000.00 will be divided equally between your living half-aunts and half-uncles');
 
       expect(result.data.shares).toEqual([500000]);
-      expect(result.data.labels).toEqual(['Half-Aunts and Uncles']);
-      expect(result.data.beneficiaries).toEqual(['Half-Aunts and Uncles']);
+      expect(result.data.labels).toEqual(['Half-Aunts and Half-Uncles']);
+      expect(result.data.beneficiaries).toEqual(['Half-Aunts and Half-Uncles']);
       expect(result.data.colors).toEqual(['#F78E69']);
       expect(result.data.totalValue).toBe(500000);
       expect(result.data.warnings).toContain('As a cohabiting partner, you have no automatic inheritance rights under UK law.');
