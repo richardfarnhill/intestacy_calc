@@ -28,6 +28,7 @@ class IntestacyUI {
       contactInfo: 'Please contact us to discuss creating a Will.',
       contactPhone: '0123 456 7890',
       contactEmail: 'info@example.com',
+      contactWebsite: 'https://www.willsolicitor.co.uk',
       ...options
     };
     
@@ -349,16 +350,8 @@ class IntestacyUI {
     resultContent.setAttribute('tabindex', '0'); // Make focusable to help screen reader users
     resultContent.setAttribute('aria-live', 'polite');
     
-    const restartButton = document.createElement('button');
-    restartButton.className = 'intestacy-button intestacy-restart-button';
-    restartButton.id = 'intestacy-restart';
-    restartButton.textContent = 'Start Again';
-    restartButton.type = 'button';
-    restartButton.setAttribute('aria-label', 'Start calculator again from beginning');
-    
     resultSection.appendChild(resultHeading);
     resultSection.appendChild(resultContent);
-    resultSection.appendChild(restartButton);
     
     // Create footer with legal disclaimer
     const footer = document.createElement('footer');
@@ -401,27 +394,50 @@ class IntestacyUI {
         emailLink.className = 'intestacy-contact-email';
         emailLink.innerHTML = this.options.contactEmail;
         emailLink.setAttribute('aria-label', `Email: ${this.options.contactEmail}`);
-        
+
         contactInfo.appendChild(document.createElement('br'));
         contactInfo.appendChild(emailLink);
       }
-      
+
+      // If website is provided, make it accessible
+      if (this.options.contactWebsite) {
+        contactInfo.appendChild(document.createTextNode(' \u00A6 '));
+        const websiteLink = document.createElement('a');
+        websiteLink.href = this.options.contactWebsite;
+        websiteLink.className = 'intestacy-contact-website';
+        websiteLink.textContent = 'www.WillSolicitor.co.uk';
+        websiteLink.target = '_blank';
+        websiteLink.rel = 'noopener noreferrer';
+        websiteLink.setAttribute('aria-label', 'Website: www.WillSolicitor.co.uk');
+        contactInfo.appendChild(websiteLink);
+      }
+
       footer.appendChild(contactInfo);
     }
     
     // Add copyright notice
     const copyrightNotice = document.createElement('p');
     copyrightNotice.className = 'intestacy-copyright';
-    copyrightNotice.textContent = '© WillSolicitor.co.uk (a trading style of McHale Legal Limited) 2025. All Rights Reserved.';
+    copyrightNotice.innerHTML = '© <a href="https://www.willsolicitor.co.uk" target="_blank" rel="noopener noreferrer" class="intestacy-contact-website">WillSolicitor.co.uk</a> (a trading style of McHale Legal Limited) 2025. All Rights Reserved.';
     
     footer.appendChild(copyrightNotice);
     
+    // Create restart button (visible on all steps except the first)
+    const restartButton = document.createElement('button');
+    restartButton.className = 'intestacy-button intestacy-restart-button';
+    restartButton.id = 'intestacy-restart';
+    restartButton.textContent = 'Start Again';
+    restartButton.type = 'button';
+    restartButton.style.display = 'none';
+    restartButton.setAttribute('aria-label', 'Start calculator again from beginning');
+
     // Add all sections to calculator
     calculatorElement.appendChild(nameSection);
     calculatorElement.appendChild(estateSection);
     calculatorElement.appendChild(statusSection);
     calculatorElement.appendChild(questionSection);
     calculatorElement.appendChild(resultSection);
+    calculatorElement.appendChild(restartButton);
     calculatorElement.appendChild(footer);
     
     // Replace container contents with calculator
@@ -612,7 +628,9 @@ class IntestacyUI {
    * @param {string} theme - The theme to apply ('light' or 'dark')
    */
   applyTheme(theme) {
-    this.container.classList.add(`intestacy-theme-${theme}`);
+    if (theme !== 'none') {
+      this.container.classList.add(`intestacy-theme-${theme}`);
+    }
   }
   
   /**
@@ -672,6 +690,7 @@ class IntestacyUI {
     this.elements.statusSection.style.display = 'none';
     this.elements.questionSection.style.display = 'none';
     this.elements.resultSection.style.display = 'none';
+    this.elements.restartButton.style.display = 'block';
     
     // Clear any previous error state
     this.elements.estateError.style.display = 'none';
@@ -703,6 +722,7 @@ class IntestacyUI {
     this.elements.statusSection.style.display = 'none';
     this.elements.questionSection.style.display = 'none';
     this.elements.resultSection.style.display = 'none';
+    this.elements.restartButton.style.display = 'none';
     
     // Focus on heading first for screen readers to announce the section
     const nameHeading = this.elements.nameSection.querySelector('h2');
@@ -773,6 +793,7 @@ class IntestacyUI {
     this.elements.statusSection.style.display = 'block';
     this.elements.questionSection.style.display = 'none';
     this.elements.resultSection.style.display = 'none';
+    this.elements.restartButton.style.display = 'block';
     
     // Focus on heading first for screen readers to announce the section
     const statusHeading = this.elements.statusSection.querySelector('h2');
@@ -898,7 +919,8 @@ class IntestacyUI {
     this.elements.estateSection.style.display = 'none';
     this.elements.statusSection.style.display = 'none';
     this.elements.resultSection.style.display = 'none';
-    
+    this.elements.restartButton.style.display = 'block';
+
     // Show question section
     this.elements.questionSection.style.display = 'block';
     
@@ -935,24 +957,23 @@ class IntestacyUI {
    * Show the result
    */
   showResult() {
-    // Calculate distribution - now returns object with text and data
+    // Calculate distribution - returns object with text and data
     const distribution = this.calculator.calculateDistribution();
-    
+
     // Get estate value for display
     const estateValue = this.calculator.formatCurrency(this.state.estateValue);
-    
-    // Format result with rich text and structured sections with enhanced semantics for accessibility
+
+    // Build the result HTML
     let formattedResult = `
-      <h2>Distribution Results for ${this.state.name}</h2>
-      
-      <div class="intestacy-result-summary" role="region" aria-label="Estate Summary">
-        <p><strong>Estate Value:</strong> <span aria-label="Estate Value: ${estateValue}">${estateValue}</span></p>
+      <div class="intestacy-result-header">
+        <h2>Distribution Results for ${this.state.name}</h2>
+        <div class="intestacy-estate-badge" aria-label="Estate Value: ${estateValue}">
+          <span class="intestacy-estate-badge-label">Estate Value</span>
+          <span class="intestacy-estate-badge-value">${estateValue}</span>
+        </div>
       </div>
-      
-      <div class="intestacy-result-details" role="region" aria-label="Detailed Distribution">
-        <h3>Detailed Distribution</h3>
-        ${this.formatDistributionDetails(distribution.data, distribution.text)}
-      </div>
+      <hr class="intestacy-divider" />
+      ${this.formatDistributionDetails(distribution.data, distribution.text)}
     `;
     
     // Update result text
@@ -963,7 +984,8 @@ class IntestacyUI {
     this.elements.estateSection.style.display = 'none';
     this.elements.statusSection.style.display = 'none';
     this.elements.questionSection.style.display = 'none';
-    
+    this.elements.restartButton.style.display = 'block';
+
     // Show result section
     this.elements.resultSection.style.display = 'block';
     
@@ -1007,36 +1029,75 @@ class IntestacyUI {
     if (!distributionData || !distributionData.shares || distributionData.shares.length === 0 || !distributionData.beneficiaries) {
       return '<p>No distribution data available.</p>';
     }
-    
-    // Format as list with percentages and amounts
-    const totalValue = distributionData.totalValue || 
+
+    const totalValue = distributionData.totalValue ||
       distributionData.shares.reduce((sum, share) => sum + share, 0);
-    
-    // Remove any cohabiting warning div from the summary text to avoid duplication
-    summaryText = summaryText.replace(/<div class="intestacy-cohabiting-warning">.*?<\/div>/s, '');
-    
-    const summaryHtml = `<p>${summaryText}</p>`;
-    
-    let html = summaryHtml + '<ul class="intestacy-distribution-list" role="list" aria-label="Distribution Breakdown">';
-    
-    // Ensure beneficiaries array exists and matches shares length
+
+    // Ensure beneficiaries array matches shares length
     if (distributionData.beneficiaries.length !== distributionData.shares.length) {
-      return summaryHtml + '<p>Invalid distribution data.</p>';
+      return '<p>Invalid distribution data.</p>';
     }
-    
+
+    // Clean summary text - strip any HTML warning divs to avoid duplication
+    let cleanSummary = summaryText.replace(/<div class="intestacy-cohabiting-warning">.*?<\/div>/s, '').trim();
+
+    // Build the advice section with the descriptive text
+    let html = '';
+    if (cleanSummary) {
+      // Convert newline bullet points to proper HTML list
+      const lines = cleanSummary.split('\n').filter(l => l.trim());
+      let adviceHtml = '';
+      let inList = false;
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('\u2022 ') || trimmed.startsWith('- ')) {
+          if (!inList) {
+            adviceHtml += '<ul class="intestacy-advice-list">';
+            inList = true;
+          }
+          const content = trimmed.replace(/^[\u2022\-]\s*/, '');
+          // Check for sub-items (indented with spaces before bullet)
+          if (line.startsWith('  ')) {
+            adviceHtml += `<li class="intestacy-advice-subitem">${content}</li>`;
+          } else {
+            adviceHtml += `<li>${content}</li>`;
+          }
+        } else {
+          if (inList) {
+            adviceHtml += '</ul>';
+            inList = false;
+          }
+          adviceHtml += `<p class="intestacy-advice-text">${trimmed}</p>`;
+        }
+      }
+      if (inList) {
+        adviceHtml += '</ul>';
+      }
+
+      html += `
+        <div class="intestacy-advice-section" role="region" aria-label="Distribution Explanation">
+          ${adviceHtml}
+        </div>
+        <hr class="intestacy-divider" />
+      `;
+    }
+
+    // Build the beneficiary breakdown
+    html += '<h3 class="intestacy-breakdown-heading">Beneficiary Breakdown</h3>';
+    html += '<ul class="intestacy-distribution-list" role="list" aria-label="Distribution Breakdown">';
+
     for (let i = 0; i < distributionData.beneficiaries.length; i++) {
       const beneficiary = distributionData.beneficiaries[i];
       const share = distributionData.shares[i];
-      
-      // Convert share to percentage of total
       const percentage = Math.round((share / totalValue) * 100);
-      
-      // Format share as currency
       const shareFormatted = this.calculator.formatCurrency(share);
-      
+      const color = distributionData.colors[i] || '#4285f4';
+
       html += `
         <li class="intestacy-beneficiary" role="listitem">
           <div class="intestacy-beneficiary-details">
+            <span class="intestacy-beneficiary-color" style="background-color: ${color};" aria-hidden="true"></span>
             <span class="intestacy-beneficiary-name">${beneficiary}</span>
             <span class="intestacy-beneficiary-share" aria-label="${beneficiary} receives ${shareFormatted}, which is ${percentage}% of the estate">
               <span class="intestacy-beneficiary-amount">${shareFormatted}</span>
@@ -1046,22 +1107,16 @@ class IntestacyUI {
         </li>
       `;
     }
-    
-    html += '</ul>';
-    
-    // Add an accessible explanation for screen readers
-    if (distributionData.beneficiaries && distributionData.beneficiaries.length > 0) {
-      const formattedTotalValue = this.calculator.formatCurrency(totalValue);
-      // Join the list of beneficiaries for the accessible text
-      const beneficiaryList = distributionData.beneficiaries.join(' and ');
 
-      html += `
-        <div class="intestacy-distribution-summary sr-only" aria-live="polite">
-          The estate valued at ${formattedTotalValue} will be distributed to: ${beneficiaryList}.
-        </div>
-      `;
-    }
-    
+    html += '</ul>';
+
+    // Contact prompt
+    html += `
+      <div class="intestacy-cta-section">
+        <p class="intestacy-cta-text"><strong>Protect your loved ones.</strong> <a href="https://www.willsolicitor.co.uk/book-consultation" target="_blank" rel="noopener noreferrer" class="intestacy-cta-link">Create a valid Will</a> to ensure your estate is distributed according to your wishes.</p>
+      </div>
+    `;
+
     return html;
   }
   

@@ -437,11 +437,9 @@ class IntestacyCalculator {
     // Update the state with the user's answer
     this.state[questionId] = answer;
 
-    // Special condition for married with children and estate <= statutory legacy
-    if (this.state.married && questionId === 'children' && answer === true) {
-      if (this.state.estateValue <= this.STATUTORY_LEGACY) {
-        return null; // End flow early, spouse gets all
-      }
+    // If we already have enough information to determine distribution, stop asking
+    if (this.canDetermineDistribution()) {
+      return null;
     }
 
     // Determine the next question based on the flow logic
@@ -474,11 +472,9 @@ class IntestacyCalculator {
       return null;
     }
 
-    // Special condition for married with children and estate <= statutory legacy
-    if (this.state.married && this._lastQuestionId === 'children' && this.state.children === true) {
-      if (this.state.estateValue <= this.STATUTORY_LEGACY) {
-        return null; // End flow early, spouse gets all
-      }
+    // If we already have enough information to determine distribution, stop asking
+    if (this.canDetermineDistribution()) {
+      return null;
     }
 
     return this.questionFlow[this._lastQuestionId](this.state[this._lastQuestionId]);
@@ -523,18 +519,19 @@ class IntestacyCalculator {
   canDetermineDistribution() {
     // For married people, we MUST know if they have children
     if (this.state.married) {
-      // If we don't know if they have children, we need to ask
+      // If estate is at or below the statutory legacy, spouse gets everything
+      // regardless of children - no further questions needed
+      if (this.state.estateValue <= this.STATUTORY_LEGACY) {
+        return true;
+      }
+
+      // Estate above statutory legacy - we need to know about children
       if (this.state.children === null) {
         return false;
       }
 
-      // If they have children, we need to know if estate > statutory legacy
-      // and if any children are deceased (and if those deceased children had issue).
       if (this.state.children) {
-        if (this.state.estateValue <= this.STATUTORY_LEGACY) {
-          return true; // Spouse gets everything, no further questions needed about children's status
-        }
-        // Estate > statutory legacy, need more info about children
+        // Need more info about deceased children for per-stirpes distribution
         if (this.state.childrenDeceased === null) return false;
         if (this.state.childrenDeceased && this.state.deceasedChildrenHadChildren === null) return false;
         return true;

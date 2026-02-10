@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UK Intestacy Calculator - Partner Install Example</title>
+  <style>
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background-color: #faf8f5;
+      color: #2c2c2c;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #1a3a5c;
+    }
+
+    h2, h3 {
+      color: #1a3a5c;
+    }
+
+    .description {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 30px;
+      border: 1px solid #ddd;
+    }
+
+    .calculator-container {
+      margin-bottom: 40px;
+    }
+
+    code {
+      background-color: #f0ede8;
+      color: #2c2c2c;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background-color: #f0ede8;
+      padding: 15px;
+      border-radius: 5px;
+      overflow-x: auto;
+      border: 1px solid #ddd;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+    }
+
+    /* ===== Widget styling (host page controls appearance) ===== */
+    .intestacy-calculator {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 25px;
+      box-sizing: border-box;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #2c2c2c;
+    }
+
+    .intestacy-calculator * {
+      box-sizing: border-box;
+    }
+
+    .intestacy-section {
+      margin-bottom: 20px;
+    }
+
+    .intestacy-section h2 {
+      color: #1a3a5c;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .intestacy-calculator label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .intestacy-calculator input[type="text"],
+    .intestacy-calculator input[type="number"],
+    .intestacy-calculator input[type="email"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #bbb;
+      border-radius: 3px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      font-family: inherit;
+      background-color: #fff;
+    }
+
+    .intestacy-calculator input:focus {
+      border-color: #1a3a5c;
+      outline: 2px solid rgba(26, 58, 92, 0.3);
+      outline-offset: 2px;
+    }
+
+    .intestacy-status-option {
+      display: block;
+      margin-bottom: 10px;
+      padding: 10px 10px 10px 38px;
+      border: 1px solid #bbb;
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .intestacy-status-option:hover {
+      background-color: #f0ede8;
+    }
+
+    .intestacy-status-input {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      accent-color: #1a3a5c;
+    }
+
+    .intestacy-error[style*="display: block"] {
+      display: block;
+      color: #b33;
+      padding: 8px 10px;
+      margin-bottom: 15px;
+      border-left: 3px solid #b33;
+      background-color: rgba(187, 51, 51, 0.05);
+    }
+
+    .intestacy-cohabiting-warning {
+      background-color: #fff8e1;
+      color: #856404;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border-radius: 3px;
+      border-left: 4px solid #f0c040;
+    }
+
+    .intestacy-calculator button {
+      padding: 12px 24px;
+      border: 1px solid #bbb;
+      border-radius: 3px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: inherit;
+      min-width: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 5px;
+      background-color: #fff;
+      color: #2c2c2c;
+    }
+
+    .intestacy-button {
+      background-color: #1a3a5c !important;
+      color: #fff !important;
+      border-color: #1a3a5c !important;
+    }
+
+    .intestacy-button:hover {
+      background-color: #15304d !important;
+    }
+
+    .intestacy-yes-button {
+      background-color: #2e7d32 !important;
+      border-color: #2e7d32 !important;
+      color: #fff !important;
+    }
+
+    .intestacy-no-button {
+      background-color: #c62828 !important;
+      border-color: #c62828 !important;
+      color: #fff !important;
+    }
+
+    .intestacy-restart-button {
+      background-color: #666 !important;
+      border-color: #666 !important;
+      color: #fff !important;
+      display: block;
+      margin: 20px auto 0 !important;
+    }
+
+    .intestacy-calculator a:focus,
+    .intestacy-calculator button:focus,
+    .intestacy-calculator [tabindex]:focus {
+      outline: 2px solid #1a3a5c;
+      outline-offset: 2px;
+    }
+
+    .intestacy-question-section fieldset {
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .intestacy-question-section legend {
+      padding: 0;
+    }
+
+    .intestacy-question-section input,
+    .intestacy-question-options {
+      display: none !important;
+    }
+
+    .intestacy-question-text {
+      margin-bottom: 15px;
+    }
+
+    .intestacy-result-header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .intestacy-estate-badge {
+      background-color: #1a3a5c;
+      color: #fff;
+      padding: 12px 30px;
+      border-radius: 6px;
+    }
+
+    .intestacy-estate-badge-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+    }
+
+    .intestacy-estate-badge-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .intestacy-divider {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 20px 0;
+    }
+
+    .intestacy-advice-section {
+      background-color: #f0ede8;
+      border-radius: 4px;
+      padding: 20px;
+    }
+
+    .intestacy-advice-text {
+      margin: 0 0 10px 0;
+      line-height: 1.6;
+    }
+
+    .intestacy-advice-list li {
+      position: relative;
+      padding: 6px 0 6px 20px;
+      line-height: 1.5;
+    }
+
+    .intestacy-advice-list li::before {
+      content: "\2022";
+      color: #1a3a5c;
+      font-weight: bold;
+      position: absolute;
+      left: 0;
+    }
+
+    .intestacy-breakdown-heading {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 10px 0;
+    }
+
+    .intestacy-distribution-list {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .intestacy-beneficiary {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      background-color: #fff;
+    }
+
+    .intestacy-beneficiary:last-child {
+      border-bottom: none;
+    }
+
+    .intestacy-beneficiary-color {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .intestacy-beneficiary-name {
+      font-weight: 600;
+    }
+
+    .intestacy-beneficiary-amount {
+      font-weight: 600;
+      color: #1a3a5c;
+    }
+
+    .intestacy-beneficiary-percentage {
+      color: #888;
+      font-size: 0.9em;
+    }
+
+    .intestacy-cta-section {
+      background-color: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 4px;
+      padding: 15px 20px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .intestacy-cta-text {
+      margin: 0;
+      color: #2e7d32;
+      line-height: 1.5;
+    }
+
+    .intestacy-footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+      font-size: 14px;
+      color: #888;
+      line-height: 1.5;
+    }
+
+    .intestacy-contact-phone,
+    .intestacy-contact-email {
+      display: inline-block;
+      margin-top: 5px;
+      color: #1a3a5c;
+      text-decoration: none;
+    }
+
+    .intestacy-contact-phone:hover,
+    .intestacy-contact-email:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .intestacy-calculator {
+        padding: 15px;
+      }
+      .intestacy-calculator button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Partner Install Example</h1>
+      <p>Demonstrates integrating the widget via a built script tag</p>
+    </header>
+
+    <div class="description">
+      <h2>Installation</h2>
+      <p>Partners can install the widget and build a self-contained script file:</p>
+
+      <h3>1. Install</h3>
+      <pre><code># From git URL
+npm install github:username/intestacy-calculator
+
+# Or from a local tarball
+npm pack  # creates intestacy-calculator-1.0.0.tgz
+npm install ./intestacy-calculator-1.0.0.tgz</code></pre>
+
+      <h3>2. Build</h3>
+      <pre><code>npm run build
+# Output: dist/intestacy-widget.min.js</code></pre>
+
+      <h3>3. Embed</h3>
+      <pre><code>&lt;!-- Add this where you want the calculator --&gt;
+&lt;div id="intestacy-calculator"&gt;&lt;/div&gt;
+
+&lt;!-- Include the built script --&gt;
+&lt;script src="intestacy-widget.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  new IntestacyWidget({
+    container: '#intestacy-calculator',
+    theme: 'none',
+    contactInfo: 'Contact us to discuss creating a Will.'
+  });
+&lt;/script&gt;</code></pre>
+
+      <p>
+        Setting <code>theme: 'none'</code> lets your site's CSS control the widget's appearance.
+        Use <code>theme: 'light'</code> or <code>theme: 'dark'</code> for the built-in themes.
+      </p>
+    </div>
+
+    <!-- Calculator container -->
+    <div id="intestacy-calculator" class="calculator-container"></div>
+  </div>
+
+  <!-- In production, partners would use: <script src="dist/intestacy-widget.min.js"></script> -->
+  <!-- For this example, we use the ES module source directly -->
+  <script type="module">
+    import IntestacyWidget from '../src/integration/IntestacyWidget.js';
+
+    document.addEventListener('DOMContentLoaded', function() {
+      new IntestacyWidget({
+        container: '#intestacy-calculator',
+        theme: 'none',
+        contactInfo: 'Contact us to discuss creating a Will.',
+        contactPhone: '0161 348 7581',
+        contactEmail: 'hello@WillSolicitor.co.uk'
+      });
+    });
+  </script>
+</body>
+</html>

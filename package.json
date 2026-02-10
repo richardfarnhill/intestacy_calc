@@ -8,11 +8,16 @@
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "build": "esbuild src/integration/IntestacyWidget.js --bundle --minify --format=iife --global-name=IntestacyWidgetModule --footer:js=\"IntestacyWidget=IntestacyWidgetModule.default;\" --outfile=dist/intestacy-widget.min.js",
     "lint": "eslint src/**/*.js",
     "serve": "node server.js",
     "start": "npm run serve",
     "test-prompt": "node scripts/test-prompt.js"
   },
+  "files": [
+    "src/",
+    "dist/"
+  ],
   "jest": {
     "testEnvironment": "jsdom",
     "transform": {},
@@ -39,6 +44,7 @@
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
+    "esbuild": "^0.24.2",
     "eslint": "^8.50.0",
     "http-server": "^14.1.0",
     "jest": "^29.7.0"

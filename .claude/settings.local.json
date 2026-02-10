@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(findstr:*)",
+      "Bash(node --experimental-vm-modules node_modules/jest/bin/jest.js:*)",
+      "Bash(npx jest:*)",
+      "Bash(set NODE_OPTIONS=--experimental-vm-modules)",
+      "Bash(node:*)",
+      "Bash(del \"C:\\\\Users\\\\richa\\\\Dev Projects\\\\projects\\\\Claude_intestacy\\\\intestacy_calc\\\\__verify_fixes.mjs\")",
+      "WebFetch(domain:primer.style)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "Bash(npx -y @primer/primitives@latest)",
+      "Bash(npm view:*)",
+      "WebFetch(domain:unpkg.com)"
+    ]
+  }
+}

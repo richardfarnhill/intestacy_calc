@@ -11,7 +11,7 @@
 - **Spouse's Interest Description**: Corrected the description of a surviving spouse's inheritance from "life interest" to "absolute interest" in the distribution results to align with UK intestacy rules for deaths on or after 1 October 2014.
 - **Question Section UI**: Resolved an issue where an unnecessary text box/label ("Answer the question") and incorrect padding appeared in the question section. Ensured the visually hidden legend is truly hidden and spacing is correct.
 - **Cohabiting No Children Distribution**: Fixed the calculation and display of distribution details for cohabiting individuals with no children to correctly identify the next class of beneficiaries.
-- **Outdated Contact Details in Examples/README**: Updated all instances of the old contact phone number (0161 928 3848), email address (mch@mchaleandco.co.uk), and copyright notice (© WillsX 2025. All Rights Reserved.) in the example HTML files and the README to the correct information.
+- **Outdated Contact Details in Examples/README**: Updated all instances of the old contact phone number (0161 928 3848), email address (mch@mchaleandco.co.uk), and copyright notice (© WillSolicitor.co.uk 2025. All Rights Reserved.) in the example HTML files and the README to the correct information.
 
 ## Version 1.2.2 - [4 March 2025]
 

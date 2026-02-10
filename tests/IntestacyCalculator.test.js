@@ -689,11 +689,20 @@ describe('IntestacyCalculator', () => {
   });
   
   describe('canDetermineDistribution', () => {
-    test('should require knowing if married person has children', () => {
+    test('should require knowing if married person has children when estate above statutory legacy', () => {
       calculator.state.married = true;
-      calculator.state.children = null; 
-      
+      calculator.state.estateValue = 500000;
+      calculator.state.children = null;
+
       expect(calculator.canDetermineDistribution()).toBe(false);
+    });
+
+    test('should not require children info when married with estate at or below statutory legacy', () => {
+      calculator.state.married = true;
+      calculator.state.estateValue = 300000;
+      calculator.state.children = null;
+
+      expect(calculator.canDetermineDistribution()).toBe(true);
     });
     
     test('should correctly handle married with no children', () => {

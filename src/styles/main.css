@@ -254,6 +254,7 @@
   cursor: pointer;
   transition: background-color 0.3s, box-shadow 0.3s;
   margin-right: 10px;
+  margin-top: 15px;
   position: relative;
   overflow: hidden;
 }
@@ -397,6 +398,8 @@
 }
 
 .intestacy-question-buttons {
+    display: flex;
+    gap: 15px;
     margin-top: 20px;
 }
 
@@ -714,6 +717,169 @@
 
 .intestacy-theme-dark .intestacy-beneficiary-percentage {
   color: #aaa;
+}
+
+/* Result page layout */
+.intestacy-result-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.intestacy-result-header h2 {
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
+
+.intestacy-estate-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, var(--primary-color), #3367d6);
+  color: #fff;
+  padding: 12px 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.intestacy-estate-badge-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+.intestacy-estate-badge-value {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.intestacy-divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 20px 0;
+}
+
+/* Advice section */
+.intestacy-advice-section {
+  background-color: var(--light-bg);
+  border-radius: 6px;
+  padding: 20px;
+}
+
+.intestacy-advice-text {
+  margin: 0 0 10px 0;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+.intestacy-advice-text:last-child {
+  margin-bottom: 0;
+}
+
+.intestacy-advice-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.intestacy-advice-list li {
+  position: relative;
+  padding: 6px 0 6px 20px;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+.intestacy-advice-list li::before {
+  content: "\2022";
+  color: var(--primary-color);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
+.intestacy-advice-subitem {
+  margin-left: 20px;
+  font-size: 0.95em;
+}
+
+.intestacy-advice-subitem::before {
+  content: "\2013" !important;
+  color: var(--light-text) !important;
+}
+
+/* Beneficiary breakdown */
+.intestacy-breakdown-heading {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 10px 0;
+}
+
+.intestacy-beneficiary-color {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+/* CTA section */
+.intestacy-cta-section {
+  background-color: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  border-radius: 6px;
+  padding: 15px 20px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.intestacy-cta-text {
+  margin: 0;
+  color: #2e7d32;
+  line-height: 1.5;
+}
+
+/* Consistent spacing for form sections */
+.intestacy-section h2 {
+  margin-bottom: 20px;
+}
+
+.intestacy-section .intestacy-label {
+  margin-bottom: 8px;
+}
+
+/* Restart button standalone styling */
+.intestacy-restart-button {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  color: #fff !important;
+  display: block;
+  margin: 20px auto 0 !important;
+}
+
+.intestacy-restart-button:hover {
+  background-color: #5a6268 !important;
+  border-color: #5a6268 !important;
+}
+
+/* Dark theme adjustments for new elements */
+.intestacy-theme-dark .intestacy-advice-section {
+  background-color: #2c2c2c;
+}
+
+.intestacy-theme-dark .intestacy-cta-section {
+  background-color: rgba(46, 125, 50, 0.15);
+  border-color: rgba(46, 125, 50, 0.3);
+}
+
+.intestacy-theme-dark .intestacy-cta-text {
+  color: #81c784;
+}
+
+.intestacy-theme-dark .intestacy-estate-badge {
+  background: linear-gradient(135deg, #5c8dd6, #3367d6);
 }
 
 .intestacy-question-fieldset {

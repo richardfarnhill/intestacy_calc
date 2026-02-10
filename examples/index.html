@@ -3,71 +3,379 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WillsX Intestacy Tool - Lead Generator</title>
+    <title>WillSolicitor.co.uk Intestacy Calculator</title>
     <style>
-        body {
-            font-family: sans-serif;
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
-            color: #333;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #1f2328;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
 
         .container {
-            max-width: 960px;
+            max-width: 1120px;
             margin: 0 auto;
+            padding: 0 24px;
         }
 
-        h1, h2 {
+        /* ── Hero ── */
+        .hero {
             text-align: center;
-            color: #0047AB; /* WillsX Blue */
-            margin-bottom: 10px;
+            padding: 96px 24px 72px;
+            background-color: #ffffff;
         }
 
-        .intro {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            font-size: 1.1em;
-            line-height: 1.6;
-        }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h3 {
-            margin-top: 0;
-            color: #0047AB;
-        }
-
-        .card a {
+        .hero-label {
             display: inline-block;
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #59636e;
+            margin-bottom: 16px;
         }
 
+        .hero h1 {
+            font-size: clamp(2.4rem, 5vw, 3.6rem);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: #1f2328;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #59636e;
+            max-width: 640px;
+            margin: 0 auto 36px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: #1f883d;
+            border: 1px solid #1a7f37;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #1a7f37;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #25292e;
+            background-color: #f6f8fa;
+            border: 1px solid #d1d9e0;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 12px;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #eaeef2;
+            border-color: #afb8c1;
+            text-decoration: none;
+        }
+
+        .hero-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* ── Section shared ── */
+        .section {
+            padding: 72px 0;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+            color: #1f2328;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #59636e;
+            font-size: 1.05rem;
+            max-width: 600px;
+            margin: 0 auto 48px;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            border: none;
+            border-top: 1px solid #d1d9e0;
+            margin: 0;
+        }
+
+        /* ── Features grid ── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background-color: #ffffff;
+            border: 1px solid #d1d9e0;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(31, 35, 40, 0.04);
+            transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            border-color: #0969da;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31, 35, 40, 0.1);
+        }
+
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            background-color: #dafbe1;
+            color: #1a7f37;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1f2328;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: #59636e;
+            line-height: 1.55;
+        }
+
+        /* ── Examples grid ── */
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .examples-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .example-card {
+            background-color: #ffffff;
+            border: 1px solid #d1d9e0;
+            border-radius: 12px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 1px 3px rgba(31, 35, 40, 0.04);
+            transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .example-card:hover {
+            border-color: #0969da;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(31, 35, 40, 0.1);
+        }
+
+        .example-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1f2328;
+        }
+
+        .example-badge {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 14px;
+            background-color: rgba(9, 105, 218, 0.08);
+            color: #0969da;
+            border: 1px solid rgba(9, 105, 218, 0.2);
+            width: fit-content;
+        }
+
+        .example-card p {
+            font-size: 0.9rem;
+            color: #59636e;
+            line-height: 1.5;
+            flex-grow: 1;
+            margin-bottom: 18px;
+        }
+
+        .example-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #0969da;
+        }
+
+        .example-link:hover {
+            text-decoration: underline;
+        }
+
+        .example-link .arrow {
+            transition: transform 0.15s ease;
+            display: inline-block;
+        }
+
+        .example-link:hover .arrow {
+            transform: translateX(3px);
+        }
+
+        /* ── Quick Start ── */
+        .quickstart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .quickstart-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .quickstart-block {
+            background-color: #f6f8fa;
+            border: 1px solid #d1d9e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .quickstart-header {
+            padding: 14px 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #59636e;
+            border-bottom: 1px solid #d1d9e0;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .code-block {
+            padding: 20px;
+            overflow-x: auto;
+            background-color: #f6f8fa;
+            border-radius: 0 0 6px 6px;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #1f2328;
+            white-space: pre;
+        }
+
+        .code-block .comment {
+            color: #59636e;
+        }
+
+        .code-block .keyword {
+            color: #cf222e;
+        }
+
+        .code-block .string {
+            color: #0a3069;
+        }
+
+        .code-block .tag {
+            color: #116329;
+        }
+
+        .code-block .attr {
+            color: #8250df;
+        }
+
+        /* ── Footer ── */
         .footer {
             text-align: center;
-            margin-top: 20px;
-            color: #777;
+            padding: 48px 24px;
+            border-top: 1px solid #d1d9e0;
+            margin-top: 24px;
+        }
+
+        .footer-brand {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .footer-brand a {
+            color: #1f2328;
+            text-decoration: none;
+        }
+
+        .footer-brand a:hover {
+            color: #0969da;
+            text-decoration: underline;
+        }
+
+        .footer p {
+            font-size: 0.85rem;
+            color: #59636e;
         }
 
         .intestacy-question-fieldset {
@@ -76,60 +384,147 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>WillsX Intestacy Tool</h1>
-        
-        <div class="intro">
-            <p>This is a prototype of an Intestacy Tool, which is designed to be a lead generator. Please feel free to test the tools - you won't break anything!!</p>
-        </div>
 
-        <h2>Available Examples</h2>
-        <div class="card-grid">
-            <div class="card">
-                <h3>Basic Example</h3>
-                <p>A straightforward implementation showing the core functionality of the intestacy calculator. Perfect for initial testing and understanding the basic features.</p>
-                <p><strong>Key Features:</strong></p>
-                <ul>
-                    <li>Default styling</li>
-                    <li>Standard question flow</li>
-                    <li>Basic results display</li>
-                </ul>
-                <a href="basic.html">View Example</a>
-            </div>
-            <div class="card">
-                <h3>Simple Include Example</h3>
-                <p>Demonstrates how to quickly add the calculator to any webpage using simple script tags. Ideal for rapid deployment.</p>
-                <p><strong>Implementation:</strong></p>
-                <ul>
-                    <li>Minimal setup required</li>
-                    <li>Single script include</li>
-                    <li>Basic configuration</li>
-                </ul>
-                <a href="simple-include.html">View Example</a>
-            </div>
-            <div class="card">
-                <h3>Custom Theme Example</h3>
-                <p>Shows how to customize the calculator's appearance to match your brand. Features custom colors, fonts, and styling.</p>
-                <p><strong>Customizations:</strong></p>
-                <ul>
-                    <li>Custom color scheme</li>
-                    <li>Modified typography</li>
-                    <li>Enhanced visual elements</li>
-                </ul>
-                <a href="custom-theme.html">View Example</a>
-            </div>
-            <div class="card">
-                <h3>Email Compatible Example</h3>
-                <p>Specialized implementation for email newsletters and marketing campaigns. Ensures compatibility across email clients.</p>
-                <p><strong>Features:</strong></p>
-                <ul>
-                    <li>Email-safe styling</li>
-                    <li>Responsive design</li>
-                    <li>Click-through functionality</li>
-                </ul>
-                <a href="email-compatible.html">View Example</a>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <span class="hero-label">Open-source intestacy calculator</span>
+            <h1>WillSolicitor.co.uk Intestacy Calculator</h1>
+            <p>A lightweight, embeddable intestacy calculator that helps your visitors understand UK inheritance rules &mdash; and connects them with professional will-writing services.</p>
+            <div class="hero-actions">
+                <a href="basic.html" class="btn-primary">Try the Calculator</a>
+                <a href="#quick-start" class="btn-secondary">Quick Start</a>
             </div>
         </div>
-    </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Features -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Built for developers and partners</h2>
+            <p class="section-subtitle">Everything you need to integrate a professional intestacy calculator into your website or application.</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&lt;/&gt;</div>
+                    <h3>Easy Integration</h3>
+                    <p>Embed the full calculator with a single script tag. No build tools, no frameworks &mdash; just drop it into any HTML page and you are up and running in seconds.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#127912;</div>
+                    <h3>Customisable Themes</h3>
+                    <p>Ships with light and dark themes out of the box. Use <code style="color:#8250df;">theme:&apos;none&apos;</code> to strip all default styles and bring your own CSS for a fully branded experience.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#9855;</div>
+                    <h3>Accessible</h3>
+                    <p>WCAG compliant, fully keyboard navigable, and screen-reader friendly. Every user gets a first-class experience regardless of how they browse.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Examples -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Examples</h2>
+            <p class="section-subtitle">Explore different integration patterns and themes to find the right fit for your project.</p>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <span class="example-badge">Default</span>
+                    <h3>Basic Example</h3>
+                    <p>The standard implementation with the default light theme. A great starting point to see the full question flow and results display.</p>
+                    <a href="basic.html" class="example-link">View example <span class="arrow">&rarr;</span></a>
+                </div>
+
+                <div class="example-card">
+                    <span class="example-badge">Theming</span>
+                    <h3>Custom Theme</h3>
+                    <p>A CSS-agnostic dark theme built with <code style="color:#8250df;">theme:&apos;none&apos;</code>. Shows how to completely restyle the calculator with your own design tokens.</p>
+                    <a href="custom-theme.html" class="example-link">View example <span class="arrow">&rarr;</span></a>
+                </div>
+
+                <div class="example-card">
+                    <span class="example-badge">Partners</span>
+                    <h3>Partner Install</h3>
+                    <p>Demonstrates the recommended script-tag integration for partners and affiliates. Minimal configuration, maximum flexibility.</p>
+                    <a href="partner-install.html" class="example-link">View example <span class="arrow">&rarr;</span></a>
+                </div>
+
+                <div class="example-card">
+                    <span class="example-badge">Minimal</span>
+                    <h3>Simple Include</h3>
+                    <p>The most minimal setup possible. Just a container div and one script include &mdash; ideal for quick prototyping or testing.</p>
+                    <a href="simple-include.html" class="example-link">View example <span class="arrow">&rarr;</span></a>
+                </div>
+
+                <div class="example-card">
+                    <span class="example-badge">Email</span>
+                    <h3>Email Compatible</h3>
+                    <p>Optimised for email newsletters and marketing campaigns. Click-through functionality that works across all major email clients.</p>
+                    <a href="email-compatible.html" class="example-link">View example <span class="arrow">&rarr;</span></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Quick Start -->
+    <section class="section" id="quick-start">
+        <div class="container">
+            <h2 class="section-title">Quick Start</h2>
+            <p class="section-subtitle">Get up and running in under a minute. Choose npm for build-tool projects or a script tag for instant integration.</p>
+
+            <div class="quickstart-grid">
+                <div class="quickstart-block">
+                    <div class="quickstart-header">Install via npm</div>
+                    <div class="code-block">
+                        <pre><span class="comment"># Install the package</span>
+<span class="keyword">npm</span> install @willsolicitor/intestacy-calculator
+
+<span class="comment"># Import in your project</span>
+<span class="keyword">import</span> { IntestacyCalculator } <span class="keyword">from</span> <span class="string">'@willsolicitor/intestacy-calculator'</span>;
+
+<span class="keyword">const</span> calc = <span class="keyword">new</span> IntestacyCalculator({
+  <span class="attr">container</span>: <span class="string">'#calculator'</span>,
+  <span class="attr">theme</span>: <span class="string">'light'</span>
+});</pre>
+                    </div>
+                </div>
+
+                <div class="quickstart-block">
+                    <div class="quickstart-header">Script tag</div>
+                    <div class="code-block">
+                        <pre><span class="comment">&lt;!-- Add a container element --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="string">"calculator"</span><span class="tag">&gt;&lt;/div&gt;</span>
+
+<span class="comment">&lt;!-- Include the script --&gt;</span>
+<span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="string">"intestacy-calculator.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
+<span class="tag">&lt;script&gt;</span>
+  <span class="keyword">new</span> IntestacyCalculator({
+    <span class="attr">container</span>: <span class="string">'#calculator'</span>,
+    <span class="attr">theme</span>: <span class="string">'light'</span>
+  });
+<span class="tag">&lt;/script&gt;</span></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p class="footer-brand"><a href="https://www.willsolicitor.co.uk">WillSolicitor.co.uk</a></p>
+            <p>Professional will-writing and estate planning services across the United Kingdom.</p>
+        </div>
+    </footer>
+
 </body>
 </html>

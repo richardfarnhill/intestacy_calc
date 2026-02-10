@@ -127,7 +127,7 @@ Old contact phone number, email address, and copyright notice were still present
 #### Steps to Reproduce:
 1. View example HTML files (e.g., basic.html, simple-include.html, custom-theme.html, email-compatible.html, index.html).
 2. View the README.md file.
-3. Observe outdated contact phone number (0161 928 3848), email address (mch@mchaleandco.co.uk), and copyright notice (© WillsX 2025. All Rights Reserved.).
+3. Observe outdated contact phone number (0161 928 3848), email address (mch@mchaleandco.co.uk), and copyright notice (© WillSolicitor.co.uk 2025. All Rights Reserved.).
 
 #### Expected Result:
 All example files and README should display the current contact phone number (0161 348 7581), email address (hello@WillSolcitor.co.uk), and copyright notice (WillSolicitor.co.uk (a trading style of McHale Legal Limited)).
